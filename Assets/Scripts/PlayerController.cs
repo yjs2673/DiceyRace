@@ -18,6 +18,9 @@ public class PlayerController : MonoBehaviour
     public float attackDuration = 0.5f; // 공격 지속 시간
     public float parryDuration = 0.5f;  // 패링 지속 시간
 
+    [Header("Managers")]
+    public DiceManager diceManager;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -136,21 +139,25 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Obstacle"))
         {
-            Debug.Log("장애물 충돌");
+            Debug.Log("장애물 충돌 - 남은 이동 수 1 감소");
+            if (diceManager != null) diceManager.ModifyMoves(-1);
         }
         else if (other.gameObject.CompareTag("Enemy"))
         {
             if (!isAttacking && !isParrying)
             {
-                Debug.Log("적 충돌");
+                Debug.Log("적 충돌 (피격) - 남은 이동 수 1 감소");
+                if (diceManager != null) diceManager.ModifyMoves(-1);
             }
             else if (isAttacking)
             {
-                Debug.Log("적 공격");
+                Debug.Log("적 공격 성공! - 남은 이동 수 1 증가");
+                if (diceManager != null) diceManager.ModifyMoves(1);
             }
             else if (isParrying)
             {
-                Debug.Log("적 패링");
+                Debug.Log("적 패링 성공! - 남은 이동 수 1 증가");
+                if (diceManager != null) diceManager.ModifyMoves(1);
             }
         }
     }
