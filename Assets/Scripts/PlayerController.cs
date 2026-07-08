@@ -18,6 +18,10 @@ public class PlayerController : MonoBehaviour
     public float attackDuration = 0.5f; // 공격 지속 시간
     public float parryDuration = 0.5f;  // 패링 지속 시간
 
+    [Header("Buff States")]
+    public int invincibleMoveCount = 0; // N번 이동 무적 (칸 이동 시 차감)
+    public int ignoreHitCount = 0;      // N회 피격 무시 (맞을 때 차감)
+
     [Header("Managers")]
     public DiceManager diceManager;
 
@@ -139,11 +143,24 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Obstacle"))
         {
+            if (CheckAndConsumeInvincibility()) return; // 무적 상태라면 장애물 충돌 무시
+
             Debug.Log("장애물 충돌 - 남은 이동 수 1 감소");
             if (diceManager != null) diceManager.ModifyMoves(-1);
         }
+        else if (other.gameObject.CompareTag("Tile"))
+        {
+            Tile tile = other.GetComponent<Tile>();
+
+            if (tile != null && tile.tileType == TileType.Moving)
+            {
+                EffectProcessor.ApplyTileEffect(tile, diceManager, this);
+            }
+        }
         else if (other.gameObject.CompareTag("Enemy"))
         {
+            if (CheckAndConsumeInvincibility()) return; // 무적 상태라면 몬스터 충돌 무시
+
             if (!isAttacking && !isParrying)
             {
                 Debug.Log("적 충돌 (피격) - 남은 이동 수 1 감소");
@@ -160,6 +177,42 @@ public class PlayerController : MonoBehaviour
                 if (diceManager != null) diceManager.ModifyMoves(1);
             }
         }
+    }
+    #endregion
+
+    #region 버프 처리
+    // 외부(EffectProcessor 등)에서 버프를 부여할 때 부를 함수
+    public void AddInvincibleMove(int count)
+    {
+        invincibleMoveCount += count;
+        Debug.Log($"버프 획득: {count}번 이동까지 무적");
+    }
+
+    public void AddIgnoreHit(int count)
+    {
+        ignoreHitCount += count;
+        Debug.Log($"버프 획득: 다음 피격 {count}회 무시");
+    }
+
+    // 적이나 장애물에 닿았을 때 무적 상태인지 체크하고 차감하는 헬퍼 함수
+    private bool CheckAndConsumeInvincibility()
+    {
+        // 이동 횟수 기반 무적이 켜져 있다면 피격 무시 (차감은 이동 로직에서 처리)
+        if (invincibleMoveCount > 0)
+        {
+            Debug.Log("무적 상태! 피해를 무시합니다.");
+            return true;
+        }
+
+        // 횟수제 방어막이 있다면 1회 깎고 피격 무시
+        if (ignoreHitCount > 0)
+        {
+            ignoreHitCount--;
+            Debug.Log($"방어막 발동! 피해 무시 (남은 방어막: {ignoreHitCount})");
+            return true;
+        }
+
+        return false; // 방어 수단이 없으면 false 반환 (피해 입음)
     }
     #endregion
 }
