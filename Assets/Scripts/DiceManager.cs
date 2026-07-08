@@ -7,13 +7,15 @@ public class DiceManager : MonoBehaviour
 {
     [Header("UI References")]
     public Button rollButton;
-    public Text diceText;          // 주사위 결과
-    public Text remainingMoveText; // 남은 이동 횟수
+    public Text diceText;               // 주사위 결과
+    public Text remainingRerollText;    // 남은 리롤 횟수
+    public Text remainingMoveText;      // 남은 이동 횟수
 
     [Header("Movement Settings")]
     public PlayerController player;
     public float moveDuration = 0.3f; // 한 칸 이동하는 시간
     public float moveDistance = 1f;   // 한 칸 이동하는 거리
+    public int remainingRerolls = 0;  // 남은 리롤 횟수
 
     private int remainingMoves = 0;
     private bool isMoving = false;
@@ -22,19 +24,20 @@ public class DiceManager : MonoBehaviour
     {
         // 버튼 클릭 이벤트 연결
         rollButton.onClick.AddListener(RollDice);
-        UpdateUI(0);
+        UpdateUI(0, remainingRerolls);
     }
 
     public void RollDice()
     {
         // 이동 중이거나 남은 횟수가 있으면 주사위 굴리기 금지
-        if (isMoving || remainingMoves > 0) return;
+        if (isMoving || remainingRerolls <= 0 || remainingMoves > 0) return;
 
         int diceValue = Random.Range(1, 7); // 1~6 랜덤
         diceText.text = $"주사위: {diceValue}";
 
+        remainingRerolls--;
         remainingMoves = diceValue;
-        UpdateUI(remainingMoves);
+        UpdateUI(remainingMoves, remainingRerolls);
 
         rollButton.interactable = false; // 이동 중 버튼 비활성화
         StartCoroutine(MoveRoutine());
@@ -64,7 +67,7 @@ public class DiceManager : MonoBehaviour
 
             remainingMoves--;
             player.invincibleMoveCount = Mathf.Max(0, player.invincibleMoveCount - 1); // 이동 횟수 기반 무적 차감
-            UpdateUI(remainingMoves);
+            UpdateUI(remainingMoves, remainingRerolls);
 
             // 충돌 등으로 인해 이동 횟수가 0 이하로 떨어졌을 경우 강제 종료
             if (remainingMoves <= 0)
@@ -74,9 +77,15 @@ public class DiceManager : MonoBehaviour
             }
         }
 
-        UpdateUI(remainingMoves);
+        UpdateUI(remainingMoves, remainingRerolls);
         isMoving = false;
         rollButton.interactable = true; // 턴 종료, 주사위 다시 활성화
+    }
+
+    public void AddReroll(int amount)
+    {
+        remainingRerolls += amount;
+        Debug.Log($"리롤 횟수 증가: {amount} -> 남은 리롤: {remainingRerolls}");
     }
 
     // PlayerController에서 충돌 시 호출할 메서드
@@ -90,15 +99,19 @@ public class DiceManager : MonoBehaviour
             remainingMoves = 0; // 음수 방지
         }
 
-        UpdateUI(remainingMoves);
+        UpdateUI(remainingMoves, remainingRerolls);
         Debug.Log($"이동 수 변경: {amount} -> 남은 이동 수: {remainingMoves}");
     }
 
-    private void UpdateUI(int currentMoves)
+    private void UpdateUI(int currentMoves, int currentRerolls)
     {
         if (remainingMoveText != null)
         {
             remainingMoveText.text = $"남은 이동: {currentMoves}";
+        }
+        if (remainingRerollText != null)
+        {
+            remainingRerollText.text = $"남은 리롤: {currentRerolls}";
         }
     }
     

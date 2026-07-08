@@ -33,8 +33,8 @@ public static class EffectProcessor
                 break;
 
             case TileEffect.AddReroll:
-                GameManager.Instance.AddReroll(value);
-                Debug.Log($"발판 효과: 리롤 {value}회 증가 -> 남은 리롤: {GameManager.Instance.Reroll}");
+                diceManager.AddReroll(value);
+                Debug.Log($"발판 효과: 리롤 {value}회 증가 -> 남은 리롤: {diceManager.remainingRerolls}");
                 break;
 
             // TODO: 무적, 상점, 보스 데미지 등은 관련 시스템이 만들어진 후 연결
