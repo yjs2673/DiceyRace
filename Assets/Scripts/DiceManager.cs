@@ -20,6 +20,8 @@ public class DiceManager : MonoBehaviour
     private int remainingMoves = 0;
     private bool isMoving = false;
 
+    private bool isKnockedBack = false; // 넉백 상태인지 여부
+
     private void Start()
     {
         // 버튼 클릭 이벤트 연결
@@ -43,6 +45,13 @@ public class DiceManager : MonoBehaviour
         StartCoroutine(MoveRoutine());
     }
 
+    // PlayerController에서 충돌 시 호출할 넉백 함수
+    public void ApplyPenaltyKnockback()
+    {
+        if (!isMoving || remainingMoves > 0) return;
+        isKnockedBack = true;
+    }
+
     // 플레이어 이동 코루틴
     private IEnumerator MoveRoutine()
     {
@@ -50,36 +59,67 @@ public class DiceManager : MonoBehaviour
 
         while (remainingMoves > 0)
         {
-            yield return new WaitForSeconds(0.2f); // 칸과 칸 사이 약간의 대기 시간
-
-            // 1칸 이동 애니메이션 (Lerp 사용)
+            remainingMoves--;
+            isKnockedBack = false; // 매 칸 이동 시작 시 초기화
             Vector3 startPos = player.transform.position;
-            Vector3 targetPos = startPos + Vector3.right * moveDistance; // X축 양의 방향으로 이동
+            Vector3 targetPos = startPos + Vector3.right * moveDistance;
             float elapsedTime = 0f;
 
+            // 1칸 이동 (Lerp)
             while (elapsedTime < moveDuration)
             {
+                // 이동 도중 넉백 신호를 받으면 즉시 루프 탈출
+                if (isKnockedBack) break;
+
                 player.transform.position = Vector3.Lerp(startPos, targetPos, elapsedTime / moveDuration);
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
-            player.transform.position = targetPos; // 오차 보정
 
-            remainingMoves--;
-            player.invincibleMoveCount = Mathf.Max(0, player.invincibleMoveCount - 1); // 이동 횟수 기반 무적 차감
+            // 넉백을 당했을 경우의 처리
+            if (isKnockedBack)
+            {
+                // 위치를 출발했던 1칸 전(startPos)으로 강제 복귀
+                player.transform.position = startPos;
+
+                // 실패한 이동이므로 이동 횟수 1 차감
+                // remainingMoves--;
+                UpdateUI(remainingMoves, remainingRerolls);
+
+                // 잠시 대기 후 다음 루프(또는 턴 종료) 진행
+                yield return new WaitForSeconds(0.2f);
+
+                if (remainingMoves <= 0) break;
+
+                continue;
+            }
+
+            // 정상적으로 1칸 도착했을 경우
+            player.transform.position = targetPos;
+            // player.invincibleMoveCount = Mathf.Max(0, player.invincibleMoveCount - 1); // 무적 이동 횟수 감소
+            // TODO: 무적 이동 횟수 감소 처리 로직
+            // remainingMoves--;
             UpdateUI(remainingMoves, remainingRerolls);
 
-            // 충돌 등으로 인해 이동 횟수가 0 이하로 떨어졌을 경우 강제 종료
+            // 이동이 모두 끝났을 때 정지 발판 체크
             if (remainingMoves <= 0)
             {
-                remainingMoves = 0;
+                CheckStopTile();
                 break;
             }
+
+            yield return new WaitForSeconds(0.2f);
         }
 
-        UpdateUI(remainingMoves, remainingRerolls);
+        // 루프 종료 후 남은 이동 수 UI 동기화 방어코드
+        if (remainingMoves <= 0)
+        {
+            remainingMoves = 0;
+            UpdateUI(remainingMoves, remainingRerolls);
+        }
+
         isMoving = false;
-        rollButton.interactable = true; // 턴 종료, 주사위 다시 활성화
+        rollButton.interactable = true;
     }
 
     public void AddReroll(int amount)
@@ -114,7 +154,7 @@ public class DiceManager : MonoBehaviour
             remainingRerollText.text = $"남은 리롤: {currentRerolls}";
         }
     }
-    
+
     private void CheckStopTile()
     {
         // Raycast를 사용하여 정지 발판 구분
@@ -123,7 +163,7 @@ public class DiceManager : MonoBehaviour
             if (hit.collider.CompareTag("Tile"))
             {
                 Tile tile = hit.collider.GetComponent<Tile>();
-                
+
                 if (tile != null && tile.tileType == TileType.Stop)
                 {
                     EffectProcessor.ApplyTileEffect(tile, this, player);

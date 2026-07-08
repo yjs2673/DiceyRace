@@ -37,14 +37,11 @@ public class PlayerController : MonoBehaviour
     // Input System: Jump (Q)
     public void OnJump(InputValue value)
     {
-        if (value.isPressed)
-        {
-            if (!isJumping)
-            {
-                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-                isJumping = true;
-                Debug.Log("점프 (Q)");
-            }
+        if (value.isPressed && !isJumping)
+        {            
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            isJumping = true;
+            Debug.Log("점프 (Q)");   
         }
     }
 
@@ -132,7 +129,7 @@ public class PlayerController : MonoBehaviour
     public void OnCollisionEnter(Collision collision)
     {
         // 바닥에 닿으면 슬라이딩 상태 해제
-        if (collision.gameObject.CompareTag("Floor"))
+        if (collision.gameObject.CompareTag("Tile"))
         {
             isJumping = false;
             isSliding = false;
@@ -141,42 +138,62 @@ public class PlayerController : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Obstacle"))
-        {
-            if (CheckAndConsumeInvincibility()) return; // 무적 상태라면 장애물 충돌 무시
-
-            Debug.Log("장애물 충돌 - 남은 이동 수 1 감소");
-            if (diceManager != null) diceManager.ModifyMoves(-1);
-        }
-        else if (other.gameObject.CompareTag("Tile"))
+        // 발판 충돌
+        if (other.gameObject.CompareTag("Tile"))
         {
             Tile tile = other.GetComponent<Tile>();
-
             if (tile != null && tile.tileType == TileType.Moving)
             {
                 EffectProcessor.ApplyTileEffect(tile, diceManager, this);
             }
         }
+        // 장애물 충돌
+        else if (other.gameObject.CompareTag("Obstacle"))
+        {
+            // 무적 방어막이 켜져있다면 효과 차감 후 그냥 지나감 (넉백 X)
+            if (CheckAndConsumeInvincibility()) return;
+
+            diceManager.ModifyMoves(-1);
+            Debug.Log("장애물 충돌 - 넉백 및 이동 수 1 감소");
+            // GameManager를 통한 체력 감소 로직 필요 시 여기에 추가
+            if (diceManager != null)
+            {
+                diceManager.ApplyPenaltyKnockback();
+            }
+        }
+        // 적 충돌
         else if (other.gameObject.CompareTag("Enemy"))
         {
-            if (CheckAndConsumeInvincibility()) return; // 무적 상태라면 몬스터 충돌 무시
-
             if (!isAttacking && !isParrying)
             {
-                Debug.Log("적 충돌 (피격) - 남은 이동 수 1 감소");
-                if (diceManager != null) diceManager.ModifyMoves(-1);
+                // 방어/공격 안 했는데 무적도 없으면 넉백
+                if (CheckAndConsumeInvincibility()) return;
+
+                diceManager.ModifyMoves(-1);
+                Debug.Log("적 충돌 (피격) - 넉백 및 이동 수 1 감소");
+                if (diceManager != null)
+                {
+                    diceManager.ApplyPenaltyKnockback();
+                }
             }
             else if (isAttacking)
             {
                 Debug.Log("적 공격 성공! - 남은 이동 수 1 증가");
-                if (diceManager != null) diceManager.ModifyMoves(1);
+                if (diceManager != null)
+                {
+                    diceManager.ModifyMoves(1);
+                }
             }
-            else if (isParrying)
+            else if (isParrying) 
             {
                 Debug.Log("적 패링 성공! - 남은 이동 수 1 증가");
-                if (diceManager != null) diceManager.ModifyMoves(1);
+                if (diceManager != null)
+                {
+                    diceManager.ModifyMoves(1);
+                }
             }
         }
+
     }
     #endregion
 
