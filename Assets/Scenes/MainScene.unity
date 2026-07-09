@@ -266,9 +266,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b4a047719ca4e5285dc597510b11f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileType: 0
-  tileEffect: 1
-  effectValue: 0
+  tileType: 1
+  tileEffect: 7
+  effectValue: 4
 --- !u!1 &21228846
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,9 +416,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b4a047719ca4e5285dc597510b11f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileType: 0
-  tileEffect: 1
-  effectValue: 0
+  tileType: 1
+  tileEffect: 7
+  effectValue: 2
 --- !u!1 &60034985
 GameObject:
   m_ObjectHideFlags: 0
@@ -718,9 +718,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b4a047719ca4e5285dc597510b11f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileType: 0
-  tileEffect: 0
-  effectValue: 0
+  tileType: 1
+  tileEffect: 7
+  effectValue: 11
 --- !u!1 &217748522
 GameObject:
   m_ObjectHideFlags: 0
@@ -868,9 +868,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b4a047719ca4e5285dc597510b11f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileType: 0
-  tileEffect: 0
-  effectValue: 0
+  tileType: 1
+  tileEffect: 7
+  effectValue: 8
 --- !u!1 &252542437
 GameObject:
   m_ObjectHideFlags: 0
@@ -1145,9 +1145,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b4a047719ca4e5285dc597510b11f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileType: 0
-  tileEffect: 0
-  effectValue: 0
+  tileType: 1
+  tileEffect: 7
+  effectValue: 1
 --- !u!1 &839527526
 GameObject:
   m_ObjectHideFlags: 0
@@ -1416,9 +1416,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b4a047719ca4e5285dc597510b11f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileType: 0
-  tileEffect: 0
-  effectValue: 0
+  tileType: 1
+  tileEffect: 7
+  effectValue: 7
 --- !u!1 &965997805
 GameObject:
   m_ObjectHideFlags: 0
@@ -1811,9 +1811,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b4a047719ca4e5285dc597510b11f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileType: 0
-  tileEffect: 0
-  effectValue: 0
+  tileType: 1
+  tileEffect: 7
+  effectValue: 12
 --- !u!1 &1126646121
 GameObject:
   m_ObjectHideFlags: 0
@@ -2310,9 +2310,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b4a047719ca4e5285dc597510b11f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileType: 0
-  tileEffect: 0
-  effectValue: 0
+  tileType: 1
+  tileEffect: 7
+  effectValue: 13
 --- !u!1 &1492393475
 GameObject:
   m_ObjectHideFlags: 0
@@ -2460,9 +2460,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b4a047719ca4e5285dc597510b11f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileType: 0
-  tileEffect: 1
-  effectValue: 0
+  tileType: 1
+  tileEffect: 7
+  effectValue: 5
 --- !u!1 &1505067586
 GameObject:
   m_ObjectHideFlags: 0
@@ -2715,9 +2715,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b4a047719ca4e5285dc597510b11f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileType: 0
-  tileEffect: 0
-  effectValue: 0
+  tileType: 1
+  tileEffect: 7
+  effectValue: 10
 --- !u!1 &1583266895
 GameObject:
   m_ObjectHideFlags: 0
@@ -2865,9 +2865,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b4a047719ca4e5285dc597510b11f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileType: 0
-  tileEffect: 0
-  effectValue: 0
+  tileType: 1
+  tileEffect: 7
+  effectValue: 9
 --- !u!1 &1638148486
 GameObject:
   m_ObjectHideFlags: 0
@@ -3293,8 +3293,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
   tileType: 1
-  tileEffect: 1
-  effectValue: 5
+  tileEffect: 7
+  effectValue: 0
 --- !u!1 &1764627400
 GameObject:
   m_ObjectHideFlags: 0
@@ -3474,9 +3474,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b4a047719ca4e5285dc597510b11f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileType: 0
-  tileEffect: 1
-  effectValue: 0
+  tileType: 1
+  tileEffect: 7
+  effectValue: 3
 --- !u!1 &1944287476
 GameObject:
   m_ObjectHideFlags: 0
@@ -3624,9 +3624,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b4a047719ca4e5285dc597510b11f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileType: 0
-  tileEffect: 1
-  effectValue: 0
+  tileType: 1
+  tileEffect: 7
+  effectValue: 6
 --- !u!1 &1992024218
 GameObject:
   m_ObjectHideFlags: 0

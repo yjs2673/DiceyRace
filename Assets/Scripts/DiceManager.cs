@@ -60,7 +60,7 @@ public class DiceManager : MonoBehaviour
         while (remainingMoves > 0)
         {
             remainingMoves--;
-            isKnockedBack = false; // 매 칸 이동 시작 시 초기화
+            isKnockedBack = remainingMoves <= 0; // 마지막 이동일 경우 넉백 신호를 받을 수 있도록 설정
             Vector3 startPos = player.transform.position;
             Vector3 targetPos = startPos + Vector3.right * moveDistance;
             float elapsedTime = 0f;
@@ -69,7 +69,7 @@ public class DiceManager : MonoBehaviour
             while (elapsedTime < moveDuration)
             {
                 // 이동 도중 넉백 신호를 받으면 즉시 루프 탈출
-                if (isKnockedBack) break;
+                // if (isKnockedBack) break;
 
                 player.transform.position = Vector3.Lerp(startPos, targetPos, elapsedTime / moveDuration);
                 elapsedTime += Time.deltaTime;
@@ -82,16 +82,15 @@ public class DiceManager : MonoBehaviour
                 // 위치를 출발했던 1칸 전(startPos)으로 강제 복귀
                 player.transform.position = startPos;
 
-                // 실패한 이동이므로 이동 횟수 1 차감
-                // remainingMoves--;
+                CheckStopTile(); // 정지 발판 체크
                 UpdateUI(remainingMoves, remainingRerolls);
 
                 // 잠시 대기 후 다음 루프(또는 턴 종료) 진행
                 yield return new WaitForSeconds(0.2f);
 
-                if (remainingMoves <= 0) break;
+                // if (remainingMoves <= 0) break;
 
-                continue;
+                break;
             }
 
             // 정상적으로 1칸 도착했을 경우

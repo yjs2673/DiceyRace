@@ -13,7 +13,7 @@ public static class EffectProcessor
         switch (tile.tileEffect)
         {
             case TileEffect.ChangeMoveDistance:
-                if (diceManager != null) 
+                if (diceManager != null)
                 {
                     diceManager.ModifyMoves(value);
                 }
@@ -46,6 +46,11 @@ public static class EffectProcessor
             case TileEffect.OpenShop:
                 player.AddIgnoreHit(value);
                 Debug.Log("발판 효과: 상점 씬으로 이동 (구현 예정)");
+                break;
+
+            // TODO: 보스 데미지 효과는 보스 관련 시스템이 만들어진 후 연결
+            case TileEffect.DamageToBoss:
+                Debug.Log($"발판 효과: 보스에게 {value} 데미지 (구현 예정)");
                 break;
         }
     }
