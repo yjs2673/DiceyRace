@@ -30,6 +30,7 @@ public enum CardEffect
 [CreateAssetMenu(fileName = "New Card", menuName = "Game/Card")]
 public class CardData : ScriptableObject
 {
+    public int cardID;
     public string cardName;
     public Sprite icon;
     [TextArea]
@@ -38,7 +39,5 @@ public class CardData : ScriptableObject
     [Header("Card Logic")]
     public CardType cardType;
     public CardEffect cardEffect;
-    
-    [Tooltip("카드 효과에 필요한 수치 (예: 돌진 거리 2, 데미지 등)")]
     public int effectValue; 
 }

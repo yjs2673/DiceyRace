@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b45fe885722b0046a1fb81189e5770f, type: 3}
   m_Name: Card8
   m_EditorClassIdentifier: Assembly-CSharp::CardData
+  cardID: 8
   cardName: 8
   icon: {fileID: 0}
   description: 88888
