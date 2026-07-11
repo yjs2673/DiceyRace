@@ -119,6 +119,9 @@ public class DiceManager : MonoBehaviour
 
         isMoving = false;
         rollButton.interactable = true;
+
+        // 엔드 턴으로 넘어가기
+        TurnManager.Instance.SetPhase(TurnPhase.End);
     }
 
     public void AddReroll(int amount)

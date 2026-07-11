@@ -8,7 +8,6 @@ public class CardManager : MonoBehaviour
     public static CardManager Instance { get; private set; }
 
     [Header("Card Database")]
-    [Tooltip("게임에 존재하는 모든 카드 에셋을 여기에 넣어주세요.")]
     public List<CardData> allAvailableCards;
 
     [Header("Mulligan UI")]
@@ -16,11 +15,11 @@ public class CardManager : MonoBehaviour
     public CardSlot[] cardSlots;     // 화면에 배치된 4개의 카드 슬롯
     public Button nextButton;        // 다음/완료 버튼
 
-    [Header("Deck UI (In-Game)")]
+    [Header("Deck UI")]
     public GameObject deckPanel;     // 화면 하단에 띄울 내 카드 목록 패널
     public CardSlot[] deckSlots;     // 하단에 배치된 4개의 카드 슬롯 (프리팹 재사용)
 
-    [Header("Managers Reference")]
+    [Header("Managers")]
     public DiceManager diceManager;
     public PlayerController playerController;
 
