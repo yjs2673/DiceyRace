@@ -54,4 +54,10 @@ public static class EffectProcessor
                 break;
         }
     }
+
+    // 카드의 효과와 수치를 받아서 매니저에게 명령
+    public static void ApplyCardEffect(CardData card, DiceManager diceManager, PlayerController player)
+    {
+
+    }
 }
