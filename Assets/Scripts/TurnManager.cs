@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 // 게임의 메인 턴 흐름
 public enum TurnPhase
@@ -47,14 +48,16 @@ public class TurnManager : MonoBehaviour
         switch (newPhase)
         {
             case TurnPhase.Mulligan:
-                // TODO: CardManager에게 멀리건 UI 띄우기 명령
-                if (CardManager.Instance != null) 
-                    CardManager.Instance.StartMulligan();
+                if (CardManager.Instance != null) CardManager.Instance.StartMulligan();
                 break;
 
             case TurnPhase.Standby:
-                // TODO: 패시브 카드 효과들을 읽어서 PlayerController에 적용
-                // TODO: DiceManager의 주사위 굴리기 버튼 활성화
+                if (CardManager.Instance != null)
+                {
+                    // yield return new WaitForSeconds(1.5f);
+                    // CardManager.Instance.ActivateAndRemovePassives();
+                    StartCoroutine(UsePassives());
+                }
                 break;
 
             case TurnPhase.Move:
@@ -69,13 +72,22 @@ public class TurnManager : MonoBehaviour
         }
     }
 
+    IEnumerator UsePassives()
+    {
+        yield return new WaitForSeconds(2.0f);
+        CardManager.Instance.ActivateAndRemovePassives();
+    }
+
     private void CleanUpTurn()
     {
-        // 8번 흐름: 소유한 카드를 모두 버리고(무덤으로) 다음 턴으로 진행
-        // (GameManager.Instance.HasCard를 비우는 작업)
+        // 소유한 카드를 모두 버리고(무덤으로) 다음 턴으로 진행
         Debug.Log("턴 종료! 소지한 카드를 모두 무덤으로 보냅니다.");
-        
-        // TODO: GameManager에 ClearCards() 같은 함수 추가 필요
+
+        // 하단 덱 UI 싹 지우기
+        if (CardManager.Instance != null) CardManager.Instance.ClearDeckUI();
+
+        // GameManager에 남은 카드들 지우기
+        if (GameManager.Instance != null) GameManager.Instance.ClearCards();
 
         // 턴 정리가 끝나면 다시 새로운 턴(멀리건) 시작
         SetPhase(TurnPhase.Mulligan);

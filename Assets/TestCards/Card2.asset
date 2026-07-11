@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b45fe885722b0046a1fb81189e5770f, type: 3}
   m_Name: Card2
   m_EditorClassIdentifier: Assembly-CSharp::CardData
+  cardID: 2
   cardName: 2
   icon: {fileID: 0}
   description: 2222222
-  cardType: 0
+  cardType: 1
   cardEffect: 0
   effectValue: 0
