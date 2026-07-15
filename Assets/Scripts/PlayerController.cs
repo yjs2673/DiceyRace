@@ -99,9 +99,8 @@ public class PlayerController : MonoBehaviour
         float elapsedTime = 0f;
 
         Quaternion startRotation = transform.rotation;
-        Quaternion targetRotation = Quaternion.Euler(0, 0, 90);
+        Quaternion targetRotation = Quaternion.Euler(-90, 90, 0);
 
-        // (0, 0, 90)으로 눕기
         while (elapsedTime < halfDuration)
         {
             transform.rotation = Quaternion.Lerp(startRotation, targetRotation, elapsedTime / halfDuration);

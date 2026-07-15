@@ -39,6 +39,6 @@ public class CardSlot : MonoBehaviour
         isSelected = !isSelected;
         if (highlightObj != null) highlightObj.SetActive(isSelected);
         
-        Debug.Log($"{currentCard.cardName} 선택 상태: {isSelected}");
+        // Debug.Log($"{currentCard.cardName} 선택 상태: {isSelected}");
     }
 }
