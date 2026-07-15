@@ -17,6 +17,11 @@ public class DiceManager : MonoBehaviour
     public float moveDistance = 1f;   // 한 칸 이동하는 거리
     public int remainingRerolls = 0;  // 남은 리롤 횟수
 
+    [Header("Test Settings")]
+    public bool enableTestMode = false; // 테스트 모드 활성화
+    public int testMaxNum = 6;
+    public int testMinNum = 1;
+
     private int remainingMoves = 0;
     private bool isMoving = false;
 
@@ -31,10 +36,12 @@ public class DiceManager : MonoBehaviour
 
     public void RollDice()
     {
+        // Standby 페이즈가 아니면 주사위 굴리기 금지
+        if (TurnManager.Instance.CurrentPhase != TurnPhase.Standby) return;
         // 이동 중이거나 남은 횟수가 있으면 주사위 굴리기 금지
         if (isMoving || remainingRerolls <= 0 || remainingMoves > 0) return;
 
-        int diceValue = Random.Range(1, 7); // 1~6 랜덤
+        int diceValue = Random.Range(testMinNum, testMaxNum + 1);
         diceText.text = $"주사위: {diceValue}";
 
         remainingRerolls--;
@@ -42,6 +49,9 @@ public class DiceManager : MonoBehaviour
         UpdateUI(remainingMoves, remainingRerolls);
 
         rollButton.interactable = false; // 이동 중 버튼 비활성화
+
+        TurnManager.Instance.SetPhase(TurnPhase.Move); // Move 페이즈로 전환
+
         StartCoroutine(MoveRoutine());
     }
 
@@ -77,13 +87,15 @@ public class DiceManager : MonoBehaviour
             }
 
             // 넉백을 당했을 경우의 처리
-            if (isKnockedBack)
+            if (isKnockedBack && !enableTestMode)
             {
                 // 위치를 출발했던 1칸 전(startPos)으로 강제 복귀
                 player.transform.position = startPos;
 
                 CheckStopTile(); // 정지 발판 체크
                 UpdateUI(remainingMoves, remainingRerolls);
+
+                isKnockedBack = false; // 넉백 상태 해제
 
                 // 잠시 대기 후 다음 루프(또는 턴 종료) 진행
                 yield return new WaitForSeconds(0.2f);

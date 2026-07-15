@@ -3641,8 +3641,8 @@ MonoBehaviour:
   moveDistance: 1
   remainingRerolls: 3
   enableTestMode: 1
-  testMaxNum: 4
-  testMinNum: 3
+  testMaxNum: 6
+  testMinNum: 1
 --- !u!1 &1020304364
 GameObject:
   m_ObjectHideFlags: 0
