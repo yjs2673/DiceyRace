@@ -67,6 +67,7 @@ public class DiceManager : MonoBehaviour
     private IEnumerator MoveRoutine()
     {
         isMoving = true;
+        player.SetAutoMoveAnimation(true);
         float moveSpeed = moveDistance / moveDuration;
 
         while (remainingMoves > 0)
@@ -119,6 +120,7 @@ public class DiceManager : MonoBehaviour
         }
 
         isMoving = false;
+        player.SetAutoMoveAnimation(false);
         rollButton.interactable = true;
 
         // 엔드 턴으로 넘어가기

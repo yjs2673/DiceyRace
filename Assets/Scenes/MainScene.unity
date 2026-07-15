@@ -6680,6 +6680,14 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 8a42044a2c71e43ddab5bbbc79ddbb44, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: ccb0ddbeddcc542af9e3985127a6091e, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 8a42044a2c71e43ddab5bbbc79ddbb44, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6721,6 +6729,7 @@ MonoBehaviour:
   invincibleMoveCount: 0
   ignoreHitCount: 0
   diceManager: {fileID: 965997807}
+  playerAnimator: {fileID: 1622605428}
 --- !u!4 &1622605424 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8a42044a2c71e43ddab5bbbc79ddbb44, type: 3}
@@ -6938,6 +6947,11 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!95 &1622605428 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 8a42044a2c71e43ddab5bbbc79ddbb44, type: 3}
+  m_PrefabInstance: {fileID: 1622605421}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1626401391
 GameObject:
   m_ObjectHideFlags: 0
