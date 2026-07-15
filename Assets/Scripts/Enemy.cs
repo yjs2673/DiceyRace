@@ -45,6 +45,7 @@ public class Enemy : MonoBehaviour
         {
             if (CanShootPlayer())
             {
+                // if (TurnManager.Instance.CurrentPhase == TurnPhase.Move)
                 Instantiate(rangeObject, spawnPoint.position, spawnPoint.rotation);
                 Debug.Log("원거리 공격!");
             }
@@ -56,14 +57,7 @@ public class Enemy : MonoBehaviour
     private bool CanShootPlayer()
     {
         if (enemyType != EnemyType.Range || rangeObject == null || spawnPoint == null)
-        {
             return false;
-        }
-
-        /*if (TurnManager.Instance == null || TurnManager.Instance.CurrentPhase != TurnPhase.Move)
-        {
-            return false;
-        }*/
 
         return Physics.Raycast(transform.position, -transform.right, out RaycastHit hit, rangeLength)
             && hit.collider.CompareTag("Player");

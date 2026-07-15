@@ -3640,7 +3640,7 @@ MonoBehaviour:
   moveDuration: 0.3
   moveDistance: 1
   remainingRerolls: 3
-  enableTestMode: 1
+  enableTestMode: 0
   testMaxNum: 4
   testMinNum: 3
 --- !u!1 &1020304364

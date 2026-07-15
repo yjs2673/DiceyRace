@@ -26,6 +26,7 @@ public class DiceManager : MonoBehaviour
     private bool isMoving = false;
 
     private bool isKnockedBack = false; // 넉백 상태인지 여부
+    private readonly WaitForFixedUpdate fixedUpdateYield = new WaitForFixedUpdate();
 
     private void Start()
     {
@@ -66,50 +67,40 @@ public class DiceManager : MonoBehaviour
     private IEnumerator MoveRoutine()
     {
         isMoving = true;
+        float moveSpeed = moveDistance / moveDuration;
 
         while (remainingMoves > 0)
         {
             remainingMoves--;
-            isKnockedBack = remainingMoves <= 0; // 마지막 이동일 경우 넉백 신호를 받을 수 있도록 설정
-            Vector3 startPos = player.transform.position;
-            Vector3 targetPos = startPos + Vector3.right * moveDistance;
-            float elapsedTime = 0f;
+            isKnockedBack = false;
+            Vector3 startPos = player.PhysicsPosition;
+            float movedDistance = 0f;
 
-            // 1칸 이동 (Lerp)
-            while (elapsedTime < moveDuration)
+            // 칸 판정은 유지하되, 대기 없이 연속적으로 전진
+            while (movedDistance < moveDistance)
             {
-                // 이동 도중 넉백 신호를 받으면 즉시 루프 탈출
-                // if (isKnockedBack) break;
+                if (isKnockedBack && !enableTestMode)
+                {
+                    player.SnapToPosition(startPos);
+                    CheckStopTile();
+                    UpdateUI(remainingMoves, remainingRerolls);
+                    isKnockedBack = false;
+                    remainingMoves = 0;
+                    break;
+                }
 
-                player.transform.position = Vector3.Lerp(startPos, targetPos, elapsedTime / moveDuration);
-                elapsedTime += Time.deltaTime;
-                yield return null;
+                float delta = Mathf.Min(moveSpeed * Time.fixedDeltaTime, moveDistance - movedDistance);
+                player.ApplyMove(delta); // PlayerController자동 이동 적용
+                movedDistance += delta;
+
+                yield return fixedUpdateYield;
             }
 
-            // 넉백을 당했을 경우의 처리
             if (isKnockedBack && !enableTestMode)
             {
-                // 위치를 출발했던 1칸 전(startPos)으로 강제 복귀
-                player.transform.position = startPos;
-
-                CheckStopTile(); // 정지 발판 체크
-                UpdateUI(remainingMoves, remainingRerolls);
-
-                isKnockedBack = false; // 넉백 상태 해제
-
-                // 잠시 대기 후 다음 루프(또는 턴 종료) 진행
-                yield return new WaitForSeconds(0.2f);
-
-                // if (remainingMoves <= 0) break;
-
                 break;
             }
 
-            // 정상적으로 1칸 도착했을 경우
-            player.transform.position = targetPos;
-            // player.invincibleMoveCount = Mathf.Max(0, player.invincibleMoveCount - 1); // 무적 이동 횟수 감소
-            // TODO: 무적 이동 횟수 감소 처리 로직
-            // remainingMoves--;
             UpdateUI(remainingMoves, remainingRerolls);
 
             // 이동이 모두 끝났을 때 정지 발판 체크
@@ -118,8 +109,6 @@ public class DiceManager : MonoBehaviour
                 CheckStopTile();
                 break;
             }
-
-            yield return new WaitForSeconds(0.2f);
         }
 
         // 루프 종료 후 남은 이동 수 UI 동기화 방어코드
@@ -172,7 +161,7 @@ public class DiceManager : MonoBehaviour
     private void CheckStopTile()
     {
         // Raycast를 사용하여 정지 발판 구분
-        if (Physics.Raycast(player.transform.position, Vector3.down, out RaycastHit hit, 2f))
+        if (Physics.Raycast(player.PhysicsPosition, Vector3.down, out RaycastHit hit, 2f))
         {
             if (hit.collider.CompareTag("Tile"))
             {

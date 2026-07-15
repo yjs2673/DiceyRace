@@ -33,6 +33,8 @@ public class PlayerController : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotation;
     }
 
+    public Vector3 PhysicsPosition => rb.position;
+
     #region 입력 처리
     // Input System: Jump (Q)
     public void OnJump(InputValue value)
@@ -127,11 +129,10 @@ public class PlayerController : MonoBehaviour
     #region 충돌 처리
     public void OnCollisionEnter(Collision collision)
     {
-        // 바닥에 닿으면 슬라이딩 상태 해제
+        // 바닥에 닿으면 점프 상태 해제
         if (collision.gameObject.CompareTag("Tile"))
         {
             isJumping = false;
-            isSliding = false;
         }
     }
 
@@ -229,6 +230,24 @@ public class PlayerController : MonoBehaviour
         }
 
         return false; // 방어 수단이 없으면 false 반환 (피해 입음)
+    }
+    #endregion
+
+    #region 외부 이동 처리
+    // DiceManager에서 이동 처리 시 PlayerController에 적용할 수 있는 메서드
+    public void ApplyMove(float deltaX)
+    {
+        if (Mathf.Approximately(deltaX, 0f))
+        {
+            return;
+        }
+
+        rb.MovePosition(rb.position + new Vector3(deltaX, 0f, 0f));
+    }
+
+    public void SnapToPosition(Vector3 position)
+    {
+        rb.position = position;
     }
     #endregion
 }
