@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardName: 55555
   icon: {fileID: 21300000, guid: 2e4622993c7777a42b0a140796fcffed, type: 3}
-  price: 555
+  price: 5
   description: Card 5

@@ -3,10 +3,12 @@ using UnityEngine;
 
 public class ShopManager : MonoBehaviour
 {
-    [Header("»óÁ¡¿¡ µîÀå °¡´ÉÇÑ Ä«µå")]
+    [Header("ìƒì ì— ë“±ì¥ ê°€ëŠ¥í•œ ì¹´ë“œ")]
     [SerializeField] private List<CardData> cardPool;
+    [Header("ìƒì ì— ë“±ì¥ ê°€ëŠ¥í•œ ì£¼ì‚¬ìœ„")]
+    [SerializeField] private List<Dice> dicePool;
 
-    [Header("»óÁ¡ ½½·Ô 5°³")]
+    [Header("Shopslot ë¦¬ìŠ¤íŠ¸")]
     [SerializeField] private List<ShopSlot> shopSlots;
 
     private void Start()
@@ -16,41 +18,57 @@ public class ShopManager : MonoBehaviour
 
     public void CreateShop()
     {
-        if (cardPool == null || cardPool.Count == 0)
-        {
-            Debug.LogError("Card PoolÀÌ ºñ¾î ÀÖ½À´Ï´Ù.");
-            return;
-        }
-
         if (shopSlots == null || shopSlots.Count == 0)
         {
-            Debug.LogError("Shop SlotÀÌ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogError("Shop Slotì„ ë¶ˆëŸ¬ì˜¬ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
+        foreach (ShopSlot slot in shopSlots)
+        {
+            if (slot != null)
+                slot.SetEmpty();
+        }
+        // ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        List<ScriptableObject> remainingItems = new List<ScriptableObject>();
 
-        // ¿øº» Ä«µå ¸ñ·ÏÀ» º¯°æÇÏÁö ¾Ê±â À§ÇØ º¹»ç
-        List<CardData> remainingCards =
-            new List<CardData>(cardPool);
+        if (cardPool != null)
+        {
+            foreach (CardData card in cardPool)
+            {
+                if (card != null)
+                    remainingItems.Add(card);
+            }
+        }
+
+        if (dicePool != null)
+        {
+            foreach (Dice dice in dicePool)
+            {
+                if (dice != null)
+                    remainingItems.Add(dice);
+            }
+        }
+
+        if (remainingItems.Count == 0)
+        {
+            Debug.LogError("ìƒì ì— í‘œì‹œí•  ì¹´ë“œì™€ ì£¼ì‚¬ìœ„ê°€ ì—†ìŠµë‹ˆë‹¤.");
+            return;
+        }
 
         for (int i = 0; i < shopSlots.Count; i++)
         {
-            if (remainingCards.Count == 0)
-            {
-                Debug.LogWarning("½½·Ô ¼öº¸´Ù Ä«µå ¼ö°¡ ºÎÁ·ÇÕ´Ï´Ù.");
+            if (remainingItems.Count == 0)
                 break;
-            }
 
-            int randomIndex =
-                Random.Range(0, remainingCards.Count);
+            int randomIndex = Random.Range(0, remainingItems.Count);
+            ScriptableObject selectedItem = remainingItems[randomIndex];
 
-            CardData selectedCard =
-                remainingCards[randomIndex];
+            if (selectedItem is CardData card)
+                shopSlots[i].SetCard(card);
+            else if (selectedItem is Dice dice)
+                shopSlots[i].SetDice(dice);
 
-            // »ÌÀº Ä«µå¸¦ ÇØ´ç ½½·Ô¿¡ Àü´Ş
-            shopSlots[i].SetCard(selectedCard);
-
-            // °°Àº Ä«µå°¡ Áßº¹À¸·Î ³ª¿ÀÁö ¾Ê°Ô Á¦°Å
-            remainingCards.RemoveAt(randomIndex);
+            remainingItems.RemoveAt(randomIndex);
         }
     }
 }

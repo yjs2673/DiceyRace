@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b481630aad676be4490de1cb1786f609, type: 3}
   m_Name: Dice 3
   m_EditorClassIdentifier: Assembly-CSharp::Dice
-  diceName: 
-  icon: {fileID: 0}
-  minValue: 0
-  maxValue: 0
+  diceName: 3
+  icon: {fileID: 21300000, guid: f1f477b6ff070ce4a90be5f1841c000b, type: 3}
+  price: 3
+  minValue: 3
+  maxValue: 3
+  description: Dice 3

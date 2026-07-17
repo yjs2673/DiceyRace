@@ -10,9 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b481630aad676be4490de1cb1786f609, type: 3}
-  m_Name: Dice 0
+  m_Name: Dice 5
   m_EditorClassIdentifier: Assembly-CSharp::Dice
-  diceName: 
-  icon: {fileID: 0}
-  minValue: 0
-  maxValue: 0
+  diceName: 5
+  icon: {fileID: 21300000, guid: a5d411fd4ff2db340b6aa2a8394f542c, type: 3}
+  price: 5
+  minValue: 5
+  maxValue: 5
+  description: Dice 5

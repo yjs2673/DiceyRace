@@ -7,11 +7,13 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private int initialCoin = 1000;
     [SerializeField] private int initialPirateCoin = 100;
-    [SerializeField] private int initialReroll = 3;
+    [SerializeField] private int initialReroll = 999;
     [SerializeField] private int initialPlayerHP = 100;
     [SerializeField] private int initialPlayerDamage = 10;
     [SerializeField] private string initialStageName = "DebugGround";
-
+    [Header("테스트용 시작 인벤토리")]
+    [SerializeField] private List<CardData> initialCards;
+    [SerializeField] private List<Dice> initialDice;
     public int Coin { get; private set; }
     public int PirateCoin { get; private set; }
 
@@ -47,6 +49,14 @@ public class GameManager : MonoBehaviour
         PlayerHP = initialPlayerHP;
         PlayerDamage = initialPlayerDamage;
         StageName = initialStageName;
+        hasCard.Clear();
+        hasDice.Clear();
+
+        if (initialCards != null)
+            hasCard.AddRange(initialCards);
+
+        if (initialDice != null)
+            hasDice.AddRange(initialDice);
     }
     // coin
     public void AddCoin(int amount)
