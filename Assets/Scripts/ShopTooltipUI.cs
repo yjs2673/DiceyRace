@@ -11,6 +11,7 @@ public class ShopTooltipUI : MonoBehaviour
 
     private RectTransform tooltipRect;
     private CanvasGroup canvasGroup;
+    private Canvas tooltipCanvas;
     private bool isVisible;
 
     private void Awake()
@@ -18,7 +19,16 @@ public class ShopTooltipUI : MonoBehaviour
         Instance = this;
         tooltipRect = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
+        tooltipCanvas = GetComponent<Canvas>();
+
+        if (tooltipCanvas == null)
+            tooltipCanvas = gameObject.AddComponent<Canvas>();
+
+        tooltipCanvas.overrideSorting = true;
+        tooltipCanvas.sortingOrder = 1000;
+        transform.SetAsLastSibling();
         canvasGroup.blocksRaycasts = false;
+        canvasGroup.ignoreParentGroups = true;
         Hide();
     }
     private void Update()

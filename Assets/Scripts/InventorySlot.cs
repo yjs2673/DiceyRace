@@ -4,7 +4,8 @@ using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour,
     IPointerEnterHandler,
-    IPointerExitHandler
+    IPointerExitHandler,
+    IPointerMoveHandler
 {
     [SerializeField] private Image iconImage;
 
@@ -20,6 +21,8 @@ public class InventorySlot : MonoBehaviour,
         currentDice = null;
 
         iconImage.sprite = card.icon;
+        iconImage.color = Color.white;
+        iconImage.enabled = card.icon != null;
         iconImage.preserveAspect = true;
     }
 
@@ -32,29 +35,20 @@ public class InventorySlot : MonoBehaviour,
         currentCard = null;
 
         iconImage.sprite = dice.icon;
+        iconImage.color = Color.white;
+        iconImage.enabled = dice.icon != null;
         iconImage.preserveAspect = true;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
-{
-    if (ShopTooltipUI.Instance == null)
-        return;
+    {
+        ShowTooltip();
+    }
 
-    if (currentCard != null)
+    public void OnPointerMove(PointerEventData eventData)
     {
-        ShopTooltipUI.Instance.Show(
-            currentCard.cardName,
-            currentCard.description
-        );
+        ShowTooltip();
     }
-    else if (currentDice != null)
-    {
-        ShopTooltipUI.Instance.Show(
-            currentDice.diceName,
-            currentDice.description
-        );
-    }
-}
 
     public void OnPointerExit(PointerEventData eventData)
     {
@@ -70,5 +64,26 @@ public class InventorySlot : MonoBehaviour,
     {
         if (ShopTooltipUI.Instance != null)
             ShopTooltipUI.Instance.Hide();
+    }
+
+    private void ShowTooltip()
+    {
+        if (ShopTooltipUI.Instance == null)
+            return;
+
+        if (currentCard != null)
+        {
+            ShopTooltipUI.Instance.Show(
+                currentCard.cardName,
+                currentCard.description
+            );
+        }
+        else if (currentDice != null)
+        {
+            ShopTooltipUI.Instance.Show(
+                currentDice.diceName,
+                currentDice.description
+            );
+        }
     }
 }

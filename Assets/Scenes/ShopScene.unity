@@ -155,7 +155,7 @@ RectTransform:
   m_Children:
   - {fileID: 1621437896}
   - {fileID: 803070643}
-  m_Father: {fileID: 1256280839}
+  m_Father: {fileID: 1764884207}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -988,7 +988,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &199712459
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3077,7 +3077,6 @@ RectTransform:
   - {fileID: 1735005410}
   - {fileID: 129964179}
   - {fileID: 92652193}
-  - {fileID: 7262601}
   m_Father: {fileID: 1764884207}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -3473,6 +3472,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1373123098}
+  - component: {fileID: 1373123099}
   m_Layer: 5
   m_Name: InventoryUIController
   m_TagString: Untagged
@@ -3499,6 +3499,26 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1373123099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373123097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87c5d44b512e4d20b1d918af62fd469a, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryUIController
+  shopRoot: {fileID: 1256280838}
+  inventoryRoot: {fileID: 199712458}
+  inventoryButton: {fileID: 560198850}
+  returnButton: {fileID: 2137305129}
+  content: {fileID: 1292184349}
+  inventorySlotPrefab: {fileID: 6692553931078230356, guid: 4c03a9e73081feb4aaec721e6b03fcfe, type: 3}
+  cardButton: {fileID: 242756952}
+  diceButton: {fileID: 36331118}
 --- !u!224 &1412551224 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 160295405118375808, guid: ecedd414b138d4e4495c283af7d8e939, type: 3}
@@ -4822,6 +4842,7 @@ RectTransform:
   - {fileID: 560198849}
   - {fileID: 1373123098}
   - {fileID: 199712459}
+  - {fileID: 7262601}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
