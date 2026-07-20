@@ -3,6 +3,7 @@ using UnityEngine;
 // 발판 유형
 public enum TileType
 {
+    None,   // 효과 없음
     Moving, // 이동 발판
     Stop    // 정지 발판
 }
