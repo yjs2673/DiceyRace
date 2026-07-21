@@ -8,6 +8,7 @@ TagManager:
   - Obstacle
   - Enemy
   - Tile
+  - Boss
   layers:
   - Default
   - TransparentFX

@@ -16,9 +16,12 @@ public enum TileEffect
     SetInvincible,      // N회 무적
     IgnoreNextHit,      // 다음 피격 무시 (수치 1)
     AddReroll,          // 리롤 횟수 증가
+    IncreaseSpeed,      // 이동속도 증가
     Heal,               // 체력 회복
     MultiplyMoney,      // 소지 골드 배수 증가
     DamageToBoss,       // 보스에게 데미지
+    DamageToBossByCrashingObstacle, // 장애물 파괴 시 보스에게 데미지
+    DamageToBossByRemainDistance,   // 남은 이동거리 비례 보스에게 데미지
     OpenShop            // 상점 호출
 }
 

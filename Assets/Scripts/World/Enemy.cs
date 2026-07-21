@@ -59,7 +59,7 @@ public class Enemy : MonoBehaviour
         if (enemyType != EnemyType.Range || rangeObject == null || spawnPoint == null)
             return false;
 
-        return Physics.Raycast(transform.position, -transform.right, out RaycastHit hit, rangeLength)
+        return Physics.Raycast(transform.position, transform.right, out RaycastHit hit, rangeLength)
             && hit.collider.CompareTag("Player");
     }
 }
