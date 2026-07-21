@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    // 게임 시작 시 초기값 설정
+    // 게임 시작 시 초기값 설정 //
     [SerializeField] private int initialCoin = 1000;
     [SerializeField] private int initialPirateCoin = 100;
     [SerializeField] private int initialReroll = 999;
