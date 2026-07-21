@@ -4752,6 +4752,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shark
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 64012073f322b4d98b4dbd3f7f142802, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050422055867433376, guid: 64012073f322b4d98b4dbd3f7f142802, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4759,6 +4767,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 64012073f322b4d98b4dbd3f7f142802, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1794032290}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 64012073f322b4d98b4dbd3f7f142802, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1794032291}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 64012073f322b4d98b4dbd3f7f142802, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1794032292}
   m_SourcePrefab: {fileID: 100100000, guid: 64012073f322b4d98b4dbd3f7f142802, type: 3}
 --- !u!4 &680169044 stripped
 Transform:
@@ -12559,6 +12573,55 @@ MonoBehaviour:
   tileType: 0
   tileEffect: 7
   effectValue: 9
+--- !u!1 &1584162105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1584162106}
+  - component: {fileID: 1584162107}
+  m_Layer: 0
+  m_Name: StageManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1584162106
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1584162105}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1828151366}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1584162107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1584162105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f3ea9087deaf4e4d9d7535b51976f5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageManager
+  fieldMode: 1
+  targetDistance: 60
+  bossMustBeDefeatedToClear: 1
+  player: {fileID: 1622605423}
+  boss: {fileID: 1794032291}
 --- !u!4 &1606147969 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2495458579501609674, guid: b2708d7ad68104d2dad610947a43d42e, type: 3}
@@ -14464,6 +14527,44 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!114 &1794032291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794032289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fd3625c634354176ac85e55c2b691b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossController
+  maxHP: 100
+  attackDamage: 10
+  attackDelay: 0.4
+  bossAnimator: {fileID: 1794032292}
+--- !u!95 &1794032292
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794032289}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2d332ddcb50ae45eb84918cd01010937, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1828151365
 GameObject:
   m_ObjectHideFlags: 0
@@ -14497,6 +14598,7 @@ Transform:
   - {fileID: 965997806}
   - {fileID: 735276108}
   - {fileID: 1181768104}
+  - {fileID: 1584162106}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1878527477
@@ -15345,6 +15447,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 879b2bbbc9e348a4e9d2a5bb1966b01d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  initialCoin: 1000
+  initialPirateCoin: 100
+  initialReroll: 999
+  initialPlayerHP: 100
+  initialPlayerDamage: 10
+  initialStageName: DebugGround
+  initialCards: []
+  initialDice: []
 --- !u!4 &1992024220
 Transform:
   m_ObjectHideFlags: 0
