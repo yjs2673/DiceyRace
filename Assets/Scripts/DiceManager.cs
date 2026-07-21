@@ -13,9 +13,9 @@ public class DiceManager : MonoBehaviour
 
     [Header("Movement Settings")]
     public PlayerController player;
-    public float moveDuration = 0.3f; // 한 칸 이동하는 시간
-    public float moveDistance = 1f;   // 한 칸 이동하는 거리
-    public int remainingRerolls = 0;  // 남은 리롤 횟수
+    public float moveDuration = 0.3f;   // 한 칸 이동하는 시간
+    public float moveDistance = 1f;     // 한 칸 이동하는 거리
+    public int remainingRerolls = 0;    // 남은 리롤 횟수
 
     [Header("Test Settings")]
     public bool enableTestMode = false; // 테스트 모드 활성화
@@ -102,12 +102,20 @@ public class DiceManager : MonoBehaviour
                 break;
             }
 
+            StageManager.Instance?.AdvanceDistance(1);
             UpdateUI(remainingMoves, remainingRerolls);
 
             // 이동이 모두 끝났을 때 정지 발판 체크
             if (remainingMoves <= 0)
             {
                 CheckStopTile();
+                break;
+            }
+
+            if (StageManager.Instance != null && StageManager.Instance.IsStageResolved)
+            {
+                remainingMoves = 0;
+                UpdateUI(remainingMoves, remainingRerolls);
                 break;
             }
         }

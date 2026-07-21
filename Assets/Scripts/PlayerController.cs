@@ -260,17 +260,41 @@ public class PlayerController : MonoBehaviour
             return;
 
         rb.MovePosition(rb.position + new Vector3(deltaX, 0f, 0f));
+        StageManager.Instance?.ApplyPlayerDelta(deltaX);
     }
 
     public void SnapToPosition(Vector3 position)
     {
+        float deltaX = position.x - rb.position.x;
         rb.position = position;
+
+        if (!Mathf.Approximately(deltaX, 0f))
+        {
+            StageManager.Instance?.ApplyPlayerDelta(deltaX);
+        }
     }
 
     public void SetAutoMoveAnimation(bool moving)
     {
         isMoving = moving;
         animator?.SetBool(IsMoveHash, moving);
+    }
+
+    public void ReceiveDirectDamage(int damage)
+    {
+        if (damage <= 0)
+        {
+            return;
+        }
+
+        if (CheckAndConsumeInvincibility())
+        {
+            return;
+        }
+
+        animator?.SetTrigger(DoHitHash);
+        GameManager.Instance?.TakeDamage(damage);
+        Debug.Log($"직접 피해 {damage} -> 현재 체력: {GameManager.Instance?.PlayerHP ?? 0}");
     }
     #endregion
 }
