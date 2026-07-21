@@ -157,4 +157,10 @@ public class GameManager : MonoBehaviour
         if (PlayerDamage < 0)
             PlayerDamage = 0;
     }
+
+    // 턴 종료 시 소지한 카드 모두 제거
+    public void ClearCards()
+    {
+        hasCard.Clear();
+    }
 }
