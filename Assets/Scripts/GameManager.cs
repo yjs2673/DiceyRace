@@ -5,13 +5,22 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    [SerializeField] private int initialCoin = 1000;
+    [SerializeField] private int initialPirateCoin = 100;
+    [SerializeField] private int initialReroll = 999;
+    [SerializeField] private int initialPlayerHP = 100;
+    [SerializeField] private int initialPlayerDamage = 10;
+    [SerializeField] private string initialStageName = "DebugGround";
+    [Header("테스트용 시작 인벤토리")]
+    [SerializeField] private List<CardData> initialCards;
+    [SerializeField] private List<Dice> initialDice;
     public int Coin { get; private set; }
     public int PirateCoin { get; private set; }
 
     public int Reroll { get; private set; }
     public int PlayerHP { get; private set; }
     public int PlayerDamage { get; private set; }
-
+    public string StageName { get; private set; }
     private readonly List<Dice> hasDice = new List<Dice>();
     private readonly List<CardData> hasCard = new List<CardData>();
 
@@ -34,11 +43,20 @@ public class GameManager : MonoBehaviour
 
     private void InitDefaultData()
     {
-        Coin = 0;
-        PirateCoin = 0;
-        Reroll = 3;
-        PlayerHP = 100;
-        PlayerDamage = 10;
+        Coin = initialCoin;
+        PirateCoin = initialPirateCoin;
+        Reroll = initialReroll;
+        PlayerHP = initialPlayerHP;
+        PlayerDamage = initialPlayerDamage;
+        StageName = initialStageName;
+        hasCard.Clear();
+        hasDice.Clear();
+
+        if (initialCards != null)
+            hasCard.AddRange(initialCards);
+
+        if (initialDice != null)
+            hasDice.AddRange(initialDice);
     }
     // coin
     public void AddCoin(int amount)
