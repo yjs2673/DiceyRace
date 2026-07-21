@@ -43,14 +43,18 @@ public static class EffectProcessor
                 Debug.Log($"발판 효과: {value}회 이동 무적 적용 (구현 예정)");
                 break;
 
-            case TileEffect.OpenShop:
+            case TileEffect.IgnoreNextHit:
                 player.AddIgnoreHit(value);
+                Debug.Log($"발판 효과: 다음 피격 {value}회 무시");
+                break;
+
+            case TileEffect.OpenShop:
                 Debug.Log("발판 효과: 상점 씬으로 이동 (구현 예정)");
                 break;
 
-            // TODO: 보스 데미지 효과는 보스 관련 시스템이 만들어진 후 연결
             case TileEffect.DamageToBoss:
-                Debug.Log($"발판 효과: 보스에게 {value} 데미지 (구현 예정)");
+                StageManager.Instance?.DamageBoss(value);
+                Debug.Log($"발판 효과: 보스에게 {value} 데미지");
                 break;
         }
     }

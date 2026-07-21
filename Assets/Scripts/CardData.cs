@@ -33,6 +33,7 @@ public class CardData : ScriptableObject
     public int cardID;
     public string cardName;
     public Sprite icon;
+    public int price;
     [TextArea]
     public string description;
 

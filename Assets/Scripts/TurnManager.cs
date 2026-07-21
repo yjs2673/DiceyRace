@@ -16,6 +16,7 @@ public class TurnManager : MonoBehaviour
     public static TurnManager Instance { get; private set; }
 
     public TurnPhase CurrentPhase { get; private set; }
+    private bool isResolvingEndPhase;
     
     // 페이즈가 변경될 때 다른 스크립트들에게 알려주는 이벤트(Action)
     public Action<TurnPhase> OnPhaseChanged; 
@@ -67,7 +68,10 @@ public class TurnManager : MonoBehaviour
 
             case TurnPhase.End:
                 // 턴 정리 로직
-                CleanUpTurn();
+                if (!isResolvingEndPhase)
+                {
+                    StartCoroutine(CleanUpTurnRoutine());
+                }
                 break;
         }
     }
@@ -78,8 +82,10 @@ public class TurnManager : MonoBehaviour
         CardManager.Instance.ActivateAndRemovePassives();
     }
 
-    private void CleanUpTurn()
+    private IEnumerator CleanUpTurnRoutine()
     {
+        isResolvingEndPhase = true;
+
         // 소유한 카드를 모두 버리고(무덤으로) 다음 턴으로 진행
         Debug.Log("턴 종료! 소지한 카드를 모두 무덤으로 보냅니다.");
 
@@ -88,6 +94,18 @@ public class TurnManager : MonoBehaviour
 
         // GameManager에 남은 카드들 지우기
         if (GameManager.Instance != null) GameManager.Instance.ClearCards();
+
+        if (StageManager.Instance != null)
+        {
+            yield return StageManager.Instance.ResolveEndTurn();
+        }
+
+        isResolvingEndPhase = false;
+
+        if (StageManager.Instance != null && StageManager.Instance.IsStageResolved)
+        {
+            yield break;
+        }
 
         // 턴 정리가 끝나면 다시 새로운 턴(멀리건) 시작
         SetPhase(TurnPhase.Mulligan);
