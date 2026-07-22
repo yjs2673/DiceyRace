@@ -17,6 +17,9 @@ public class StageManager : MonoBehaviour
     public FieldMode fieldMode = FieldMode.Normal;
     public int targetDistance = 20;
     public bool bossMustBeDefeatedToClear = false;
+    [SerializeField] private string nextSceneName = "BossFieldScene";
+    [SerializeField] private float clearFadeDuration = 1.0f;
+    [SerializeField] private float clearFadeHoldDuration = 0.5f;
 
     [Header("Runtime References")]
     public PlayerController player;
@@ -27,6 +30,7 @@ public class StageManager : MonoBehaviour
     public bool IsStageResolved { get; private set; }
 
     private bool bossFollowInitialized;
+    private bool stageTransitionRequested;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void BootstrapStageManager()
@@ -194,6 +198,11 @@ public class StageManager : MonoBehaviour
     {
         IsStageResolved = true;
         Debug.Log("[StageManager] 스테이지 클리어!");
+
+        if (!IsBossField)
+        {
+            TransitionToNextStage();
+        }
     }
 
     private void EnsureRuntimeReferences()
@@ -231,5 +240,22 @@ public class StageManager : MonoBehaviour
     private static bool IsShopScene(string sceneName)
     {
         return sceneName.IndexOf("Shop", StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    private void TransitionToNextStage()
+    {
+        if (stageTransitionRequested)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(nextSceneName))
+        {
+            Debug.LogWarning("다음 스테이지 씬 이름이 비어 있어 전환을 건너뜁니다.");
+            return;
+        }
+
+        stageTransitionRequested = true;
+        SceneTransitionFader.Instance.FadeToScene(nextSceneName, clearFadeDuration, clearFadeHoldDuration);
     }
 }

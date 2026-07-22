@@ -69,6 +69,10 @@ public class GameManager : MonoBehaviour
     [Header("테스트용 시작 인벤토리")]
     [SerializeField] private List<CardData> initialCards;
     [SerializeField] private List<Dice> initialDice;
+
+    [Header("Scene Transition")]
+    [SerializeField] private float shopFadeDuration = 0.75f;
+    [SerializeField] private float shopFadeHoldDuration = 0.2f;
     
     [Header("Runtime Debug")]
     [SerializeField] private int coin;
@@ -294,7 +298,7 @@ public class GameManager : MonoBehaviour
         }
 
         SaveFieldSceneState(player, diceManager, stageManager, returnPhase);
-        SceneManager.LoadScene(shopSceneName);
+        FadeToScene(shopSceneName);
     }
 
     public void CaptureFieldCheckpoint(PlayerController player, DiceManager diceManager, StageManager stageManager, TurnPhase phase)
@@ -316,7 +320,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        SceneManager.LoadScene(savedFieldState.sceneName);
+        FadeToScene(savedFieldState.sceneName);
     }
 
     private void SaveFieldSceneState(PlayerController player, DiceManager diceManager, StageManager stageManager, TurnPhase returnPhase)
@@ -423,6 +427,11 @@ public class GameManager : MonoBehaviour
     private static bool IsShopScene(string sceneName)
     {
         return sceneName.IndexOf("Shop", System.StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    private void FadeToScene(string sceneName)
+    {
+        SceneTransitionFader.Instance.FadeToScene(sceneName, shopFadeDuration, shopFadeHoldDuration);
     }
 
     private bool EnsureSavedFieldStateForReturn()
