@@ -601,7 +601,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (diceManager != null && diceManager.IsMoving)
+        if (diceManager != null && diceManager.HasPendingMoveBudget)
         {
             diceManager.ModifyMoves(amount);
         }

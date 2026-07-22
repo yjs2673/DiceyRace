@@ -5170,6 +5170,79 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 586989504}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &595419907
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 121
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_Name
+      value: Cave
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
 --- !u!1 &611388051
 GameObject:
   m_ObjectHideFlags: 0
@@ -9211,6 +9284,11 @@ MonoBehaviour:
   moveDuration: 0.3
   moveDistance: 2
   remainingRerolls: 10
+  diceBoardRoot: {fileID: 0}
+  runtimeDicePrefab: {fileID: 0}
+  autoMoveDelay: 1.5
+  createFallbackBoardIfMissing: 1
+  fallbackToLegacyRollIfBoardUnavailable: 0
   enableTestMode: 0
   testMaxNum: 4
   testMinNum: 3
@@ -15858,6 +15936,13 @@ MonoBehaviour:
   fieldMode: 1
   targetDistance: 60
   bossMustBeDefeatedToClear: 1
+  nextSceneName: BossFieldScene
+  clearFadeDuration: 1
+  clearFadeHoldDuration: 0.5
+  transitionImages: []
+  transitionImageDisplayDuration: 2.5
+  transitionImageFadeDuration: 0.35
+  transitionImageGapDuration: 0.15
   player: {fileID: 1622605423}
   boss: {fileID: 1794032291}
 --- !u!4 &1606147969 stripped
@@ -16007,6 +16092,7 @@ MonoBehaviour:
   parryReflectDamage: 1
   nextAttackHasParry: 0
   nextBlockIsParry: 0
+  isInvincibleDashResolving: 0
   diceManager: {fileID: 965997807}
   playerAnimator: {fileID: 1622605428}
 --- !u!4 &1622605424 stripped
@@ -19810,6 +19896,75 @@ MonoBehaviour:
   initialStageName: DebugGround
   initialCards: []
   initialDice: []
+  shopFadeDuration: 0.75
+  shopFadeHoldDuration: 0.2
+  coin: 0
+  pirateCoin: 0
+  reroll: 0
+  playerHP: 0
+  playerDamage: 0
+  stageName: 
+  hasDice: []
+  hasCard: []
+  savedFieldState:
+    sceneName: 
+    stageName: 
+    playerPosition: {x: 0, y: 0, z: 0}
+    stageDistance: 0
+    remainingMoves: 0
+    remainingRerolls: 0
+    currentDiceValue: 0
+    playerInvincibleMoveCount: 0
+    playerIgnoreHitCount: 0
+    bossCurrentHp: 0
+    returnPhase: 0
+    playerCardRuntimeState:
+      gamblerActive: 0
+      gamblerSwing: 0
+      nextGamblerThreshold: 0
+      dashAfterEvadeActive: 0
+      dashAfterEvadeDistance: 0
+      hedonismBonusDistance: 0
+      parryGodBonusDistance: 0
+      destroyerBonusDistance: 0
+      jumpCrazyBonusDistance: 0
+      parryReflectActive: 0
+      parryReflectDamage: 0
+      nextAttackHasParry: 0
+      nextBlockIsParry: 0
+  latestFieldCheckpoint:
+    sceneName: 
+    stageName: 
+    playerPosition: {x: 0, y: 0, z: 0}
+    stageDistance: 0
+    remainingMoves: 0
+    remainingRerolls: 0
+    currentDiceValue: 0
+    playerInvincibleMoveCount: 0
+    playerIgnoreHitCount: 0
+    bossCurrentHp: 0
+    returnPhase: 0
+    playerCardRuntimeState:
+      gamblerActive: 0
+      gamblerSwing: 0
+      nextGamblerThreshold: 0
+      dashAfterEvadeActive: 0
+      dashAfterEvadeDistance: 0
+      hedonismBonusDistance: 0
+      parryGodBonusDistance: 0
+      destroyerBonusDistance: 0
+      jumpCrazyBonusDistance: 0
+      parryReflectActive: 0
+      parryReflectDamage: 0
+      nextAttackHasParry: 0
+      nextBlockIsParry: 0
+  hasSavedFieldStateDebug: 0
+  activeSceneNameDebug: 
+  instanceIdDebug: 0
+  owningSceneDebug: 
+  isPrimaryInstanceDebug: 0
+  savedFieldStateSummaryDebug: 
+  latestFieldCheckpointSummaryDebug: 
 --- !u!4 &1992024220
 Transform:
   m_ObjectHideFlags: 0
@@ -21814,3 +21969,4 @@ SceneRoots:
   - {fileID: 1622605421}
   - {fileID: 1505067590}
   - {fileID: 1126646124}
+  - {fileID: 595419907}
