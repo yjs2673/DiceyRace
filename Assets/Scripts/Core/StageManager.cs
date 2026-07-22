@@ -59,14 +59,30 @@ public class StageManager : MonoBehaviour
 
     public void AdvanceDistance(int amount)
     {
-        if (IsStageResolved || amount <= 0)
+        if (amount <= 0)
         {
             return;
         }
 
-        CurrentDistance = Mathf.Min(CurrentDistance + amount, targetDistance);
-        Debug.Log($"[StageManager] 진행도 {CurrentDistance}/{targetDistance}");
+        ModifyDistance(amount);
+    }
 
+    public void ModifyDistance(int amount)
+    {
+        if (IsStageResolved || amount == 0)
+        {
+            return;
+        }
+
+        int previousDistance = CurrentDistance;
+        CurrentDistance = Mathf.Clamp(CurrentDistance + amount, 0, targetDistance);
+
+        if (previousDistance == CurrentDistance)
+        {
+            return;
+        }
+
+        Debug.Log($"[StageManager] 진행도 {CurrentDistance}/{targetDistance} ({CurrentDistance - previousDistance:+#;-#;0})");
         EvaluateStageResolution();
     }
 

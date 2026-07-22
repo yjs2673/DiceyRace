@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardID: 3
   cardName: 3
-  icon: {fileID: 0}
-  description: 3333333
+  icon: {fileID: 21300000, guid: 23af500602170e84ba89b76093e78811, type: 3}
+  price: 0
+  description: Destroy Enemy 3
   cardType: 1
-  cardEffect: 0
-  effectValue: 0
+  cardEffect: 10
+  effectValue: 3

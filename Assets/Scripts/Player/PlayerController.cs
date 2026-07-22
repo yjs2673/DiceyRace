@@ -31,6 +31,21 @@ public class PlayerController : MonoBehaviour
     public int invincibleMoveCount = 0; // N번 이동 무적 (칸 이동 시 차감)
     public int ignoreHitCount = 0;      // N회 피격 무시 (맞을 때 차감)
 
+    [Header("Card Effect Runtime")]
+    [SerializeField] private bool gamblerActive;
+    [SerializeField] private int gamblerSwing = 3;
+    [SerializeField] private int nextGamblerThreshold = 5;
+    [SerializeField] private bool dashAfterEvadeActive;
+    [SerializeField] private int dashAfterEvadeDistance = 1;
+    [SerializeField] private int hedonismBonusDistance;
+    [SerializeField] private int parryGodBonusDistance;
+    [SerializeField] private int destroyerBonusDistance;
+    [SerializeField] private int jumpCrazyBonusDistance;
+    [SerializeField] private bool parryReflectActive;
+    [SerializeField] private int parryReflectDamage = 1;
+    [SerializeField] private bool nextAttackHasParry;
+    [SerializeField] private bool nextBlockIsParry;
+
     [Header("Managers")]
     public DiceManager diceManager;
 
@@ -57,6 +72,10 @@ public class PlayerController : MonoBehaviour
             animator?.SetTrigger(DoJumpHash);
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isJumping = true;
+            if (jumpCrazyBonusDistance != 0)
+            {
+                AdjustCardDistance(jumpCrazyBonusDistance, "JumpCrazy");
+            }
             Debug.Log("점프 (Q)");   
         }
     }
@@ -96,9 +115,15 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator AttackRoutine()
     {
+        bool consumeParryAfterAttack = nextAttackHasParry;
         isAttacking = true;
         yield return new WaitForSeconds(attackDuration); // 공격 지속 시간
         isAttacking = false;
+
+        if (consumeParryAfterAttack)
+        {
+            nextAttackHasParry = false;
+        }
     }
 
     private IEnumerator ParryRoutine()
@@ -167,13 +192,18 @@ public class PlayerController : MonoBehaviour
         // 장애물 충돌
         else if (other.gameObject.CompareTag("Obstacle"))
         {
-            // 무적 방어막이 켜져있다면 효과 차감 후 그냥 지나감 (넉백 X)
-            if (CheckAndConsumeInvincibility()) return;
+            if (TryResolveThreat(other.gameObject, false, true, true))
+            {
+                return;
+            }
 
             animator?.SetTrigger(DoHitHash);
-            diceManager.ModifyMoves(-1);
+            if (diceManager != null)
+            {
+                diceManager.ModifyMoves(-1);
+            }
             Debug.Log("장애물 충돌 - 넉백 및 이동 수 1 감소");
-            // GameManager를 통한 체력 감소 로직 필요 시 여기에 추가
+            OnDamaged(1, other.gameObject);
             if (diceManager != null)
             {
                 diceManager.ApplyPenaltyKnockback();
@@ -182,34 +212,21 @@ public class PlayerController : MonoBehaviour
         // 적 충돌
         else if (other.gameObject.CompareTag("Enemy"))
         {
-            if (!isAttacking && !isParrying)
+            if (TryResolveThreat(other.gameObject, true, true, true))
             {
-                // 방어/공격 안 했는데 무적도 없으면 넉백
-                if (CheckAndConsumeInvincibility()) return;
+                return;
+            }
 
-                animator?.SetTrigger(DoHitHash);
+            animator?.SetTrigger(DoHitHash);
+            if (diceManager != null)
+            {
                 diceManager.ModifyMoves(-1);
-                Debug.Log("적 충돌 (피격) - 넉백 및 이동 수 1 감소");
-                if (diceManager != null)
-                {
-                    diceManager.ApplyPenaltyKnockback();
-                }
             }
-            else if (isAttacking)
+            Debug.Log("적 충돌 (피격) - 넉백 및 이동 수 1 감소");
+            OnDamaged(1, other.gameObject);
+            if (diceManager != null)
             {
-                Debug.Log("적 공격 성공! - 남은 이동 수 1 증가");
-                if (diceManager != null)
-                {
-                    diceManager.ModifyMoves(1);
-                }
-            }
-            else if (isParrying) 
-            {
-                Debug.Log("적 패링 성공! - 남은 이동 수 1 증가");
-                if (diceManager != null)
-                {
-                    diceManager.ModifyMoves(1);
-                }
+                diceManager.ApplyPenaltyKnockback();
             }
         }
 
@@ -228,6 +245,169 @@ public class PlayerController : MonoBehaviour
     {
         ignoreHitCount += count;
         Debug.Log($"버프 획득: 다음 피격 {count}회 무시");
+    }
+
+    public void ActivateGambler(int swing)
+    {
+        gamblerActive = true;
+        gamblerSwing = Mathf.Max(1, swing);
+
+        int currentDistance = StageManager.Instance != null ? StageManager.Instance.CurrentDistance : 0;
+        nextGamblerThreshold = ((currentDistance / 5) + 1) * 5;
+        Debug.Log($"카드 효과 적용: Gambler 활성화 (다음 발동 거리 {nextGamblerThreshold})");
+    }
+
+    public void ActivateDashAfterEvade(int dashDistance)
+    {
+        dashAfterEvadeActive = true;
+        dashAfterEvadeDistance = Mathf.Max(1, dashDistance);
+        Debug.Log($"카드 효과 적용: DashAfterEvade 활성화 ({dashAfterEvadeDistance}칸)");
+    }
+
+    public void ActivateHedonism(int bonusDistance)
+    {
+        hedonismBonusDistance = Mathf.Max(hedonismBonusDistance, bonusDistance);
+        Debug.Log($"카드 효과 적용: Hedonism 활성화 (+{hedonismBonusDistance})");
+    }
+
+    public void ActivateParryGod(int bonusDistance)
+    {
+        parryGodBonusDistance = Mathf.Max(parryGodBonusDistance, bonusDistance);
+        Debug.Log($"카드 효과 적용: ParryGod 활성화 (+{parryGodBonusDistance})");
+    }
+
+    public void ActivateDestroyer(int bonusDistance)
+    {
+        destroyerBonusDistance = Mathf.Max(destroyerBonusDistance, bonusDistance);
+        Debug.Log($"카드 효과 적용: Destroyer 활성화 (+{destroyerBonusDistance})");
+    }
+
+    public void ActivateJumpCrazy(int bonusDistance)
+    {
+        jumpCrazyBonusDistance = Mathf.Max(jumpCrazyBonusDistance, bonusDistance);
+        Debug.Log($"카드 효과 적용: JumpCrazy 활성화 (+{jumpCrazyBonusDistance})");
+    }
+
+    public void ActivateParryReflect(int reflectDamage)
+    {
+        parryReflectActive = true;
+        parryReflectDamage = Mathf.Max(1, reflectDamage);
+        Debug.Log($"카드 효과 적용: ParryReflect 활성화 ({parryReflectDamage} 반사 피해)");
+    }
+
+    public void EnableNextAttackParry()
+    {
+        nextAttackHasParry = true;
+        Debug.Log("카드 효과 적용: 다음 공격에 패링 판정 추가");
+    }
+
+    public void EnableNextBlockParry()
+    {
+        nextBlockIsParry = true;
+        Debug.Log("카드 효과 적용: 다음 방어가 패링으로 판정됩니다.");
+    }
+
+    public void TriggerInvincibleDash(int distance)
+    {
+        int dashDistance = Mathf.Max(1, distance);
+        AddInvincibleMove(dashDistance);
+
+        if (diceManager != null)
+        {
+            diceManager.QueueForcedMove(dashDistance);
+        }
+        else
+        {
+            AdjustCardDistance(dashDistance, "InvincibleDash");
+        }
+
+        Debug.Log($"카드 효과 적용: 무적 돌진 {dashDistance}칸");
+    }
+
+    public void OnMoveStepCompleted(int currentDistance)
+    {
+        ConsumeInvincibleMoveStep();
+
+        if (!gamblerActive)
+        {
+            return;
+        }
+
+        while (currentDistance >= nextGamblerThreshold)
+        {
+            int delta = Random.Range(-gamblerSwing, gamblerSwing + 1);
+            if (delta != 0)
+            {
+                AdjustCardDistance(delta, $"Gambler({nextGamblerThreshold})");
+            }
+            else
+            {
+                Debug.Log($"Gambler 발동 ({nextGamblerThreshold}) -> 변동 없음");
+            }
+
+            nextGamblerThreshold += 5;
+        }
+    }
+
+    public bool DestroyCardTarget(GameObject target, string reason)
+    {
+        if (target == null)
+        {
+            return false;
+        }
+
+        if (target.TryGetComponent<BossController>(out BossController _))
+        {
+            int damage = Mathf.Max(1, GameManager.Instance != null ? GameManager.Instance.PlayerDamage : 1);
+            StageManager.Instance?.DamageBoss(damage);
+            Debug.Log($"{reason}: 보스에게 {damage} 피해");
+            return true;
+        }
+
+        if (!target.CompareTag("Enemy") && !target.CompareTag("Obstacle"))
+        {
+            return false;
+        }
+
+        Destroy(target);
+        Debug.Log($"{reason}: {target.name} 제거");
+        OnTargetDestroyed(reason);
+        return true;
+    }
+
+    public void HandleProjectileHit(RangeObject projectile)
+    {
+        if (projectile == null)
+        {
+            return;
+        }
+
+        GameObject projectileObject = projectile.gameObject;
+        if (TryResolveThreat(projectileObject, false, true, true))
+        {
+            Destroy(projectileObject);
+            return;
+        }
+
+        ReceiveDirectDamage(projectile.damage, projectileObject, true);
+        Destroy(projectileObject);
+    }
+
+    public void ResetTurnCardEffects()
+    {
+        gamblerActive = false;
+        gamblerSwing = 3;
+        nextGamblerThreshold = 5;
+        dashAfterEvadeActive = false;
+        dashAfterEvadeDistance = 1;
+        hedonismBonusDistance = 0;
+        parryGodBonusDistance = 0;
+        destroyerBonusDistance = 0;
+        jumpCrazyBonusDistance = 0;
+        parryReflectActive = false;
+        parryReflectDamage = 1;
+        nextAttackHasParry = false;
+        nextBlockIsParry = false;
     }
 
     // 적이나 장애물에 닿았을 때 무적 상태인지 체크하고 차감하는 헬퍼 함수
@@ -249,6 +429,153 @@ public class PlayerController : MonoBehaviour
         }
 
         return false; // 방어 수단이 없으면 false 반환 (피해 입음)
+    }
+
+    private void ConsumeInvincibleMoveStep()
+    {
+        if (invincibleMoveCount <= 0)
+        {
+            return;
+        }
+
+        invincibleMoveCount--;
+        Debug.Log($"이동 무적 차감 -> 남은 무적 이동: {invincibleMoveCount}");
+    }
+
+    private bool TryResolveThreat(GameObject source, bool canAttack, bool canParry, bool canEvade)
+    {
+        if (canEvade && isSliding)
+        {
+            OnSuccessfulEvade();
+            return true;
+        }
+
+        bool forcedParry = false;
+        if (canParry && nextBlockIsParry)
+        {
+            nextBlockIsParry = false;
+            forcedParry = true;
+            animator?.SetTrigger(DoShieldHash);
+        }
+
+        bool attackParry = canParry && isAttacking && nextAttackHasParry;
+        if ((canParry && isParrying) || forcedParry || attackParry)
+        {
+            if (attackParry)
+            {
+                nextAttackHasParry = false;
+            }
+
+            OnSuccessfulParry(source);
+            return true;
+        }
+
+        if (canAttack && isAttacking)
+        {
+            OnSuccessfulAttack(source);
+            return true;
+        }
+
+        return CheckAndConsumeInvincibility();
+    }
+
+    private void OnSuccessfulAttack(GameObject source)
+    {
+        Debug.Log("적 공격 성공! - 남은 이동 수 1 증가");
+        if (diceManager != null)
+        {
+            diceManager.ModifyMoves(1);
+        }
+
+        DestroyCardTarget(source, "공격 성공");
+    }
+
+    private void OnSuccessfulParry(GameObject source)
+    {
+        Debug.Log("패링 성공! - 남은 이동 수 1 증가");
+        if (diceManager != null)
+        {
+            diceManager.ModifyMoves(1);
+        }
+
+        if (parryGodBonusDistance != 0)
+        {
+            AdjustCardDistance(parryGodBonusDistance, "ParryGod");
+        }
+
+        if (parryReflectActive)
+        {
+            ReflectThreat(source);
+        }
+    }
+
+    private void OnSuccessfulEvade()
+    {
+        Debug.Log("회피 성공!");
+
+        if (dashAfterEvadeActive)
+        {
+            TriggerInvincibleDash(dashAfterEvadeDistance);
+        }
+    }
+
+    private void ReflectThreat(GameObject source)
+    {
+        if (source == null)
+        {
+            return;
+        }
+
+        if (source.TryGetComponent<BossController>(out BossController _))
+        {
+            StageManager.Instance?.DamageBoss(parryReflectDamage);
+            Debug.Log($"패링 반사: 보스에게 {parryReflectDamage} 피해");
+            return;
+        }
+
+        if (source.TryGetComponent<RangeObject>(out RangeObject _))
+        {
+            Destroy(source);
+            Debug.Log("패링 반사: 투사체 제거");
+            return;
+        }
+
+        DestroyCardTarget(source, "패링 반사");
+    }
+
+    private void OnDamaged(int damage, GameObject source)
+    {
+        if (hedonismBonusDistance != 0)
+        {
+            AdjustCardDistance(hedonismBonusDistance, "Hedonism");
+        }
+    }
+
+    private void OnTargetDestroyed(string reason)
+    {
+        if (destroyerBonusDistance != 0)
+        {
+            AdjustCardDistance(destroyerBonusDistance, $"Destroyer:{reason}");
+        }
+    }
+
+    private void AdjustCardDistance(int amount, string reason)
+    {
+        if (amount == 0)
+        {
+            return;
+        }
+
+        if (diceManager != null && diceManager.IsMoving)
+        {
+            diceManager.ModifyMoves(amount);
+        }
+        else
+        {
+            StageManager.Instance?.ModifyDistance(amount);
+        }
+
+        Debug.Log($"{reason}: 거리 {amount:+#;-#;0}");
     }
     #endregion
 
@@ -280,20 +607,21 @@ public class PlayerController : MonoBehaviour
         animator?.SetBool(IsMoveHash, moving);
     }
 
-    public void ReceiveDirectDamage(int damage)
+    public void ReceiveDirectDamage(int damage, GameObject source = null, bool canParry = false)
     {
         if (damage <= 0)
         {
             return;
         }
 
-        if (CheckAndConsumeInvincibility())
+        if (TryResolveThreat(source, false, canParry, false))
         {
             return;
         }
 
         animator?.SetTrigger(DoHitHash);
         GameManager.Instance?.TakeDamage(damage);
+        OnDamaged(damage, source);
         Debug.Log($"직접 피해 {damage} -> 현재 체력: {GameManager.Instance?.PlayerHP ?? 0}");
     }
     #endregion

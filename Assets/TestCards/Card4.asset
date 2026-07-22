@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardID: 4
   cardName: 4
-  icon: {fileID: 0}
-  description: 444444
+  icon: {fileID: 21300000, guid: 077010d1f3c512747ac81877eeb83c94, type: 3}
+  price: 0
+  description: Next Block is Parry
   cardType: 1
-  cardEffect: 0
+  cardEffect: 11
   effectValue: 0

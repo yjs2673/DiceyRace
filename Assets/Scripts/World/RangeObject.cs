@@ -15,7 +15,8 @@ public class RangeObject : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Destroy(gameObject); // 충돌 후 오브젝트 제거
+            PlayerController player = other.GetComponentInParent<PlayerController>();
+            player?.HandleProjectileHit(this);
         }
     }
 }

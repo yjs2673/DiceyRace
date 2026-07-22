@@ -100,6 +100,11 @@ public class TurnManager : MonoBehaviour
             yield return StageManager.Instance.ResolveEndTurn();
         }
 
+        PlayerController player = StageManager.Instance != null
+            ? StageManager.Instance.player
+            : FindObjectOfType<PlayerController>();
+        player?.ResetTurnCardEffects();
+
         isResolvingEndPhase = false;
 
         if (StageManager.Instance != null && StageManager.Instance.IsStageResolved)

@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b45fe885722b0046a1fb81189e5770f, type: 3}
-  m_Name: Card8
+  m_Name: Card11
   m_EditorClassIdentifier: Assembly-CSharp::CardData
-  cardID: 8
-  cardName: 8
-  icon: {fileID: 21300000, guid: 87ad68129104fb246b84a496917342f4, type: 3}
+  cardID: 11
+  cardName: 11
+  icon: {fileID: 21300000, guid: 64c6d57a4453d2c41b44ae64ecf9f19e, type: 3}
   price: 0
-  description: 88888
+  description: Parrt Reflect
   cardType: 0
-  cardEffect: 4
-  effectValue: 1
+  cardEffect: 7
+  effectValue: 0

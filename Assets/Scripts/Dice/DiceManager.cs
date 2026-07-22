@@ -28,6 +28,9 @@ public class DiceManager : MonoBehaviour
     private bool isKnockedBack = false; // 넉백 상태인지 여부
     private readonly WaitForFixedUpdate fixedUpdateYield = new WaitForFixedUpdate();
 
+    public bool IsMoving => isMoving;
+    public float StepDistance => moveDistance;
+
     private void Start()
     {
         // 버튼 클릭 이벤트 연결
@@ -103,6 +106,7 @@ public class DiceManager : MonoBehaviour
             }
 
             StageManager.Instance?.AdvanceDistance(1);
+            player?.OnMoveStepCompleted(StageManager.Instance != null ? StageManager.Instance.CurrentDistance : 0);
             UpdateUI(remainingMoves, remainingRerolls);
 
             // 이동이 모두 끝났을 때 정지 발판 체크
@@ -139,6 +143,49 @@ public class DiceManager : MonoBehaviour
     {
         remainingRerolls += amount;
         Debug.Log($"리롤 횟수 증가: {amount} -> 남은 리롤: {remainingRerolls}");
+    }
+
+    public void QueueForcedMove(int amount)
+    {
+        if (amount == 0)
+        {
+            return;
+        }
+
+        if (isMoving)
+        {
+            ModifyMoves(amount);
+            return;
+        }
+
+        if (amount < 0)
+        {
+            StageManager.Instance?.ModifyDistance(amount);
+            return;
+        }
+
+        remainingMoves += amount;
+        UpdateUI(remainingMoves, remainingRerolls);
+
+        if (TurnManager.Instance != null && TurnManager.Instance.CurrentPhase == TurnPhase.End)
+        {
+            StageManager.Instance?.ModifyDistance(amount);
+            remainingMoves = 0;
+            UpdateUI(remainingMoves, remainingRerolls);
+            return;
+        }
+
+        if (rollButton != null)
+        {
+            rollButton.interactable = false;
+        }
+
+        if (TurnManager.Instance != null && TurnManager.Instance.CurrentPhase != TurnPhase.Move)
+        {
+            TurnManager.Instance.SetPhase(TurnPhase.Move);
+        }
+
+        StartCoroutine(MoveRoutine());
     }
 
     // PlayerController에서 충돌 시 호출할 메서드

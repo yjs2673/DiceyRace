@@ -6409,6 +6409,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 177e2b78a839c4c51a8159e4e61af83a, type: 2}
   - {fileID: 11400000, guid: b086c145e282e4223afd93233fd88438, type: 2}
   - {fileID: 11400000, guid: c4a43c891dfb64a41898bd337493379a, type: 2}
+  - {fileID: 11400000, guid: 1cebb789c47a6418fa106e1e0adb6c1e, type: 2}
+  - {fileID: 11400000, guid: 31d0e949679094781aacea2a15a28ccb, type: 2}
+  - {fileID: 11400000, guid: 2265e2c89102445f0b9e586980907c4f, type: 2}
   mulliganPanel: {fileID: 691629390}
   cardSlots:
   - {fileID: 947719811}
@@ -15991,6 +15994,19 @@ MonoBehaviour:
   parryDuration: 0.5
   invincibleMoveCount: 0
   ignoreHitCount: 0
+  gamblerActive: 0
+  gamblerSwing: 3
+  nextGamblerThreshold: 5
+  dashAfterEvadeActive: 0
+  dashAfterEvadeDistance: 1
+  hedonismBonusDistance: 0
+  parryGodBonusDistance: 0
+  destroyerBonusDistance: 0
+  jumpCrazyBonusDistance: 0
+  parryReflectActive: 0
+  parryReflectDamage: 1
+  nextAttackHasParry: 0
+  nextBlockIsParry: 0
   diceManager: {fileID: 965997807}
   playerAnimator: {fileID: 1622605428}
 --- !u!4 &1622605424 stripped

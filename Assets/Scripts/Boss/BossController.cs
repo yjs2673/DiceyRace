@@ -79,7 +79,7 @@ public class BossController : MonoBehaviour
         SyncToFollowTarget();
         bossAnimator?.SetTrigger(DoAttackHash);
         yield return new WaitForSeconds(attackDelay);
-        player.ReceiveDirectDamage(attackDamage);
+        player.ReceiveDirectDamage(attackDamage, gameObject, true);
     }
 
     private void LateUpdate()

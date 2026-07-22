@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 // 타일의 효과를 처리하는 클래스
@@ -62,6 +63,109 @@ public static class EffectProcessor
     // 카드의 효과와 수치를 받아서 매니저에게 명령
     public static void ApplyCardEffect(CardData card, DiceManager diceManager, PlayerController player)
     {
+        if (card == null || card.cardEffect == CardEffect.None)
+        {
+            return;
+        }
 
+        int value = card.effectValue;
+        int normalizedValue = value > 0 ? value : 1;
+
+        switch (card.cardEffect)
+        {
+            case CardEffect.Gambler:
+                player?.ActivateGambler(value > 0 ? value : 3);
+                break;
+
+            case CardEffect.DashAfterEvade:
+                player?.ActivateDashAfterEvade(normalizedValue);
+                break;
+
+            case CardEffect.Hedonism:
+                player?.ActivateHedonism(normalizedValue);
+                break;
+
+            case CardEffect.ParryGod:
+                player?.ActivateParryGod(normalizedValue);
+                break;
+
+            case CardEffect.Destroyer:
+                player?.ActivateDestroyer(normalizedValue);
+                break;
+
+            case CardEffect.JumpCrazy:
+                player?.ActivateJumpCrazy(normalizedValue);
+                break;
+
+            case CardEffect.ParryReflect:
+                player?.ActivateParryReflect(normalizedValue);
+                break;
+
+            case CardEffect.AddParryToAttack:
+                player?.EnableNextAttackParry();
+                break;
+
+            case CardEffect.InvincibleDash:
+                player?.TriggerInvincibleDash(value > 0 ? value : 2);
+                break;
+
+            case CardEffect.DestroyEnemy3:
+                DestroyTargetsAhead(player, diceManager, value > 0 ? value : 3);
+                break;
+
+            case CardEffect.NextBlockIsParry:
+                player?.EnableNextBlockParry();
+                break;
+        }
+    }
+
+    private static void DestroyTargetsAhead(PlayerController player, DiceManager diceManager, int distance)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        float stepDistance = diceManager != null ? diceManager.StepDistance : 1f;
+        float range = Mathf.Max(1, distance) * stepDistance;
+        Vector3 center = player.transform.position + Vector3.right * (range * 0.5f);
+        Vector3 halfExtents = new Vector3(range * 0.5f, 1.5f, 1.5f);
+        Collider[] hits = Physics.OverlapBox(center, halfExtents);
+        HashSet<GameObject> processedTargets = new HashSet<GameObject>();
+        int destroyedCount = 0;
+
+        foreach (Collider hit in hits)
+        {
+            if (hit == null)
+            {
+                continue;
+            }
+
+            GameObject target = hit.attachedRigidbody != null
+                ? hit.attachedRigidbody.gameObject
+                : hit.gameObject;
+
+            if (!processedTargets.Add(target))
+            {
+                continue;
+            }
+
+            if (!target.CompareTag("Enemy") && !target.CompareTag("Obstacle"))
+            {
+                continue;
+            }
+
+            if (target.transform.position.x < player.transform.position.x)
+            {
+                continue;
+            }
+
+            if (player.DestroyCardTarget(target, "DestroyEnemy3"))
+            {
+                destroyedCount++;
+            }
+        }
+
+        Debug.Log($"카드 효과 적용: DestroyEnemy3 -> {destroyedCount}개 제거");
     }
 }

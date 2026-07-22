@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardID: 6
   cardName: 6
-  icon: {fileID: 0}
-  description: 666666
+  icon: {fileID: 21300000, guid: d391b84631a4ae14db722a0f62210c58, type: 3}
+  price: 0
+  description: Dash After Evade
   cardType: 0
-  cardEffect: 0
-  effectValue: 0
+  cardEffect: 2
+  effectValue: 2
