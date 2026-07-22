@@ -1,5 +1,6 @@
 using System.Collections;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -20,6 +21,11 @@ public class StageManager : MonoBehaviour
     [SerializeField] private string nextSceneName = "BossFieldScene";
     [SerializeField] private float clearFadeDuration = 1.0f;
     [SerializeField] private float clearFadeHoldDuration = 0.5f;
+    [Header("Normal To Boss Sequence")]
+    [SerializeField] private List<Sprite> transitionImages = new List<Sprite>();
+    [SerializeField] private float transitionImageDisplayDuration = 2.5f;
+    [SerializeField] private float transitionImageFadeDuration = 0.35f;
+    [SerializeField] private float transitionImageGapDuration = 0.15f;
 
     [Header("Runtime References")]
     public PlayerController player;
@@ -257,6 +263,19 @@ public class StageManager : MonoBehaviour
         }
 
         stageTransitionRequested = true;
+        if (transitionImages != null && transitionImages.Count > 0)
+        {
+            SceneTransitionFader.Instance.FadeThroughImagesToScene(
+                nextSceneName,
+                transitionImages,
+                clearFadeDuration,
+                clearFadeHoldDuration,
+                transitionImageDisplayDuration,
+                transitionImageFadeDuration,
+                transitionImageGapDuration);
+            return;
+        }
+
         SceneTransitionFader.Instance.FadeToScene(nextSceneName, clearFadeDuration, clearFadeHoldDuration);
     }
 }

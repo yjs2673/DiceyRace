@@ -4023,6 +4023,14 @@ MonoBehaviour:
   nextSceneName: BossFieldScene
   clearFadeDuration: 1
   clearFadeHoldDuration: 0.5
+  transitionImages:
+  - {fileID: 21300000, guid: 6e496b16498404d589c63adfa3740682, type: 3}
+  - {fileID: 21300000, guid: 2fc9721c4730b48b5909d7f25377fc0c, type: 3}
+  - {fileID: 21300000, guid: 56f0d078a886143179b952e320b7aafe, type: 3}
+  - {fileID: 21300000, guid: 9629b45346f65448b81e144b4892f48a, type: 3}
+  transitionImageDisplayDuration: 2.5
+  transitionImageFadeDuration: 0.35
+  transitionImageGapDuration: 0.15
   player: {fileID: 1622605423}
   boss: {fileID: 0}
 --- !u!1001 &712854205
@@ -11133,6 +11141,7 @@ MonoBehaviour:
   parryReflectDamage: 1
   nextAttackHasParry: 0
   nextBlockIsParry: 0
+  isInvincibleDashResolving: 0
   diceManager: {fileID: 965997807}
   playerAnimator: {fileID: 1622605428}
 --- !u!4 &1622605424 stripped

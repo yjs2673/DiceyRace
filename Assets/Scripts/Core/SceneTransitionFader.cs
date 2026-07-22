@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,6 +11,7 @@ public class SceneTransitionFader : MonoBehaviour
 
     private Canvas canvas;
     private Image fadeImage;
+    private Image sequenceImage;
     private Coroutine transitionRoutine;
 
     public static SceneTransitionFader Instance
@@ -58,6 +60,36 @@ public class SceneTransitionFader : MonoBehaviour
         transitionRoutine = StartCoroutine(FadeToSceneRoutine(sceneName, fadeDuration, holdDuration));
     }
 
+    public void FadeThroughImagesToScene(
+        string sceneName,
+        IList<Sprite> sprites,
+        float fadeDuration,
+        float blackHoldDuration,
+        float imageDisplayDuration,
+        float imageFadeDuration,
+        float imageGapDuration)
+    {
+        if (sprites == null || sprites.Count == 0)
+        {
+            FadeToScene(sceneName, fadeDuration, blackHoldDuration);
+            return;
+        }
+
+        if (transitionRoutine != null)
+        {
+            StopCoroutine(transitionRoutine);
+        }
+
+        transitionRoutine = StartCoroutine(FadeThroughImagesRoutine(
+            sceneName,
+            sprites,
+            fadeDuration,
+            blackHoldDuration,
+            imageDisplayDuration,
+            imageFadeDuration,
+            imageGapDuration));
+    }
+
     private IEnumerator FadeToSceneRoutine(string sceneName, float fadeDuration, float holdDuration)
     {
         float duration = Mathf.Max(0.01f, fadeDuration);
@@ -77,6 +109,60 @@ public class SceneTransitionFader : MonoBehaviour
         transitionRoutine = null;
     }
 
+    private IEnumerator FadeThroughImagesRoutine(
+        string sceneName,
+        IList<Sprite> sprites,
+        float fadeDuration,
+        float blackHoldDuration,
+        float imageDisplayDuration,
+        float imageFadeDuration,
+        float imageGapDuration)
+    {
+        float sceneFade = Mathf.Max(0.01f, fadeDuration);
+        float blackHold = Mathf.Max(0f, blackHoldDuration);
+        float displayDuration = Mathf.Max(0f, imageDisplayDuration);
+        float spriteFade = Mathf.Max(0.01f, imageFadeDuration);
+        float gapDuration = Mathf.Max(0f, imageGapDuration);
+
+        yield return Fade(0f, 1f, sceneFade);
+
+        if (blackHold > 0f)
+        {
+            yield return new WaitForSecondsRealtime(blackHold);
+        }
+
+        for (int i = 0; i < sprites.Count; i++)
+        {
+            Sprite sprite = sprites[i];
+            if (sprite == null)
+            {
+                continue;
+            }
+
+            SetSequenceSprite(sprite);
+            yield return FadeSequence(0f, 1f, spriteFade);
+
+            if (displayDuration > 0f)
+            {
+                yield return new WaitForSecondsRealtime(displayDuration);
+            }
+
+            yield return FadeSequence(1f, 0f, spriteFade);
+
+            if (gapDuration > 0f && i < sprites.Count - 1)
+            {
+                yield return new WaitForSecondsRealtime(gapDuration);
+            }
+        }
+
+        SetSequenceSprite(null);
+        SceneManager.LoadScene(sceneName);
+        yield return null;
+
+        yield return Fade(1f, 0f, sceneFade);
+        transitionRoutine = null;
+    }
+
     private IEnumerator Fade(float from, float to, float duration)
     {
         float elapsed = 0f;
@@ -89,6 +175,20 @@ public class SceneTransitionFader : MonoBehaviour
         }
 
         SetAlpha(to);
+    }
+
+    private IEnumerator FadeSequence(float from, float to, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            SetSequenceAlpha(Mathf.Lerp(from, to, t));
+            yield return null;
+        }
+
+        SetSequenceAlpha(to);
     }
 
     private void BuildOverlay()
@@ -119,6 +219,20 @@ public class SceneTransitionFader : MonoBehaviour
         fadeImage = imageObject.AddComponent<Image>();
         fadeImage.color = Color.black;
         fadeImage.raycastTarget = false;
+
+        GameObject sequenceObject = new GameObject("SequenceImage");
+        sequenceObject.transform.SetParent(canvasObject.transform, false);
+
+        RectTransform sequenceRect = sequenceObject.AddComponent<RectTransform>();
+        sequenceRect.anchorMin = Vector2.zero;
+        sequenceRect.anchorMax = Vector2.one;
+        sequenceRect.offsetMin = new Vector2(120f, 80f);
+        sequenceRect.offsetMax = new Vector2(-120f, -80f);
+
+        sequenceImage = sequenceObject.AddComponent<Image>();
+        sequenceImage.preserveAspect = true;
+        sequenceImage.raycastTarget = false;
+        sequenceImage.color = new Color(1f, 1f, 1f, 0f);
     }
 
     private void SetAlpha(float alpha)
@@ -131,5 +245,28 @@ public class SceneTransitionFader : MonoBehaviour
         Color color = fadeImage.color;
         color.a = Mathf.Clamp01(alpha);
         fadeImage.color = color;
+    }
+
+    private void SetSequenceSprite(Sprite sprite)
+    {
+        if (sequenceImage == null)
+        {
+            return;
+        }
+
+        sequenceImage.sprite = sprite;
+        SetSequenceAlpha(sprite != null ? sequenceImage.color.a : 0f);
+    }
+
+    private void SetSequenceAlpha(float alpha)
+    {
+        if (sequenceImage == null)
+        {
+            return;
+        }
+
+        Color color = sequenceImage.color;
+        color.a = Mathf.Clamp01(alpha);
+        sequenceImage.color = color;
     }
 }
