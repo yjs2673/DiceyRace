@@ -4,9 +4,21 @@ using UnityEngine;
 
 public class DiceBoardController : MonoBehaviour
 {
+    private sealed class RuntimeDieHandle
+    {
+        public GameObject prefabSource;
+        public DiceRuntimeDie runtimeDie;
+        public Dice sourceData;
+        public Transform parkedParent;
+        public Vector3 parkedLocalPosition;
+        public Quaternion parkedLocalRotation;
+        public bool isParked;
+    }
+
     [Header("References")]
     [SerializeField] private Transform boardCenter;
     [SerializeField] private GameObject dicePrefab;
+    [SerializeField] private Transform[] rollSpawnPoints;
 
     [Header("Camera Focus")]
     [SerializeField] private Vector3 cameraOffset = new Vector3(0f, 8f, -5.5f);
@@ -15,6 +27,7 @@ public class DiceBoardController : MonoBehaviour
     [SerializeField] private float postRollDelay = 0.5f;
 
     [Header("Dice Physics")]
+    [SerializeField] private float parkedHeight = 0.35f;
     [SerializeField] private float spawnHeight = 2.4f;
     [SerializeField] private float rollUpForceMin = 6.5f;
     [SerializeField] private float rollUpForceMax = 9f;
@@ -22,21 +35,21 @@ public class DiceBoardController : MonoBehaviour
     [SerializeField] private float rollTorqueForce = 16f;
     [SerializeField] private float spawnMargin = 0.85f;
 
-    private readonly List<DiceRuntimeDie> runtimeDice = new List<DiceRuntimeDie>();
+    private readonly List<RuntimeDieHandle> runtimeDice = new List<RuntimeDieHandle>();
     private readonly List<int> lastResults = new List<int>();
 
     private DiceBoardAnchor boardAnchor;
     private CameraFollow cameraFollow;
+    private bool hasWarnedAboutSpawnPointCount;
 
     public bool IsRolling { get; private set; }
     public int LastRollSum { get; private set; }
     public IReadOnlyList<int> LastRollResults => lastResults;
     public bool CanRoll => transform != null;
 
-    public void Configure(Transform followTarget, GameObject overrideDicePrefab)
+    public void Configure(Transform followTarget)
     {
         boardCenter = boardCenter != null ? boardCenter : transform;
-        dicePrefab = overrideDicePrefab != null ? overrideDicePrefab : dicePrefab;
 
         if (boardAnchor == null)
         {
@@ -50,9 +63,9 @@ public class DiceBoardController : MonoBehaviour
         boardAnchor.Configure(followTarget);
     }
 
-    public IEnumerator PlayRollSequence(int diceCount)
+    public IEnumerator PlayRollSequence(IReadOnlyList<Dice> diceDefinitions)
     {
-        diceCount = Mathf.Max(1, diceCount);
+        int diceCount = diceDefinitions != null && diceDefinitions.Count > 0 ? diceDefinitions.Count : 1;
         IsRolling = true;
         LastRollSum = 0;
         lastResults.Clear();
@@ -61,9 +74,9 @@ public class DiceBoardController : MonoBehaviour
         FocusBoard();
         yield return new WaitForSeconds(preRollDelay);
 
-        EnsureDicePool(diceCount);
-        PositionDice(diceCount);
-        RollDice(diceCount);
+        EnsureDicePool(diceDefinitions, diceCount);
+        PositionDice(diceDefinitions, diceCount);
+        RollDice(diceDefinitions, diceCount);
 
         yield return new WaitUntil(AllDiceResolved);
 
@@ -71,14 +84,26 @@ public class DiceBoardController : MonoBehaviour
         lastResults.Clear();
         for (int i = 0; i < diceCount; i++)
         {
-            int result = runtimeDice[i].Result;
+            int result = runtimeDice[i].runtimeDie.Result;
             lastResults.Add(result);
             LastRollSum += result;
         }
 
         yield return new WaitForSeconds(postRollDelay);
         ReleaseBoardFocus();
+        yield return WaitForCameraToReturn();
+        ParkDiceAtSpawnPoints(diceCount);
         IsRolling = false;
+    }
+
+    private void LateUpdate()
+    {
+        if (IsRolling)
+        {
+            return;
+        }
+
+        MaintainParkedDice();
     }
 
     public static DiceBoardController CreateRuntimeFallbackBoard()
@@ -99,29 +124,70 @@ public class DiceBoardController : MonoBehaviour
         return controller;
     }
 
-    private void EnsureDicePool(int diceCount)
+    private void EnsureDicePool(IReadOnlyList<Dice> diceDefinitions, int diceCount)
     {
         while (runtimeDice.Count < diceCount)
         {
-            runtimeDice.Add(CreateDieInstance(runtimeDice.Count));
+            runtimeDice.Add(new RuntimeDieHandle());
         }
 
         for (int i = 0; i < runtimeDice.Count; i++)
         {
-            runtimeDice[i].gameObject.SetActive(i < diceCount);
+            bool shouldBeActive = i < diceCount;
+            RuntimeDieHandle handle = runtimeDice[i];
+
+            if (!shouldBeActive)
+            {
+                if (handle.runtimeDie != null)
+                {
+                    handle.runtimeDie.gameObject.SetActive(false);
+                }
+
+                continue;
+            }
+
+            Dice diceData = GetDiceDefinition(diceDefinitions, i);
+            GameObject prefabSource = GetPrefabForDice(diceData);
+
+            if (handle.runtimeDie == null || handle.prefabSource != prefabSource)
+            {
+                RecreateRuntimeDie(i, prefabSource);
+                handle = runtimeDice[i];
+            }
+
+            handle.sourceData = diceData;
+            handle.runtimeDie.ApplyDiceData(diceData);
+            handle.runtimeDie.gameObject.SetActive(true);
+            handle.isParked = false;
         }
     }
 
-    private DiceRuntimeDie CreateDieInstance(int index)
+    private void RecreateRuntimeDie(int index, GameObject prefabSource)
     {
-        GameObject dieObject = dicePrefab != null
-            ? Instantiate(dicePrefab, transform)
+        RuntimeDieHandle handle = runtimeDice[index];
+        if (handle.runtimeDie != null)
+        {
+            Destroy(handle.runtimeDie.gameObject);
+        }
+
+        DiceRuntimeDie runtimeDie = CreateDieInstance(index, prefabSource);
+        runtimeDice[index] = new RuntimeDieHandle
+        {
+            prefabSource = prefabSource,
+            runtimeDie = runtimeDie
+        };
+    }
+
+    private DiceRuntimeDie CreateDieInstance(int index, GameObject prefabSource)
+    {
+        GameObject dieObject = prefabSource != null
+            ? Instantiate(prefabSource, transform)
             : GameObject.CreatePrimitive(PrimitiveType.Cube);
 
         dieObject.name = $"RuntimeDie_{index + 1}";
         dieObject.transform.SetParent(transform, true);
 
-        if (dicePrefab == null)
+        if (prefabSource == null)
         {
             dieObject.transform.localScale = Vector3.one * 0.75f;
         }
@@ -150,11 +216,136 @@ public class DiceBoardController : MonoBehaviour
         return runtimeDie;
     }
 
-    private void PositionDice(int diceCount)
+    private void PositionDice(IReadOnlyList<Dice> diceDefinitions, int diceCount)
     {
+        bool[] usedSpawnSlots = rollSpawnPoints != null ? new bool[rollSpawnPoints.Length] : null;
         Bounds trayBounds = CalculateTrayBounds();
-        int columns = Mathf.CeilToInt(Mathf.Sqrt(diceCount));
-        int rows = Mathf.CeilToInt((float)diceCount / columns);
+
+        int configuredSpawnPointCount = GetConfiguredSpawnPointCount();
+        if (configuredSpawnPointCount > 0 && configuredSpawnPointCount < diceCount && !hasWarnedAboutSpawnPointCount)
+        {
+            Debug.LogWarning(
+                $"DiceBoard spawn point가 부족합니다. 설정된 위치 {configuredSpawnPointCount}개, 현재 주사위 {diceCount}개입니다. " +
+                "나머지 주사위는 보드 내부 fallback 위치를 사용합니다.");
+            hasWarnedAboutSpawnPointCount = true;
+        }
+
+        for (int i = 0; i < diceCount; i++)
+        {
+            RuntimeDieHandle handle = runtimeDice[i];
+            Dice diceData = handle.sourceData;
+
+            if (TryGetSpawnPointPose(diceData, i, usedSpawnSlots, out Transform parkedParent, out Vector3 spawnPosition, out Quaternion spawnRotation))
+            {
+                ApplySpawnPose(handle, diceData, parkedParent, spawnPosition, spawnRotation, true);
+                continue;
+            }
+
+            Vector3 fallbackPosition = GetGridSpawnPosition(trayBounds, diceCount, i);
+            Quaternion fallbackRotation = Random.rotation;
+            ApplySpawnPose(handle, diceData, transform, fallbackPosition, fallbackRotation, false);
+        }
+    }
+
+    private void ApplySpawnPose(RuntimeDieHandle handle, Dice diceData, Transform parkedParent, Vector3 basePosition, Quaternion baseRotation, bool useSpawnHeight)
+    {
+        Vector3 boardOffset = diceData != null ? diceData.boardSpawnOffset : Vector3.zero;
+        Quaternion authoredRotation = Quaternion.Euler(diceData != null ? diceData.spawnEulerAngles : Vector3.zero);
+        Quaternion finalRotation = baseRotation * authoredRotation;
+        Vector3 worldOffset = baseRotation * boardOffset;
+
+        Transform safeParent = parkedParent != null ? parkedParent : transform;
+        Vector3 parkedWorldPosition = basePosition + worldOffset + Vector3.up * parkedHeight;
+        handle.parkedParent = safeParent;
+        handle.parkedLocalPosition = safeParent.InverseTransformPoint(parkedWorldPosition);
+        handle.parkedLocalRotation = Quaternion.Inverse(safeParent.rotation) * finalRotation;
+        handle.isParked = false;
+
+        Vector3 rollStartPosition = basePosition + worldOffset + Vector3.up * (useSpawnHeight ? spawnHeight : parkedHeight);
+        handle.runtimeDie.transform.SetParent(transform, true);
+        handle.runtimeDie.ResetForRoll(rollStartPosition, finalRotation);
+    }
+
+    private void ParkDiceAtSpawnPoints(int diceCount)
+    {
+        for (int i = 0; i < diceCount; i++)
+        {
+            RuntimeDieHandle handle = runtimeDice[i];
+            if (handle.runtimeDie == null)
+            {
+                continue;
+            }
+
+            handle.runtimeDie.Park(handle.parkedParent, handle.parkedLocalPosition, handle.parkedLocalRotation);
+            handle.isParked = true;
+        }
+    }
+
+    private void MaintainParkedDice()
+    {
+        for (int i = 0; i < runtimeDice.Count; i++)
+        {
+            RuntimeDieHandle handle = runtimeDice[i];
+            if (handle.runtimeDie == null || !handle.runtimeDie.gameObject.activeSelf || !handle.isParked)
+            {
+                continue;
+            }
+
+            handle.runtimeDie.Park(handle.parkedParent, handle.parkedLocalPosition, handle.parkedLocalRotation);
+        }
+    }
+
+    private bool TryGetSpawnPointPose(Dice diceData, int orderIndex, bool[] usedSpawnSlots, out Transform parkedParent, out Vector3 spawnPosition, out Quaternion spawnRotation)
+    {
+        parkedParent = null;
+        spawnPosition = default;
+        spawnRotation = Quaternion.identity;
+
+        if (rollSpawnPoints == null || rollSpawnPoints.Length == 0)
+        {
+            return false;
+        }
+
+        int preferredSlot = diceData != null ? diceData.preferredBoardSlot : -1;
+        if (preferredSlot >= 0 && preferredSlot < rollSpawnPoints.Length && !usedSpawnSlots[preferredSlot] && rollSpawnPoints[preferredSlot] != null)
+        {
+            usedSpawnSlots[preferredSlot] = true;
+            parkedParent = rollSpawnPoints[preferredSlot];
+            spawnPosition = parkedParent.position;
+            spawnRotation = parkedParent.rotation;
+            return true;
+        }
+
+        if (orderIndex >= 0 && orderIndex < rollSpawnPoints.Length && !usedSpawnSlots[orderIndex] && rollSpawnPoints[orderIndex] != null)
+        {
+            usedSpawnSlots[orderIndex] = true;
+            parkedParent = rollSpawnPoints[orderIndex];
+            spawnPosition = parkedParent.position;
+            spawnRotation = parkedParent.rotation;
+            return true;
+        }
+
+        for (int i = 0; i < rollSpawnPoints.Length; i++)
+        {
+            if (usedSpawnSlots[i] || rollSpawnPoints[i] == null)
+            {
+                continue;
+            }
+
+            usedSpawnSlots[i] = true;
+            parkedParent = rollSpawnPoints[i];
+            spawnPosition = parkedParent.position;
+            spawnRotation = parkedParent.rotation;
+            return true;
+        }
+
+        return false;
+    }
+
+    private Vector3 GetGridSpawnPosition(Bounds trayBounds, int gridCount, int gridIndex)
+    {
+        int columns = Mathf.CeilToInt(Mathf.Sqrt(Mathf.Max(1, gridCount)));
+        int rows = Mathf.CeilToInt((float)Mathf.Max(1, gridCount) / columns);
 
         float usableWidth = Mathf.Max(1f, trayBounds.size.x - spawnMargin * 2f);
         float usableDepth = Mathf.Max(1f, trayBounds.size.z - spawnMargin * 2f);
@@ -166,25 +357,25 @@ public class DiceBoardController : MonoBehaviour
             trayBounds.max.y + spawnHeight,
             trayBounds.center.z - usableDepth * 0.5f);
 
-        for (int i = 0; i < diceCount; i++)
-        {
-            int column = i % columns;
-            int row = i / columns;
-            Vector3 worldPosition = start + new Vector3(column * xStep, 0f, row * zStep);
-            Quaternion worldRotation = Random.rotation;
-            runtimeDice[i].ResetForRoll(worldPosition, worldRotation);
-        }
+        int column = gridIndex % columns;
+        int row = gridIndex / columns;
+        return start + new Vector3(column * xStep, 0f, row * zStep);
     }
 
-    private void RollDice(int diceCount)
+    private void RollDice(IReadOnlyList<Dice> diceDefinitions, int diceCount)
     {
         for (int i = 0; i < diceCount; i++)
         {
-            Vector3 force = Vector3.up * Random.Range(rollUpForceMin, rollUpForceMax)
+            Dice diceData = GetDiceDefinition(diceDefinitions, i);
+            float forceMultiplier = diceData != null ? Mathf.Max(0.1f, diceData.rollForceMultiplier) : 1f;
+            float torqueMultiplier = diceData != null ? Mathf.Max(0.1f, diceData.torqueMultiplier) : 1f;
+
+            Vector3 force = (Vector3.up * Random.Range(rollUpForceMin, rollUpForceMax)
                 + transform.right * Random.Range(-rollSideForce, rollSideForce)
-                + transform.forward * Random.Range(-rollSideForce, rollSideForce);
-            Vector3 torque = Random.onUnitSphere * rollTorqueForce;
-            runtimeDice[i].Roll(force, torque);
+                + transform.forward * Random.Range(-rollSideForce, rollSideForce)) * forceMultiplier;
+            Vector3 torque = Random.onUnitSphere * rollTorqueForce * torqueMultiplier;
+
+            runtimeDice[i].runtimeDie.Roll(force, torque);
         }
     }
 
@@ -192,12 +383,12 @@ public class DiceBoardController : MonoBehaviour
     {
         for (int i = 0; i < runtimeDice.Count; i++)
         {
-            if (!runtimeDice[i].gameObject.activeSelf)
+            if (runtimeDice[i].runtimeDie == null || !runtimeDice[i].runtimeDie.gameObject.activeSelf)
             {
                 continue;
             }
 
-            if (!runtimeDice[i].HasResolved)
+            if (!runtimeDice[i].runtimeDie.HasResolved)
             {
                 return false;
             }
@@ -224,6 +415,21 @@ public class DiceBoardController : MonoBehaviour
         }
 
         cameraFollow?.ClearTemporaryFocus();
+    }
+
+    private IEnumerator WaitForCameraToReturn()
+    {
+        if (cameraFollow == null && Camera.main != null)
+        {
+            cameraFollow = Camera.main.GetComponent<CameraFollow>();
+        }
+
+        if (cameraFollow == null)
+        {
+            yield break;
+        }
+
+        yield return new WaitUntil(() => cameraFollow.IsNearFollowPose());
     }
 
     private Bounds CalculateTrayBounds()
@@ -280,6 +486,45 @@ public class DiceBoardController : MonoBehaviour
         }
 
         return new Bounds(transform.position, new Vector3(6f, 2f, 6f));
+    }
+
+    private Dice GetDiceDefinition(IReadOnlyList<Dice> diceDefinitions, int index)
+    {
+        if (diceDefinitions == null || index < 0 || index >= diceDefinitions.Count)
+        {
+            return null;
+        }
+
+        return diceDefinitions[index];
+    }
+
+    private GameObject GetPrefabForDice(Dice diceData)
+    {
+        if (diceData != null && diceData.runtimePrefab != null)
+        {
+            return diceData.runtimePrefab;
+        }
+
+        return dicePrefab;
+    }
+
+    private int GetConfiguredSpawnPointCount()
+    {
+        if (rollSpawnPoints == null || rollSpawnPoints.Length == 0)
+        {
+            return 0;
+        }
+
+        int count = 0;
+        for (int i = 0; i < rollSpawnPoints.Length; i++)
+        {
+            if (rollSpawnPoints[i] != null)
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private void BuildFallbackTray()

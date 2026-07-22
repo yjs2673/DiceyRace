@@ -19,7 +19,6 @@ public class DiceManager : MonoBehaviour
 
     [Header("Dice Board")]
     [SerializeField] private Transform diceBoardRoot;
-    [SerializeField] private GameObject runtimeDicePrefab;
     [SerializeField] private float autoMoveDelay = 1.5f;
     [SerializeField] private bool createFallbackBoardIfMissing = true;
     [SerializeField] private bool fallbackToLegacyRollIfBoardUnavailable = false;
@@ -249,8 +248,8 @@ public class DiceManager : MonoBehaviour
         isRollingDice = true;
         RefreshRollButtonState();
 
-        int ownedDiceCount = GetOwnedDiceCount();
-        yield return diceBoardController.PlayRollSequence(ownedDiceCount);
+        List<Dice> ownedDice = GetOwnedDiceDefinitions();
+        yield return diceBoardController.PlayRollSequence(ownedDice);
 
         isRollingDice = false;
         ApplyRollResult(diceBoardController.LastRollSum, diceBoardController.LastRollResults);
@@ -508,23 +507,23 @@ public class DiceManager : MonoBehaviour
         }
     }
 
-    private int GetOwnedDiceCount()
+    private List<Dice> GetOwnedDiceDefinitions()
     {
+        List<Dice> ownedDice = new List<Dice>();
         if (GameManager.Instance == null || GameManager.Instance.HasDice == null)
         {
-            return 1;
+            return ownedDice;
         }
 
-        int count = 0;
         for (int i = 0; i < GameManager.Instance.HasDice.Count; i++)
         {
             if (GameManager.Instance.HasDice[i] != null)
             {
-                count++;
+                ownedDice.Add(GameManager.Instance.HasDice[i]);
             }
         }
 
-        return Mathf.Max(1, count);
+        return ownedDice;
     }
 
     private bool EnsureDiceBoardController()
@@ -559,7 +558,7 @@ public class DiceManager : MonoBehaviour
             return false;
         }
 
-        diceBoardController.Configure(player != null ? player.transform : null, runtimeDicePrefab);
+        diceBoardController.Configure(player != null ? player.transform : null);
         return true;
     }
 

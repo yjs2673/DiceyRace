@@ -15,12 +15,13 @@ public class DiceRuntimeDie : MonoBehaviour
     [SerializeField] private float angularStopThreshold = 0.15f;
     [SerializeField] private float stableDuration = 0.4f;
     [SerializeField] private float maxRollDuration = 6f;
-    [SerializeField] private FaceDirection[] faceDirections;
 
     private Rigidbody rb;
     private float stableTimer;
     private float rollTimer;
     private int lastDetectedFace;
+    private FaceDirection[] runtimeFaces;
+    private Vector3 authoredLocalScale = Vector3.one;
 
     public bool IsRolling { get; private set; }
     public bool HasResolved { get; private set; }
@@ -30,7 +31,8 @@ public class DiceRuntimeDie : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.maxAngularVelocity = Mathf.Max(rb.maxAngularVelocity, 50f);
-        EnsureDefaultFaces();
+        authoredLocalScale = transform.localScale;
+        runtimeFaces = CreateDefaultFaces();
     }
 
     public void ResetForRoll(Vector3 worldPosition, Quaternion worldRotation)
@@ -51,6 +53,35 @@ public class DiceRuntimeDie : MonoBehaviour
         Result = 0;
         IsRolling = false;
         HasResolved = false;
+    }
+
+    public void Park(Transform parent, Vector3 localPosition, Quaternion localRotation)
+    {
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody>();
+        }
+
+        transform.SetParent(parent, false);
+        transform.localPosition = localPosition;
+        transform.localRotation = localRotation;
+        rb.isKinematic = true;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        IsRolling = false;
+    }
+
+    public void ApplyDiceData(Dice diceData)
+    {
+        if (diceData == null)
+        {
+            runtimeFaces = CreateDefaultFaces();
+            ApplyModelSettings(1f, 1f);
+            return;
+        }
+
+        runtimeFaces = CreateFacesFromDiceData(diceData);
+        ApplyModelSettings(diceData.modelScale, diceData.rigidbodyMass);
     }
 
     public void Roll(Vector3 force, Vector3 torque)
@@ -121,33 +152,60 @@ public class DiceRuntimeDie : MonoBehaviour
 
     private int GetTopFace()
     {
-        EnsureDefaultFaces();
+        if (runtimeFaces == null || runtimeFaces.Length == 0)
+        {
+            runtimeFaces = CreateDefaultFaces();
+        }
 
         float maxDot = float.NegativeInfinity;
         int bestValue = 1;
 
-        for (int i = 0; i < faceDirections.Length; i++)
+        for (int i = 0; i < runtimeFaces.Length; i++)
         {
-            Vector3 worldDirection = transform.TransformDirection(faceDirections[i].localUpDirection.normalized);
+            Vector3 worldDirection = transform.TransformDirection(runtimeFaces[i].localUpDirection.normalized);
             float dot = Vector3.Dot(worldDirection, Vector3.up);
             if (dot > maxDot)
             {
                 maxDot = dot;
-                bestValue = faceDirections[i].value;
+                bestValue = runtimeFaces[i].value;
             }
         }
 
         return bestValue;
     }
 
-    private void EnsureDefaultFaces()
+    private void ApplyModelSettings(float modelScale, float rigidbodyMass)
     {
-        if (faceDirections != null && faceDirections.Length == 6)
+        float scaleMultiplier = Mathf.Max(0.1f, modelScale);
+        transform.localScale = authoredLocalScale * scaleMultiplier;
+        rb.mass = Mathf.Max(0.1f, rigidbodyMass);
+    }
+
+    private FaceDirection[] CreateFacesFromDiceData(Dice diceData)
+    {
+        if (diceData != null && diceData.faceDefinitions != null && diceData.faceDefinitions.Count > 0)
         {
-            return;
+            FaceDirection[] faces = new FaceDirection[diceData.faceDefinitions.Count];
+            for (int i = 0; i < faces.Length; i++)
+            {
+                faces[i] = new FaceDirection
+                {
+                    value = diceData.faceDefinitions[i].value,
+                    localUpDirection = diceData.faceDefinitions[i].localUpDirection.sqrMagnitude > 0f
+                        ? diceData.faceDefinitions[i].localUpDirection.normalized
+                        : Vector3.up
+                };
+            }
+
+            return faces;
         }
 
-        faceDirections = new[]
+        return CreateDefaultFaces();
+    }
+
+    private FaceDirection[] CreateDefaultFaces()
+    {
+        return new[]
         {
             new FaceDirection { value = 1, localUpDirection = Vector3.up },
             new FaceDirection { value = 6, localUpDirection = Vector3.down },

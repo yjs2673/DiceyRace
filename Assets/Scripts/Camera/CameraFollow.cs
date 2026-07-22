@@ -71,6 +71,18 @@ public class CameraFollow : MonoBehaviour
         focusTarget = null;
     }
 
+    public bool IsNearFollowPose(float positionThreshold = 0.15f, float rotationThreshold = 2f)
+    {
+        if (player == null)
+        {
+            return true;
+        }
+
+        Vector3 targetPosition = new Vector3(player.position.x + offsetX, fixedY, fixedZ);
+        return Vector3.Distance(transform.position, targetPosition) <= positionThreshold
+            && Quaternion.Angle(transform.rotation, followRotation) <= rotationThreshold;
+    }
+
     public void SnapToFollowTarget()
     {
         if (player == null)
