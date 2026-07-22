@@ -6484,7 +6484,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
   tileType: 2
-  tileEffect: 8
+  tileEffect: 11
   effectValue: 0
 --- !u!65 &932812576
 BoxCollider:
@@ -6793,8 +6793,8 @@ MonoBehaviour:
   moveDistance: 2
   remainingRerolls: 10
   enableTestMode: 0
-  testMaxNum: 6
-  testMinNum: 5
+  testMaxNum: 1
+  testMinNum: 1
 --- !u!4 &995084490 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -3435229363823192219, guid: b2708d7ad68104d2dad610947a43d42e, type: 3}
@@ -9268,7 +9268,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
   tileType: 2
-  tileEffect: 8
+  tileEffect: 11
   effectValue: 0
 --- !u!65 &1384049596
 BoxCollider:
@@ -11010,7 +11010,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b2708d7ad68104d2dad610947a43d42e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b2708d7ad68104d2dad610947a43d42e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -13793,6 +13793,71 @@ MonoBehaviour:
   initialStageName: DebugGround
   initialCards: []
   initialDice: []
+  coin: 0
+  pirateCoin: 0
+  reroll: 0
+  playerHP: 0
+  playerDamage: 0
+  stageName: 
+  hasDice: []
+  hasCard: []
+  savedFieldState:
+    sceneName: 
+    stageName: 
+    playerPosition: {x: 0, y: 0, z: 0}
+    stageDistance: 0
+    remainingMoves: 0
+    remainingRerolls: 0
+    currentDiceValue: 0
+    playerInvincibleMoveCount: 0
+    playerIgnoreHitCount: 0
+    bossCurrentHp: 0
+    returnPhase: 0
+    playerCardRuntimeState:
+      gamblerActive: 0
+      gamblerSwing: 0
+      nextGamblerThreshold: 0
+      dashAfterEvadeActive: 0
+      dashAfterEvadeDistance: 0
+      hedonismBonusDistance: 0
+      parryGodBonusDistance: 0
+      destroyerBonusDistance: 0
+      jumpCrazyBonusDistance: 0
+      parryReflectActive: 0
+      parryReflectDamage: 0
+      nextAttackHasParry: 0
+      nextBlockIsParry: 0
+  latestFieldCheckpoint:
+    sceneName: 
+    stageName: 
+    playerPosition: {x: 0, y: 0, z: 0}
+    stageDistance: 0
+    remainingMoves: 0
+    remainingRerolls: 0
+    currentDiceValue: 0
+    playerInvincibleMoveCount: 0
+    playerIgnoreHitCount: 0
+    bossCurrentHp: 0
+    returnPhase: 0
+    playerCardRuntimeState:
+      gamblerActive: 0
+      gamblerSwing: 0
+      nextGamblerThreshold: 0
+      dashAfterEvadeActive: 0
+      dashAfterEvadeDistance: 0
+      hedonismBonusDistance: 0
+      parryGodBonusDistance: 0
+      destroyerBonusDistance: 0
+      jumpCrazyBonusDistance: 0
+      parryReflectActive: 0
+      parryReflectDamage: 0
+      nextAttackHasParry: 0
+      nextBlockIsParry: 0
+  hasSavedFieldStateDebug: 0
+  activeSceneNameDebug: 
+  instanceIdDebug: 0
+  owningSceneDebug: 
+  isPrimaryInstanceDebug: 0
 --- !u!4 &1992024220
 Transform:
   m_ObjectHideFlags: 0

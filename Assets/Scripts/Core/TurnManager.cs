@@ -33,6 +33,11 @@ public class TurnManager : MonoBehaviour
 
     private void Start()
     {
+        if (GameManager.Instance != null && GameManager.Instance.ShouldRestoreFieldStateForActiveScene())
+        {
+            return;
+        }
+
         // 게임 씬이 시작되면 멀리건 페이즈부터 시작
         SetPhase(TurnPhase.Mulligan);
     }
@@ -114,5 +119,11 @@ public class TurnManager : MonoBehaviour
 
         // 턴 정리가 끝나면 다시 새로운 턴(멀리건) 시작
         SetPhase(TurnPhase.Mulligan);
+    }
+
+    public void RestoreSavedPhase(TurnPhase savedPhase)
+    {
+        isResolvingEndPhase = false;
+        SetPhase(savedPhase);
     }
 }

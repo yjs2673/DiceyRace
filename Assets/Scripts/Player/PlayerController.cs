@@ -391,6 +391,54 @@ public class PlayerController : MonoBehaviour
         Destroy(projectileObject);
     }
 
+    public Vector3 GetRestorePosition()
+    {
+        return rb != null ? rb.position : transform.position;
+    }
+
+    public PlayerCardRuntimeState CaptureCardRuntimeState()
+    {
+        return new PlayerCardRuntimeState
+        {
+            gamblerActive = gamblerActive,
+            gamblerSwing = gamblerSwing,
+            nextGamblerThreshold = nextGamblerThreshold,
+            dashAfterEvadeActive = dashAfterEvadeActive,
+            dashAfterEvadeDistance = dashAfterEvadeDistance,
+            hedonismBonusDistance = hedonismBonusDistance,
+            parryGodBonusDistance = parryGodBonusDistance,
+            destroyerBonusDistance = destroyerBonusDistance,
+            jumpCrazyBonusDistance = jumpCrazyBonusDistance,
+            parryReflectActive = parryReflectActive,
+            parryReflectDamage = parryReflectDamage,
+            nextAttackHasParry = nextAttackHasParry,
+            nextBlockIsParry = nextBlockIsParry
+        };
+    }
+
+    public void RestoreSavedFieldState(FieldSceneState savedState)
+    {
+        if (savedState == null)
+        {
+            return;
+        }
+
+        if (rb != null)
+        {
+            rb.position = savedState.playerPosition;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+        else
+        {
+            transform.position = savedState.playerPosition;
+        }
+
+        invincibleMoveCount = savedState.playerInvincibleMoveCount;
+        ignoreHitCount = savedState.playerIgnoreHitCount;
+        ApplyCardRuntimeState(savedState.playerCardRuntimeState);
+    }
+
     public void ResetTurnCardEffects()
     {
         gamblerActive = false;
@@ -555,6 +603,29 @@ public class PlayerController : MonoBehaviour
         {
             AdjustCardDistance(destroyerBonusDistance, $"Destroyer:{reason}");
         }
+    }
+
+    private void ApplyCardRuntimeState(PlayerCardRuntimeState runtimeState)
+    {
+        if (runtimeState == null)
+        {
+            ResetTurnCardEffects();
+            return;
+        }
+
+        gamblerActive = runtimeState.gamblerActive;
+        gamblerSwing = runtimeState.gamblerSwing;
+        nextGamblerThreshold = runtimeState.nextGamblerThreshold;
+        dashAfterEvadeActive = runtimeState.dashAfterEvadeActive;
+        dashAfterEvadeDistance = runtimeState.dashAfterEvadeDistance;
+        hedonismBonusDistance = runtimeState.hedonismBonusDistance;
+        parryGodBonusDistance = runtimeState.parryGodBonusDistance;
+        destroyerBonusDistance = runtimeState.destroyerBonusDistance;
+        jumpCrazyBonusDistance = runtimeState.jumpCrazyBonusDistance;
+        parryReflectActive = runtimeState.parryReflectActive;
+        parryReflectDamage = runtimeState.parryReflectDamage;
+        nextAttackHasParry = runtimeState.nextAttackHasParry;
+        nextBlockIsParry = runtimeState.nextBlockIsParry;
     }
 
     private void AdjustCardDistance(int amount, string reason)

@@ -22,6 +22,7 @@ public class DiceManager : MonoBehaviour
     public int testMaxNum = 6;
     public int testMinNum = 1;
 
+    private int currentDiceValue = 0;
     private int remainingMoves = 0;
     private bool isMoving = false;
 
@@ -30,12 +31,16 @@ public class DiceManager : MonoBehaviour
 
     public bool IsMoving => isMoving;
     public float StepDistance => moveDistance;
+    public int RemainingMoves => remainingMoves;
+    public int RemainingRerolls => remainingRerolls;
+    public int CurrentDiceValue => currentDiceValue;
 
     private void Start()
     {
         // 버튼 클릭 이벤트 연결
         rollButton.onClick.AddListener(RollDice);
         UpdateUI(0, remainingRerolls);
+        CaptureFieldCheckpoint();
     }
 
     public void RollDice()
@@ -46,6 +51,7 @@ public class DiceManager : MonoBehaviour
         if (isMoving || remainingRerolls <= 0 || remainingMoves > 0) return;
 
         int diceValue = Random.Range(testMinNum, testMaxNum + 1);
+        currentDiceValue = diceValue;
         diceText.text = $"주사위: {diceValue}";
 
         remainingRerolls--;
@@ -108,6 +114,7 @@ public class DiceManager : MonoBehaviour
             StageManager.Instance?.AdvanceDistance(1);
             player?.OnMoveStepCompleted(StageManager.Instance != null ? StageManager.Instance.CurrentDistance : 0);
             UpdateUI(remainingMoves, remainingRerolls);
+            CaptureFieldCheckpoint();
 
             // 이동이 모두 끝났을 때 정지 발판 체크
             if (remainingMoves <= 0)
@@ -143,6 +150,7 @@ public class DiceManager : MonoBehaviour
     {
         remainingRerolls += amount;
         Debug.Log($"리롤 횟수 증가: {amount} -> 남은 리롤: {remainingRerolls}");
+        CaptureFieldCheckpoint();
     }
 
     public void QueueForcedMove(int amount)
@@ -186,6 +194,49 @@ public class DiceManager : MonoBehaviour
         }
 
         StartCoroutine(MoveRoutine());
+    }
+
+    public void RestoreSavedFieldState(FieldSceneState savedState)
+    {
+        if (savedState == null)
+        {
+            return;
+        }
+
+        currentDiceValue = savedState.currentDiceValue;
+        remainingMoves = Mathf.Max(0, savedState.remainingMoves);
+        remainingRerolls = Mathf.Max(0, savedState.remainingRerolls);
+        isMoving = false;
+        isKnockedBack = false;
+
+        if (diceText != null)
+        {
+            diceText.text = currentDiceValue > 0
+                ? $"주사위: {currentDiceValue}"
+                : "주사위: -";
+        }
+
+        UpdateUI(remainingMoves, remainingRerolls);
+
+        if (rollButton != null)
+        {
+            rollButton.interactable = savedState.returnPhase == TurnPhase.Standby;
+        }
+
+        player?.SetAutoMoveAnimation(false);
+    }
+
+    private void CaptureFieldCheckpoint()
+    {
+        if (GameManager.Instance == null || player == null || StageManager.Instance == null)
+        {
+            return;
+        }
+
+        TurnPhase phase = TurnManager.Instance != null
+            ? TurnManager.Instance.CurrentPhase
+            : TurnPhase.Standby;
+        GameManager.Instance.CaptureFieldCheckpoint(player, this, StageManager.Instance, phase);
     }
 
     // PlayerController에서 충돌 시 호출할 메서드

@@ -71,4 +71,15 @@ public class ShopManager : MonoBehaviour
             remainingItems.RemoveAt(randomIndex);
         }
     }
+
+    public void ReturnToField()
+    {
+        if (GameManager.Instance == null)
+        {
+            Debug.LogError("GameManager가 존재하지 않습니다.");
+            return;
+        }
+
+        GameManager.Instance.ReturnToSavedFieldScene();
+    }
 }

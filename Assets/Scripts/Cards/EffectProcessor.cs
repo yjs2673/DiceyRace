@@ -50,7 +50,15 @@ public static class EffectProcessor
                 break;
 
             case TileEffect.OpenShop:
-                Debug.Log("발판 효과: 상점 씬으로 이동 (구현 예정)");
+                if (GameManager.Instance != null && player != null && diceManager != null && StageManager.Instance != null)
+                {
+                    GameManager.Instance.EnterShopFromField(player, diceManager, StageManager.Instance, TurnPhase.End);
+                    Debug.Log("발판 효과: 상점 씬으로 이동");
+                }
+                else
+                {
+                    Debug.LogError("상점 이동에 필요한 필드 참조가 부족합니다.");
+                }
                 break;
 
             case TileEffect.DamageToBoss:

@@ -69,6 +69,11 @@ public class BossController : MonoBehaviour
         Debug.Log($"[Boss] 피격 {amount} -> 현재 HP: {CurrentHP}/{maxHP}");
     }
 
+    public void RestoreHP(int amount)
+    {
+        CurrentHP = Mathf.Clamp(amount, 0, maxHP);
+    }
+
     public IEnumerator PerformEndTurnAttack(PlayerController player)
     {
         if (IsDead || player == null)

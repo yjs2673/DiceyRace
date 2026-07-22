@@ -31,6 +31,11 @@ public class StageManager : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void BootstrapStageManager()
     {
+        if (IsShopScene(SceneManager.GetActiveScene().name))
+        {
+            return;
+        }
+
         if (FindObjectOfType<StageManager>() != null)
         {
             return;
@@ -55,6 +60,11 @@ public class StageManager : MonoBehaviour
     {
         ApplySceneDefaults();
         EnsureRuntimeReferences();
+        string activeSceneName = SceneManager.GetActiveScene().name;
+        if (!IsShopScene(activeSceneName))
+        {
+            GameManager.Instance?.SetStageName(activeSceneName);
+        }
     }
 
     public void AdvanceDistance(int amount)
@@ -133,6 +143,23 @@ public class StageManager : MonoBehaviour
         EvaluateStageResolution();
     }
 
+    public void RestoreSavedFieldState(FieldSceneState savedState)
+    {
+        if (savedState == null)
+        {
+            return;
+        }
+
+        EnsureRuntimeReferences();
+        IsStageResolved = false;
+        CurrentDistance = Mathf.Clamp(savedState.stageDistance, 0, targetDistance);
+
+        if (IsBossField && boss != null)
+        {
+            boss.RestoreHP(savedState.bossCurrentHp);
+        }
+    }
+
     private void EvaluateStageResolution()
     {
         if (IsStageResolved)
@@ -199,5 +226,10 @@ public class StageManager : MonoBehaviour
     private static bool IsBossScene(string sceneName)
     {
         return sceneName.IndexOf("Boss", StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    private static bool IsShopScene(string sceneName)
+    {
+        return sceneName.IndexOf("Shop", StringComparison.OrdinalIgnoreCase) >= 0;
     }
 }
