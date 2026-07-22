@@ -180,54 +180,20 @@ public class PlayerController : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        // 발판 충돌
-        if (other.gameObject.CompareTag("Tile"))
-        {
-            Tile tile = other.GetComponent<Tile>();
-            if (tile != null && tile.tileType == TileType.Moving)
-            {
-                EffectProcessor.ApplyTileEffect(tile, diceManager, this);
-            }
-        }
-        // 장애물 충돌
-        else if (other.gameObject.CompareTag("Obstacle"))
-        {
-            if (TryResolveThreat(other.gameObject, false, true, true))
-            {
-                DestroyCardTarget(other.gameObject, "장애물 관통");
-                return;
-            }
+        GameObject otherObject = other.gameObject;
 
-            animator?.SetTrigger(DoHitHash);
-            if (diceManager != null)
-            {
-                diceManager.ModifyMoves(-1);
-            }
-            Debug.Log("장애물 충돌 - 넉백 및 이동 수 1 감소");
-            OnDamaged(1, other.gameObject);
-            DestroyCardTarget(other.gameObject, "장애물 충돌");
-        }
-        // 적 충돌
-        else if (other.gameObject.CompareTag("Enemy"))
+        if (otherObject.CompareTag("Tile"))
         {
-            if (TryResolveThreat(other.gameObject, true, true, true))
-            {
-                return;
-            }
-
-            animator?.SetTrigger(DoHitHash);
-            if (diceManager != null)
-            {
-                diceManager.ModifyMoves(-1);
-            }
-            Debug.Log("적 충돌 (피격) - 넉백 및 이동 수 1 감소");
-            OnDamaged(1, other.gameObject);
-            if (diceManager != null)
-            {
-                diceManager.ApplyPenaltyKnockback();
-            }
+            HandleTileTrigger(other);
         }
-
+        else if (otherObject.CompareTag("Obstacle"))
+        {
+            HandleObstacleTrigger(otherObject);
+        }
+        else if (otherObject.CompareTag("Enemy"))
+        {
+            HandleEnemyTrigger(otherObject);
+        }
     }
     #endregion
 
@@ -459,14 +425,12 @@ public class PlayerController : MonoBehaviour
     // 적이나 장애물에 닿았을 때 무적 상태인지 체크하고 차감하는 헬퍼 함수
     private bool CheckAndConsumeInvincibility()
     {
-        // 이동 횟수 기반 무적이 켜져 있다면 피격 무시 (차감은 이동 로직에서 처리)
         if (invincibleMoveCount > 0)
         {
             Debug.Log("무적 상태! 피해를 무시합니다.");
             return true;
         }
 
-        // 횟수제 방어막이 있다면 1회 깎고 피격 무시
         if (ignoreHitCount > 0)
         {
             ignoreHitCount--;
@@ -528,21 +492,14 @@ public class PlayerController : MonoBehaviour
     private void OnSuccessfulAttack(GameObject source)
     {
         Debug.Log("적 공격 성공! - 남은 이동 수 1 증가");
-        if (diceManager != null)
-        {
-            diceManager.ModifyMoves(1);
-        }
-
+        ModifyRemainingMoves(1);
         DestroyCardTarget(source, "공격 성공");
     }
 
     private void OnSuccessfulParry(GameObject source)
     {
         Debug.Log("패링 성공! - 남은 이동 수 1 증가");
-        if (diceManager != null)
-        {
-            diceManager.ModifyMoves(1);
-        }
+        ModifyRemainingMoves(1);
 
         if (parryGodBonusDistance != 0)
         {
@@ -645,6 +602,58 @@ public class PlayerController : MonoBehaviour
         }
 
         Debug.Log($"{reason}: 거리 {amount:+#;-#;0}");
+    }
+
+    private void HandleTileTrigger(Collider other)
+    {
+        Tile tile = other.GetComponent<Tile>();
+        if (tile != null && tile.tileType == TileType.Moving)
+        {
+            EffectProcessor.ApplyTileEffect(tile, diceManager, this);
+        }
+    }
+
+    private void HandleObstacleTrigger(GameObject obstacle)
+    {
+        if (TryResolveThreat(obstacle, false, true, true))
+        {
+            DestroyCardTarget(obstacle, "장애물 관통");
+            return;
+        }
+
+        ApplyCollisionPenalty("장애물 충돌 - 넉백 및 이동 수 1 감소", obstacle);
+        DestroyCardTarget(obstacle, "장애물 충돌");
+    }
+
+    private void HandleEnemyTrigger(GameObject enemy)
+    {
+        if (TryResolveThreat(enemy, true, true, true))
+        {
+            return;
+        }
+
+        ApplyCollisionPenalty("적 충돌 (피격) - 넉백 및 이동 수 1 감소", enemy);
+
+        if (diceManager != null)
+        {
+            diceManager.ApplyPenaltyKnockback();
+        }
+    }
+
+    private void ApplyCollisionPenalty(string logMessage, GameObject source)
+    {
+        animator?.SetTrigger(DoHitHash);
+        ModifyRemainingMoves(-1);
+        Debug.Log(logMessage);
+        OnDamaged(1, source);
+    }
+
+    private void ModifyRemainingMoves(int amount)
+    {
+        if (diceManager != null)
+        {
+            diceManager.ModifyMoves(amount);
+        }
     }
     #endregion
 

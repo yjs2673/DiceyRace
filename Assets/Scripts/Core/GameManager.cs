@@ -41,19 +41,23 @@ public class FieldSceneState
 [DefaultExecutionOrder(-1000)]
 public class GameManager : MonoBehaviour
 {
+    private static class RuntimeCache
+    {
+        public static bool HasCache;
+        public static int Coin;
+        public static int PirateCoin;
+        public static int Reroll;
+        public static int PlayerHP;
+        public static int PlayerDamage;
+        public static string StageName;
+        public static List<Dice> HasDice = new List<Dice>();
+        public static List<CardData> HasCard = new List<CardData>();
+        public static FieldSceneState SavedFieldState;
+        public static FieldSceneState LatestFieldCheckpoint;
+    }
+
     public static GameManager Instance { get; private set; }
     private const string DefaultShopSceneName = "ShopScene";
-    private static bool hasRuntimeCache;
-    private static int cachedCoin;
-    private static int cachedPirateCoin;
-    private static int cachedReroll;
-    private static int cachedPlayerHP;
-    private static int cachedPlayerDamage;
-    private static string cachedStageName;
-    private static List<Dice> cachedHasDice = new List<Dice>();
-    private static List<CardData> cachedHasCard = new List<CardData>();
-    private static FieldSceneState cachedSavedFieldState;
-    private static FieldSceneState cachedLatestFieldCheckpoint;
 
     // 게임 시작 시 초기값 설정 //
     [SerializeField] private int initialCoin = 1000;
@@ -111,7 +115,7 @@ public class GameManager : MonoBehaviour
         gameObject.name = "GameManager [Persistent]";
         DontDestroyOnLoad(gameObject);
 
-        if (hasRuntimeCache)
+        if (RuntimeCache.HasCache)
         {
             RestoreFromRuntimeCache();
         }
@@ -157,8 +161,7 @@ public class GameManager : MonoBehaviour
     // coin
     public void AddCoin(int amount)
     {
-        coin += amount;
-        RefreshRuntimeDebugInfo();
+        UpdateCoin(coin + amount);
     }
 
     public bool SpendCoin(int amount)
@@ -166,15 +169,13 @@ public class GameManager : MonoBehaviour
         if (coin < amount)
             return false;
 
-        coin -= amount;
-        RefreshRuntimeDebugInfo();
+        UpdateCoin(coin - amount);
         return true;
     }
     // pirate coin
     public void AddPirateCoin(int amount)
     {
-        pirateCoin += amount;
-        RefreshRuntimeDebugInfo();
+        UpdatePirateCoin(pirateCoin + amount);
     }
 
     public bool SpendPirateCoin(int amount)
@@ -182,8 +183,7 @@ public class GameManager : MonoBehaviour
         if (pirateCoin < amount)
             return false;
 
-        pirateCoin -= amount;
-        RefreshRuntimeDebugInfo();
+        UpdatePirateCoin(pirateCoin - amount);
         return true;
     }
     // dice
@@ -222,59 +222,43 @@ public class GameManager : MonoBehaviour
         if (reroll <= 0)
             return false;
 
-        reroll--;
-        RefreshRuntimeDebugInfo();
+        UpdateReroll(reroll - 1);
         return true;
     }
 
     public void AddReroll(int amount)
     {
-        reroll += amount;
-        RefreshRuntimeDebugInfo();
+        UpdateReroll(reroll + amount);
     }
 
     public void SetReroll(int amount)
     {
-        reroll = Mathf.Max(0, amount);
-        RefreshRuntimeDebugInfo();
+        UpdateReroll(Mathf.Max(0, amount));
     }
     // player HP
     public void SetPlayerHP(int hp)
     {
-        playerHP = hp;
-        RefreshRuntimeDebugInfo();
+        UpdatePlayerHP(hp);
     }
 
     public void TakeDamage(int damage)
     {
-        playerHP -= damage;
-
-        if (playerHP < 0)
-            playerHP = 0;
-
-        RefreshRuntimeDebugInfo();
+        UpdatePlayerHP(Mathf.Max(0, playerHP - damage));
     }
 
     public void Heal(int amount)
     {
-        playerHP += amount;
-        RefreshRuntimeDebugInfo();
+        UpdatePlayerHP(playerHP + amount);
     }
     // player Damage
     public void AddPlayerDamage(int amount)
     {
-        playerDamage += amount;
-        RefreshRuntimeDebugInfo();
+        UpdatePlayerDamage(playerDamage + amount);
     }
 
     public void ReducePlayerDamage(int amount)
     {
-        playerDamage -= amount;
-
-        if (playerDamage < 0)
-            playerDamage = 0;
-
-        RefreshRuntimeDebugInfo();
+        UpdatePlayerDamage(Mathf.Max(0, playerDamage - amount));
     }
 
     // 턴 종료 시 소지한 카드 모두 제거
@@ -315,13 +299,7 @@ public class GameManager : MonoBehaviour
 
     public void CaptureFieldCheckpoint(PlayerController player, DiceManager diceManager, StageManager stageManager, TurnPhase phase)
     {
-        if (player == null || diceManager == null || stageManager == null)
-        {
-            return;
-        }
-
-        string activeSceneName = SceneManager.GetActiveScene().name;
-        if (activeSceneName.IndexOf("Shop", System.StringComparison.OrdinalIgnoreCase) >= 0)
+        if (!CanCaptureFieldState(player, diceManager, stageManager))
         {
             return;
         }
@@ -332,19 +310,10 @@ public class GameManager : MonoBehaviour
 
     public void ReturnToSavedFieldScene()
     {
-        if (!HasSavedFieldState)
+        if (!EnsureSavedFieldStateForReturn())
         {
-            if (latestFieldCheckpoint != null)
-            {
-                savedFieldState = latestFieldCheckpoint;
-                Debug.LogWarning($"복귀용 저장 상태가 없어 마지막 체크포인트로 대체합니다. -> {savedFieldState.sceneName}");
-                RefreshRuntimeDebugInfo();
-            }
-            else
-            {
-                Debug.LogWarning("복귀할 필드 저장 상태가 없습니다.");
-                return;
-            }
+            Debug.LogWarning("복귀할 필드 저장 상태가 없습니다.");
+            return;
         }
 
         SceneManager.LoadScene(savedFieldState.sceneName);
@@ -409,12 +378,7 @@ public class GameManager : MonoBehaviour
             yield break;
         }
 
-        StageManager stageManager = FindFirstObjectByType<StageManager>();
-        PlayerController player = FindFirstObjectByType<PlayerController>();
-        DiceManager diceManager = FindFirstObjectByType<DiceManager>();
-        TurnManager turnManager = FindFirstObjectByType<TurnManager>();
-
-        if (stageManager == null || player == null || diceManager == null || turnManager == null)
+        if (!TryFindFieldRuntime(out StageManager stageManager, out PlayerController player, out DiceManager diceManager, out TurnManager turnManager, true))
         {
             Debug.LogError("필드 상태 복원에 필요한 오브젝트를 찾지 못했습니다.");
             yield break;
@@ -444,12 +408,7 @@ public class GameManager : MonoBehaviour
             yield break;
         }
 
-        StageManager stageManager = FindFirstObjectByType<StageManager>();
-        PlayerController player = FindFirstObjectByType<PlayerController>();
-        DiceManager diceManager = FindFirstObjectByType<DiceManager>();
-        TurnManager turnManager = FindFirstObjectByType<TurnManager>();
-
-        if (stageManager == null || player == null || diceManager == null)
+        if (!TryFindFieldRuntime(out StageManager stageManager, out PlayerController player, out DiceManager diceManager, out TurnManager turnManager, false))
         {
             Debug.LogWarning($"필드 체크포인트 자동 저장 실패 -> {sceneName}");
             yield break;
@@ -464,6 +423,52 @@ public class GameManager : MonoBehaviour
     private static bool IsShopScene(string sceneName)
     {
         return sceneName.IndexOf("Shop", System.StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    private bool EnsureSavedFieldStateForReturn()
+    {
+        if (HasSavedFieldState)
+        {
+            return true;
+        }
+
+        if (latestFieldCheckpoint == null)
+        {
+            return false;
+        }
+
+        savedFieldState = latestFieldCheckpoint;
+        Debug.LogWarning($"복귀용 저장 상태가 없어 마지막 체크포인트로 대체합니다. -> {savedFieldState.sceneName}");
+        RefreshRuntimeDebugInfo();
+        return true;
+    }
+
+    private bool CanCaptureFieldState(PlayerController player, DiceManager diceManager, StageManager stageManager)
+    {
+        if (player == null || diceManager == null || stageManager == null)
+        {
+            return false;
+        }
+
+        return !IsShopScene(SceneManager.GetActiveScene().name);
+    }
+
+    private static bool TryFindFieldRuntime(
+        out StageManager stageManager,
+        out PlayerController player,
+        out DiceManager diceManager,
+        out TurnManager turnManager,
+        bool requireTurnManager)
+    {
+        stageManager = FindFirstObjectByType<StageManager>();
+        player = FindFirstObjectByType<PlayerController>();
+        diceManager = FindFirstObjectByType<DiceManager>();
+        turnManager = FindFirstObjectByType<TurnManager>();
+
+        return stageManager != null
+            && player != null
+            && diceManager != null
+            && (!requireTurnManager || turnManager != null);
     }
 
     private void RefreshRuntimeDebugInfo()
@@ -484,31 +489,61 @@ public class GameManager : MonoBehaviour
 
     private void SaveToRuntimeCache()
     {
-        hasRuntimeCache = true;
-        cachedCoin = coin;
-        cachedPirateCoin = pirateCoin;
-        cachedReroll = reroll;
-        cachedPlayerHP = playerHP;
-        cachedPlayerDamage = playerDamage;
-        cachedStageName = stageName;
-        cachedHasDice = new List<Dice>(hasDice);
-        cachedHasCard = new List<CardData>(hasCard);
-        cachedSavedFieldState = CloneFieldSceneState(savedFieldState);
-        cachedLatestFieldCheckpoint = CloneFieldSceneState(latestFieldCheckpoint);
+        RuntimeCache.HasCache = true;
+        RuntimeCache.Coin = coin;
+        RuntimeCache.PirateCoin = pirateCoin;
+        RuntimeCache.Reroll = reroll;
+        RuntimeCache.PlayerHP = playerHP;
+        RuntimeCache.PlayerDamage = playerDamage;
+        RuntimeCache.StageName = stageName;
+        RuntimeCache.HasDice = new List<Dice>(hasDice);
+        RuntimeCache.HasCard = new List<CardData>(hasCard);
+        RuntimeCache.SavedFieldState = CloneFieldSceneState(savedFieldState);
+        RuntimeCache.LatestFieldCheckpoint = CloneFieldSceneState(latestFieldCheckpoint);
     }
 
     private void RestoreFromRuntimeCache()
     {
-        coin = cachedCoin;
-        pirateCoin = cachedPirateCoin;
-        reroll = cachedReroll;
-        playerHP = cachedPlayerHP;
-        playerDamage = cachedPlayerDamage;
-        stageName = cachedStageName;
-        hasDice = new List<Dice>(cachedHasDice);
-        hasCard = new List<CardData>(cachedHasCard);
-        savedFieldState = CloneFieldSceneState(cachedSavedFieldState);
-        latestFieldCheckpoint = CloneFieldSceneState(cachedLatestFieldCheckpoint);
+        coin = RuntimeCache.Coin;
+        pirateCoin = RuntimeCache.PirateCoin;
+        reroll = RuntimeCache.Reroll;
+        playerHP = RuntimeCache.PlayerHP;
+        playerDamage = RuntimeCache.PlayerDamage;
+        stageName = RuntimeCache.StageName;
+        hasDice = new List<Dice>(RuntimeCache.HasDice);
+        hasCard = new List<CardData>(RuntimeCache.HasCard);
+        savedFieldState = CloneFieldSceneState(RuntimeCache.SavedFieldState);
+        latestFieldCheckpoint = CloneFieldSceneState(RuntimeCache.LatestFieldCheckpoint);
+    }
+
+    private void UpdateCoin(int value)
+    {
+        coin = value;
+        RefreshRuntimeDebugInfo();
+    }
+
+    private void UpdatePirateCoin(int value)
+    {
+        pirateCoin = value;
+        RefreshRuntimeDebugInfo();
+    }
+
+    private void UpdateReroll(int value)
+    {
+        reroll = value;
+        RefreshRuntimeDebugInfo();
+    }
+
+    private void UpdatePlayerHP(int value)
+    {
+        playerHP = value;
+        RefreshRuntimeDebugInfo();
+    }
+
+    private void UpdatePlayerDamage(int value)
+    {
+        playerDamage = value;
+        RefreshRuntimeDebugInfo();
     }
 
     private static FieldSceneState CloneFieldSceneState(FieldSceneState source)
