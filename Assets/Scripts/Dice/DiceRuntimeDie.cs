@@ -3,11 +3,24 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class DiceRuntimeDie : MonoBehaviour
 {
+    private enum DiceFaceReadMode
+    {
+        TopFace,
+        BottomFace
+    }
+
     [System.Serializable]
     private struct FaceDirection
     {
         public int value;
         public Vector3 localUpDirection;
+    }
+
+    [System.Serializable]
+    private struct FaceAnchor
+    {
+        public int value;
+        public Transform anchor;
     }
 
     [Header("Result Detection")]
@@ -16,12 +29,18 @@ public class DiceRuntimeDie : MonoBehaviour
     [SerializeField] private float stableDuration = 0.4f;
     [SerializeField] private float maxRollDuration = 6f;
 
+    [Header("Face Readout")]
+    [SerializeField] private DiceFaceReadMode readMode = DiceFaceReadMode.TopFace;
+    [SerializeField] private FaceAnchor[] faceAnchors;
+    [SerializeField] private bool useDiceFaceAnchorComponents = true;
+
     private Rigidbody rb;
     private float stableTimer;
     private float rollTimer;
     private int lastDetectedFace;
     private FaceDirection[] runtimeFaces;
     private Vector3 authoredLocalScale = Vector3.one;
+    private DiceFaceAnchor[] componentFaceAnchors;
 
     public bool IsRolling { get; private set; }
     public bool HasResolved { get; private set; }
@@ -33,6 +52,7 @@ public class DiceRuntimeDie : MonoBehaviour
         rb.maxAngularVelocity = Mathf.Max(rb.maxAngularVelocity, 50f);
         authoredLocalScale = transform.localScale;
         runtimeFaces = CreateDefaultFaces();
+        RefreshFaceAnchors();
     }
 
     public void ResetForRoll(Vector3 worldPosition, Quaternion worldRotation)
@@ -73,6 +93,8 @@ public class DiceRuntimeDie : MonoBehaviour
 
     public void ApplyDiceData(Dice diceData)
     {
+        RefreshFaceAnchors();
+
         if (diceData == null)
         {
             runtimeFaces = CreateDefaultFaces();
@@ -108,11 +130,11 @@ public class DiceRuntimeDie : MonoBehaviour
         }
 
         rollTimer += Time.fixedDeltaTime;
-        int topFace = GetTopFace();
+        int resolvedFace = GetResolvedFace();
 
         if (rollTimer >= maxRollDuration)
         {
-            Resolve(topFace);
+            Resolve(resolvedFace);
             return;
         }
 
@@ -122,13 +144,13 @@ public class DiceRuntimeDie : MonoBehaviour
         if (!almostStopped)
         {
             stableTimer = 0f;
-            lastDetectedFace = topFace;
+            lastDetectedFace = resolvedFace;
             return;
         }
 
-        if (topFace != lastDetectedFace)
+        if (resolvedFace != lastDetectedFace)
         {
-            lastDetectedFace = topFace;
+            lastDetectedFace = resolvedFace;
             stableTimer = 0f;
             return;
         }
@@ -136,7 +158,7 @@ public class DiceRuntimeDie : MonoBehaviour
         stableTimer += Time.fixedDeltaTime;
         if (stableTimer >= stableDuration)
         {
-            Resolve(topFace);
+            Resolve(resolvedFace);
         }
     }
 
@@ -150,7 +172,17 @@ public class DiceRuntimeDie : MonoBehaviour
         rb.isKinematic = true;
     }
 
-    private int GetTopFace()
+    private int GetResolvedFace()
+    {
+        if (HasValidFaceAnchors())
+        {
+            return GetFaceFromAnchors();
+        }
+
+        return GetFaceFromDirections();
+    }
+
+    private int GetFaceFromDirections()
     {
         if (runtimeFaces == null || runtimeFaces.Length == 0)
         {
@@ -159,11 +191,12 @@ public class DiceRuntimeDie : MonoBehaviour
 
         float maxDot = float.NegativeInfinity;
         int bestValue = 1;
+        Vector3 targetDirection = GetReadReferenceDirection();
 
         for (int i = 0; i < runtimeFaces.Length; i++)
         {
             Vector3 worldDirection = transform.TransformDirection(runtimeFaces[i].localUpDirection.normalized);
-            float dot = Vector3.Dot(worldDirection, Vector3.up);
+            float dot = Vector3.Dot(worldDirection, targetDirection);
             if (dot > maxDot)
             {
                 maxDot = dot;
@@ -172,6 +205,109 @@ public class DiceRuntimeDie : MonoBehaviour
         }
 
         return bestValue;
+    }
+
+    private int GetFaceFromAnchors()
+    {
+        float maxDot = float.NegativeInfinity;
+        int bestValue = 1;
+        Vector3 targetDirection = GetReadReferenceDirection();
+
+        if (HasValidComponentFaceAnchors())
+        {
+            for (int i = 0; i < componentFaceAnchors.Length; i++)
+            {
+                DiceFaceAnchor faceAnchor = componentFaceAnchors[i];
+                if (faceAnchor == null)
+                {
+                    continue;
+                }
+
+                float dot = Vector3.Dot(faceAnchor.transform.up, targetDirection);
+                if (dot > maxDot)
+                {
+                    maxDot = dot;
+                    bestValue = faceAnchor.Value;
+                }
+            }
+
+            return bestValue;
+        }
+
+        for (int i = 0; i < faceAnchors.Length; i++)
+        {
+            if (faceAnchors[i].anchor == null)
+            {
+                continue;
+            }
+
+            float dot = Vector3.Dot(faceAnchors[i].anchor.up, targetDirection);
+            if (dot > maxDot)
+            {
+                maxDot = dot;
+                bestValue = faceAnchors[i].value;
+            }
+        }
+
+        return bestValue;
+    }
+
+    private bool HasValidFaceAnchors()
+    {
+        if (HasValidComponentFaceAnchors())
+        {
+            return true;
+        }
+
+        if (faceAnchors == null || faceAnchors.Length == 0)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < faceAnchors.Length; i++)
+        {
+            if (faceAnchors[i].anchor != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool HasValidComponentFaceAnchors()
+    {
+        if (!useDiceFaceAnchorComponents)
+        {
+            return false;
+        }
+
+        if (componentFaceAnchors == null || componentFaceAnchors.Length == 0)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < componentFaceAnchors.Length; i++)
+        {
+            if (componentFaceAnchors[i] != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private Vector3 GetReadReferenceDirection()
+    {
+        return readMode == DiceFaceReadMode.BottomFace
+            ? Vector3.down
+            : Vector3.up;
+    }
+
+    private void RefreshFaceAnchors()
+    {
+        componentFaceAnchors = GetComponentsInChildren<DiceFaceAnchor>(true);
     }
 
     private void ApplyModelSettings(float modelScale, float rigidbodyMass)

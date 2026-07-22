@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b481630aad676be4490de1cb1786f609, type: 3}
-  m_Name: Dice3
+  m_Name: Dice_OddDice
   m_EditorClassIdentifier: Assembly-CSharp::Dice
-  diceName: Middle 4
+  diceName: Odd Dice
   icon: {fileID: 0}
   price: 0
   minValue: 0
   maxValue: 0
   description: 
-  runtimePrefab: {fileID: 2125669165506736020, guid: f13b3906ec60a446baca091f8663b20c, type: 3}
+  runtimePrefab: {fileID: 820570565641664209, guid: d178d618fb3214a48ac0ba4e07e695c4, type: 3}
   preferredBoardSlot: -1
   boardSpawnOffset: {x: 0, y: 0, z: 0}
   spawnEulerAngles: {x: 0, y: 0, z: 0}

@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b481630aad676be4490de1cb1786f609, type: 3}
-  m_Name: Dice1
+  m_Name: Dice_GoodDay
   m_EditorClassIdentifier: Assembly-CSharp::Dice
-  diceName: 10 Ace King
+  diceName: Good Daay
   icon: {fileID: 0}
   price: 0
   minValue: 0
   maxValue: 0
   description: 
-  runtimePrefab: {fileID: 2228036851911166814, guid: bfdeaf80005984292aa9fb226560c1bc, type: 3}
+  runtimePrefab: {fileID: 3941028979799630408, guid: 0488b7866bfd04ef3aeffd878512a406, type: 3}
   preferredBoardSlot: -1
   boardSpawnOffset: {x: 0, y: 0, z: 0}
   spawnEulerAngles: {x: 0, y: 0, z: 0}

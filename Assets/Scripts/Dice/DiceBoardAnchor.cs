@@ -7,23 +7,24 @@ public class DiceBoardAnchor : MonoBehaviour
     [SerializeField] private Vector3 boardOffset;
 
     private bool hasCachedOffset;
+    private bool isSubscribedToTurnManager;
 
     public void Configure(Transform target)
     {
         followTarget = target;
         CacheOffsetIfNeeded();
         SnapToTarget();
+        SubscribeTurnManagerIfNeeded();
     }
 
-    private void LateUpdate()
+    private void OnEnable()
     {
-        if (followTarget == null)
-        {
-            return;
-        }
+        SubscribeTurnManagerIfNeeded();
+    }
 
-        CacheOffsetIfNeeded();
-        transform.position = GetTargetPosition();
+    private void OnDisable()
+    {
+        UnsubscribeTurnManager();
     }
 
     public void SnapToTarget()
@@ -62,5 +63,37 @@ public class DiceBoardAnchor : MonoBehaviour
             ? new Vector3(currentPosition.x - followTarget.position.x, currentPosition.y, currentPosition.z)
             : currentPosition - followTarget.position;
         hasCachedOffset = true;
+    }
+
+    private void SubscribeTurnManagerIfNeeded()
+    {
+        if (isSubscribedToTurnManager || TurnManager.Instance == null)
+        {
+            return;
+        }
+
+        TurnManager.Instance.OnPhaseChanged += HandlePhaseChanged;
+        isSubscribedToTurnManager = true;
+    }
+
+    private void UnsubscribeTurnManager()
+    {
+        if (!isSubscribedToTurnManager || TurnManager.Instance == null)
+        {
+            return;
+        }
+
+        TurnManager.Instance.OnPhaseChanged -= HandlePhaseChanged;
+        isSubscribedToTurnManager = false;
+    }
+
+    private void HandlePhaseChanged(TurnPhase phase)
+    {
+        if (phase != TurnPhase.End)
+        {
+            return;
+        }
+
+        SnapToTarget();
     }
 }

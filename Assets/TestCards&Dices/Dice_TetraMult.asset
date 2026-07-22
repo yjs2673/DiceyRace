@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b481630aad676be4490de1cb1786f609, type: 3}
-  m_Name: Dice2
+  m_Name: Dice_TetraMult
   m_EditorClassIdentifier: Assembly-CSharp::Dice
-  diceName: Even Dice
+  diceName: Tetra Mult
   icon: {fileID: 0}
   price: 0
   minValue: 0
   maxValue: 0
   description: 
-  runtimePrefab: {fileID: 9156067298482440789, guid: 34563a1c2ef664c419d1479913d5c3b6, type: 3}
+  runtimePrefab: {fileID: 8629187991832175849, guid: 0e2bd91c3a676417a9b205713acfa487, type: 3}
   preferredBoardSlot: -1
   boardSpawnOffset: {x: 0, y: 0, z: 0}
   spawnEulerAngles: {x: 0, y: 0, z: 0}
