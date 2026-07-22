@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardID: 8
   cardName: 8
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 87ad68129104fb246b84a496917342f4, type: 3}
+  price: 0
   description: 88888
   cardType: 0
-  cardEffect: 0
-  effectValue: 0
+  cardEffect: 4
+  effectValue: 1

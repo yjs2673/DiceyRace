@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardID: 1
   cardName: 1
-  icon: {fileID: 0}
-  description: 1111111
+  icon: {fileID: 21300000, guid: 64c6d57a4453d2c41b44ae64ecf9f19e, type: 3}
+  price: 0
+  description: Add Parry To Attack
   cardType: 1
-  cardEffect: 0
+  cardEffect: 8
   effectValue: 0
