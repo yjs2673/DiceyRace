@@ -194,6 +194,7 @@ public class PlayerController : MonoBehaviour
         {
             if (TryResolveThreat(other.gameObject, false, true, true))
             {
+                DestroyCardTarget(other.gameObject, "장애물 관통");
                 return;
             }
 
@@ -204,10 +205,7 @@ public class PlayerController : MonoBehaviour
             }
             Debug.Log("장애물 충돌 - 넉백 및 이동 수 1 감소");
             OnDamaged(1, other.gameObject);
-            if (diceManager != null)
-            {
-                diceManager.ApplyPenaltyKnockback();
-            }
+            DestroyCardTarget(other.gameObject, "장애물 충돌");
         }
         // 적 충돌
         else if (other.gameObject.CompareTag("Enemy"))

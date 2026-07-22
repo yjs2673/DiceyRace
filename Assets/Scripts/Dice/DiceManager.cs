@@ -83,7 +83,7 @@ public class DiceManager : MonoBehaviour
             // 칸 판정은 유지하되, 대기 없이 연속적으로 전진
             while (movedDistance < moveDistance)
             {
-                if (isKnockedBack && !enableTestMode)
+                /*if (isKnockedBack && !enableTestMode)     // 넉백 로직 일단 주석 처리
                 {
                     player.SnapToPosition(startPos);
                     CheckStopTile();
@@ -91,7 +91,7 @@ public class DiceManager : MonoBehaviour
                     isKnockedBack = false;
                     remainingMoves = 0;
                     break;
-                }
+                }*/
 
                 float delta = Mathf.Min(moveSpeed * Time.fixedDeltaTime, moveDistance - movedDistance);
                 player.ApplyMove(delta); // PlayerController자동 이동 적용

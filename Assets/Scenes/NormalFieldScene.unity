@@ -6790,11 +6790,11 @@ MonoBehaviour:
   remainingMoveText: {fileID: 2120069640}
   player: {fileID: 1622605423}
   moveDuration: 0.3
-  moveDistance: 1
-  remainingRerolls: 3
+  moveDistance: 2
+  remainingRerolls: 10
   enableTestMode: 0
-  testMaxNum: 4
-  testMinNum: 3
+  testMaxNum: 6
+  testMinNum: 5
 --- !u!4 &995084490 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -3435229363823192219, guid: b2708d7ad68104d2dad610947a43d42e, type: 3}
