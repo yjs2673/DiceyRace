@@ -19,7 +19,7 @@ public class DiceManager : MonoBehaviour
 
     [Header("Dice Board")]
     [SerializeField] private Transform diceBoardRoot;
-    [SerializeField] private float autoMoveDelay = 1.5f;
+    [SerializeField] public float autoMoveDelay = 1.5f;
     [SerializeField] private bool createFallbackBoardIfMissing = true;
     [SerializeField] private bool fallbackToLegacyRollIfBoardUnavailable = false;
 
@@ -56,6 +56,7 @@ public class DiceManager : MonoBehaviour
         }
 
         EnsureDiceBoardController();
+        PrepareParkedDiceBoard();
         UpdateDiceLabel("주사위: -");
         UpdateUI(remainingMoves, remainingRerolls);
         SubscribeTurnManager();
@@ -193,6 +194,7 @@ public class DiceManager : MonoBehaviour
         UpdateUI(remainingMoves, remainingRerolls);
         RefreshRollButtonState();
         player?.SetAutoMoveAnimation(false);
+        PrepareParkedDiceBoard();
     }
 
     public void ModifyMoves(int amount)
@@ -225,7 +227,7 @@ public class DiceManager : MonoBehaviour
             }
             else
             {
-                UpdateDiceLabel($"주사위 합: {currentDiceValue}\n버튼을 누르거나 잠시 후 이동");
+                UpdateDiceLabel($"주사위 합: {currentDiceValue}\n버튼을 눌러서 이동");
             }
         }
 
@@ -524,6 +526,16 @@ public class DiceManager : MonoBehaviour
         }
 
         return ownedDice;
+    }
+
+    private void PrepareParkedDiceBoard()
+    {
+        if (!EnsureDiceBoardController() || diceBoardController == null)
+        {
+            return;
+        }
+
+        diceBoardController.PrepareParkedDice(GetOwnedDiceDefinitions());
     }
 
     private bool EnsureDiceBoardController()

@@ -96,6 +96,14 @@ public class DiceBoardController : MonoBehaviour
         IsRolling = false;
     }
 
+    public void PrepareParkedDice(IReadOnlyList<Dice> diceDefinitions)
+    {
+        int diceCount = diceDefinitions != null && diceDefinitions.Count > 0 ? diceDefinitions.Count : 1;
+        EnsureDicePool(diceDefinitions, diceCount);
+        PositionDice(diceDefinitions, diceCount);
+        ParkDiceAtSpawnPoints(diceCount);
+    }
+
     private void LateUpdate()
     {
         if (IsRolling)
@@ -237,7 +245,7 @@ public class DiceBoardController : MonoBehaviour
 
             if (TryGetSpawnPointPose(diceData, i, usedSpawnSlots, out Transform parkedParent, out Vector3 spawnPosition, out Quaternion spawnRotation))
             {
-                ApplySpawnPose(handle, diceData, parkedParent, spawnPosition, spawnRotation, true);
+                ApplyExplicitSpawnPointPose(handle, diceData, parkedParent, spawnRotation);
                 continue;
             }
 
@@ -245,6 +253,22 @@ public class DiceBoardController : MonoBehaviour
             Quaternion fallbackRotation = Random.rotation;
             ApplySpawnPose(handle, diceData, transform, fallbackPosition, fallbackRotation, false);
         }
+    }
+
+    private void ApplyExplicitSpawnPointPose(RuntimeDieHandle handle, Dice diceData, Transform parkedParent, Quaternion baseRotation)
+    {
+        Transform safeParent = parkedParent != null ? parkedParent : transform;
+        Quaternion authoredRotation = Quaternion.Euler(diceData != null ? diceData.spawnEulerAngles : Vector3.zero);
+        Quaternion finalLocalRotation = authoredRotation;
+        Quaternion finalWorldRotation = safeParent.rotation * finalLocalRotation;
+
+        handle.parkedParent = safeParent;
+        handle.parkedLocalPosition = Vector3.zero;
+        handle.parkedLocalRotation = finalLocalRotation;
+        handle.isParked = false;
+
+        handle.runtimeDie.transform.SetParent(transform, true);
+        handle.runtimeDie.ResetForRoll(safeParent.position, finalWorldRotation);
     }
 
     private void ApplySpawnPose(RuntimeDieHandle handle, Dice diceData, Transform parkedParent, Vector3 basePosition, Quaternion baseRotation, bool useSpawnHeight)

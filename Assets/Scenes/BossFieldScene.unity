@@ -9285,7 +9285,7 @@ MonoBehaviour:
   moveDistance: 2
   remainingRerolls: 10
   diceBoardRoot: {fileID: 0}
-  autoMoveDelay: 1.5
+  autoMoveDelay: 1000
   createFallbackBoardIfMissing: 1
   fallbackToLegacyRollIfBoardUnavailable: 0
   enableTestMode: 0
