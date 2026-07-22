@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int parryReflectDamage = 1;
     [SerializeField] private bool nextAttackHasParry;
     [SerializeField] private bool nextBlockIsParry;
+    [SerializeField] private bool isInvincibleDashResolving;
 
     [Header("Managers")]
     public DiceManager diceManager;
@@ -273,6 +274,13 @@ public class PlayerController : MonoBehaviour
 
     public void TriggerInvincibleDash(int distance)
     {
+        if (isInvincibleDashResolving)
+        {
+            Debug.LogWarning("InvincibleDash 재진입이 감지되어 이번 호출은 무시합니다.");
+            return;
+        }
+
+        isInvincibleDashResolving = true;
         int dashDistance = Mathf.Max(1, distance);
         AddInvincibleMove(dashDistance);
 
@@ -286,6 +294,7 @@ public class PlayerController : MonoBehaviour
         }
 
         Debug.Log($"카드 효과 적용: 무적 돌진 {dashDistance}칸");
+        isInvincibleDashResolving = false;
     }
 
     public void OnMoveStepCompleted(int currentDistance)

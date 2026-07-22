@@ -25,6 +25,8 @@ public class DiceManager : MonoBehaviour
     private int currentDiceValue = 0;
     private int remainingMoves = 0;
     private bool isMoving = false;
+    private bool isMoveRoutineQueued = false;
+    private Coroutine activeMoveRoutine;
 
     private bool isKnockedBack = false; // 넉백 상태인지 여부
     private readonly WaitForFixedUpdate fixedUpdateYield = new WaitForFixedUpdate();
@@ -40,7 +42,19 @@ public class DiceManager : MonoBehaviour
         // 버튼 클릭 이벤트 연결
         rollButton.onClick.AddListener(RollDice);
         UpdateUI(0, remainingRerolls);
+        SubscribeTurnManager();
+        RefreshRollButtonState();
         CaptureFieldCheckpoint();
+    }
+
+    private void OnDestroy()
+    {
+        if (rollButton != null)
+        {
+            rollButton.onClick.RemoveListener(RollDice);
+        }
+
+        UnsubscribeTurnManager();
     }
 
     public void RollDice()
@@ -58,11 +72,11 @@ public class DiceManager : MonoBehaviour
         remainingMoves = diceValue;
         UpdateUI(remainingMoves, remainingRerolls);
 
-        rollButton.interactable = false; // 이동 중 버튼 비활성화
+        RefreshRollButtonState();
 
         TurnManager.Instance.SetPhase(TurnPhase.Move); // Move 페이즈로 전환
 
-        StartCoroutine(MoveRoutine());
+        StartMoveRoutine();
     }
 
     // PlayerController에서 충돌 시 호출할 넉백 함수
@@ -75,12 +89,20 @@ public class DiceManager : MonoBehaviour
     // 플레이어 이동 코루틴
     private IEnumerator MoveRoutine()
     {
+        isMoveRoutineQueued = false;
         isMoving = true;
         player.SetAutoMoveAnimation(true);
         float moveSpeed = moveDistance / moveDuration;
 
         while (remainingMoves > 0)
         {
+            if (HasReachedStageGoal())
+            {
+                remainingMoves = 0;
+                UpdateUI(remainingMoves, remainingRerolls);
+                break;
+            }
+
             remainingMoves--;
             isKnockedBack = false;
             Vector3 startPos = player.PhysicsPosition;
@@ -116,6 +138,13 @@ public class DiceManager : MonoBehaviour
             UpdateUI(remainingMoves, remainingRerolls);
             CaptureFieldCheckpoint();
 
+            if (HasReachedStageGoal())
+            {
+                remainingMoves = 0;
+                UpdateUI(remainingMoves, remainingRerolls);
+                break;
+            }
+
             // 이동이 모두 끝났을 때 정지 발판 체크
             if (remainingMoves <= 0)
             {
@@ -139,6 +168,7 @@ public class DiceManager : MonoBehaviour
         }
 
         isMoving = false;
+        activeMoveRoutine = null;
         player.SetAutoMoveAnimation(false);
         rollButton.interactable = true;
 
@@ -185,7 +215,7 @@ public class DiceManager : MonoBehaviour
 
         if (rollButton != null)
         {
-            rollButton.interactable = false;
+            RefreshRollButtonState();
         }
 
         if (TurnManager.Instance != null && TurnManager.Instance.CurrentPhase != TurnPhase.Move)
@@ -193,7 +223,7 @@ public class DiceManager : MonoBehaviour
             TurnManager.Instance.SetPhase(TurnPhase.Move);
         }
 
-        StartCoroutine(MoveRoutine());
+        StartMoveRoutine();
     }
 
     public void RestoreSavedFieldState(FieldSceneState savedState)
@@ -220,7 +250,7 @@ public class DiceManager : MonoBehaviour
 
         if (rollButton != null)
         {
-            rollButton.interactable = savedState.returnPhase == TurnPhase.Standby;
+            RefreshRollButtonState();
         }
 
         player?.SetAutoMoveAnimation(false);
@@ -264,6 +294,55 @@ public class DiceManager : MonoBehaviour
         {
             remainingRerollText.text = $"남은 리롤: {currentRerolls}";
         }
+    }
+
+    private void SubscribeTurnManager()
+    {
+        if (TurnManager.Instance != null)
+        {
+            TurnManager.Instance.OnPhaseChanged += HandlePhaseChanged;
+        }
+    }
+
+    private void UnsubscribeTurnManager()
+    {
+        if (TurnManager.Instance != null)
+        {
+            TurnManager.Instance.OnPhaseChanged -= HandlePhaseChanged;
+        }
+    }
+
+    private void HandlePhaseChanged(TurnPhase phase)
+    {
+        RefreshRollButtonState();
+    }
+
+    private void RefreshRollButtonState()
+    {
+        if (rollButton == null)
+        {
+            return;
+        }
+
+        bool isStandbyPhase = TurnManager.Instance != null && TurnManager.Instance.CurrentPhase == TurnPhase.Standby;
+        rollButton.interactable = isStandbyPhase && !isMoving && remainingRerolls > 0 && remainingMoves <= 0;
+    }
+
+    private bool HasReachedStageGoal()
+    {
+        return StageManager.Instance != null
+            && (StageManager.Instance.IsStageResolved || StageManager.Instance.RemainingDistanceToGoal <= 0);
+    }
+
+    private void StartMoveRoutine()
+    {
+        if (isMoving || isMoveRoutineQueued || activeMoveRoutine != null)
+        {
+            return;
+        }
+
+        isMoveRoutineQueued = true;
+        activeMoveRoutine = StartCoroutine(MoveRoutine());
     }
 
     private void CheckStopTile()

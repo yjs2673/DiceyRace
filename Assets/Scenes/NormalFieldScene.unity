@@ -4020,6 +4020,9 @@ MonoBehaviour:
   fieldMode: 0
   targetDistance: 40
   bossMustBeDefeatedToClear: 0
+  nextSceneName: BossFieldScene
+  clearFadeDuration: 1
+  clearFadeHoldDuration: 0.5
   player: {fileID: 1622605423}
   boss: {fileID: 0}
 --- !u!1001 &712854205
@@ -6793,8 +6796,8 @@ MonoBehaviour:
   moveDistance: 2
   remainingRerolls: 10
   enableTestMode: 0
-  testMaxNum: 1
-  testMinNum: 1
+  testMaxNum: 10
+  testMinNum: 10
 --- !u!4 &995084490 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -3435229363823192219, guid: b2708d7ad68104d2dad610947a43d42e, type: 3}
@@ -11010,7 +11013,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b2708d7ad68104d2dad610947a43d42e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 40
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b2708d7ad68104d2dad610947a43d42e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -13793,6 +13796,8 @@ MonoBehaviour:
   initialStageName: DebugGround
   initialCards: []
   initialDice: []
+  shopFadeDuration: 0.75
+  shopFadeHoldDuration: 0.2
   coin: 0
   pirateCoin: 0
   reroll: 0
@@ -13858,6 +13863,8 @@ MonoBehaviour:
   instanceIdDebug: 0
   owningSceneDebug: 
   isPrimaryInstanceDebug: 0
+  savedFieldStateSummaryDebug: 
+  latestFieldCheckpointSummaryDebug: 
 --- !u!4 &1992024220
 Transform:
   m_ObjectHideFlags: 0

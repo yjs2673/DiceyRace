@@ -26,6 +26,7 @@ public class StageManager : MonoBehaviour
     public BossController boss;
 
     public int CurrentDistance { get; private set; }
+    public int RemainingDistanceToGoal => Mathf.Max(0, targetDistance - CurrentDistance);
     public bool IsBossField => fieldMode == FieldMode.Boss;
     public bool IsStageResolved { get; private set; }
 
