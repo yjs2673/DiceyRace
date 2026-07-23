@@ -1,5 +1,5 @@
 using System.Collections;
-// using TMPro;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,31 +7,42 @@ public class DiceManager : MonoBehaviour
 {
     [Header("UI References")]
     public Button rollButton;
-    public Text diceText;               // 주사위 결과
-    public Text remainingRerollText;    // 남은 리롤 횟수
-    public Text remainingMoveText;      // 남은 이동 횟수
+    public Text diceText;
+    public Text remainingRerollText;
+    public Text remainingMoveText;
 
     [Header("Movement Settings")]
     public PlayerController player;
-    public float moveDuration = 0.3f;   // 한 칸 이동하는 시간
-    public float moveDistance = 1f;     // 한 칸 이동하는 거리
-    public int remainingRerolls = 0;    // 남은 리롤 횟수
+    public float moveDuration = 0.3f;
+    public float moveDistance = 1f;
+    public int remainingRerolls = 0;
+
+    [Header("Dice Board")]
+    [SerializeField] private Transform diceBoardRoot;
+    [SerializeField] public float autoMoveDelay = 1.5f;
+    [SerializeField] private bool createFallbackBoardIfMissing = true;
+    [SerializeField] private bool fallbackToLegacyRollIfBoardUnavailable = false;
 
     [Header("Test Settings")]
-    public bool enableTestMode = false; // 테스트 모드 활성화
+    public bool enableTestMode = false;
     public int testMaxNum = 6;
     public int testMinNum = 1;
 
-    private int currentDiceValue = 0;
-    private int remainingMoves = 0;
-    private bool isMoving = false;
-    private bool isMoveRoutineQueued = false;
+    private int currentDiceValue;
+    private int remainingMoves;
+    private bool isMoving;
+    private bool isMoveRoutineQueued;
+    private bool isKnockedBack;
+    private bool isRollingDice;
+    private bool isAwaitingMoveStart;
     private Coroutine activeMoveRoutine;
-
-    private bool isKnockedBack = false; // 넉백 상태인지 여부
+    private Coroutine pendingAutoMoveRoutine;
+    private DiceBoardController diceBoardController;
     private readonly WaitForFixedUpdate fixedUpdateYield = new WaitForFixedUpdate();
 
     public bool IsMoving => isMoving;
+    public bool IsRollingDice => isRollingDice;
+    public bool HasPendingMoveBudget => isMoving || isAwaitingMoveStart || remainingMoves > 0;
     public float StepDistance => moveDistance;
     public int RemainingMoves => remainingMoves;
     public int RemainingRerolls => remainingRerolls;
@@ -39,9 +50,15 @@ public class DiceManager : MonoBehaviour
 
     private void Start()
     {
-        // 버튼 클릭 이벤트 연결
-        rollButton.onClick.AddListener(RollDice);
-        UpdateUI(0, remainingRerolls);
+        if (rollButton != null)
+        {
+            rollButton.onClick.AddListener(HandlePrimaryActionButton);
+        }
+
+        EnsureDiceBoardController();
+        PrepareParkedDiceBoard();
+        UpdateDiceLabel("주사위: -");
+        UpdateUI(remainingMoves, remainingRerolls);
         SubscribeTurnManager();
         RefreshRollButtonState();
         CaptureFieldCheckpoint();
@@ -51,47 +68,273 @@ public class DiceManager : MonoBehaviour
     {
         if (rollButton != null)
         {
-            rollButton.onClick.RemoveListener(RollDice);
+            rollButton.onClick.RemoveListener(HandlePrimaryActionButton);
         }
 
+        CancelPendingAutoMove();
         UnsubscribeTurnManager();
     }
 
     public void RollDice()
     {
-        // Standby 페이즈가 아니면 주사위 굴리기 금지
-        if (TurnManager.Instance.CurrentPhase != TurnPhase.Standby) return;
-        // 이동 중이거나 남은 횟수가 있으면 주사위 굴리기 금지
-        if (isMoving || remainingRerolls <= 0 || remainingMoves > 0) return;
+        if (TurnManager.Instance == null || TurnManager.Instance.CurrentPhase != TurnPhase.Standby)
+        {
+            return;
+        }
 
-        int diceValue = Random.Range(testMinNum, testMaxNum + 1);
-        currentDiceValue = diceValue;
-        diceText.text = $"주사위: {diceValue}";
+        if (isMoving || isRollingDice || isAwaitingMoveStart || remainingRerolls <= 0 || remainingMoves > 0)
+        {
+            return;
+        }
+
+        bool canUseBoard = EnsureDiceBoardController() && diceBoardController != null && diceBoardController.CanRoll;
+        if (!canUseBoard && !fallbackToLegacyRollIfBoardUnavailable)
+        {
+            Debug.LogWarning("DiceBoardController를 준비하지 못해 3D 주사위 굴리기를 시작할 수 없습니다.");
+            return;
+        }
 
         remainingRerolls--;
-        remainingMoves = diceValue;
         UpdateUI(remainingMoves, remainingRerolls);
-
         RefreshRollButtonState();
 
-        TurnManager.Instance.SetPhase(TurnPhase.Move); // Move 페이즈로 전환
+        if (canUseBoard)
+        {
+            StartCoroutine(RollDiceBoardRoutine());
+            return;
+        }
+
+        ApplyRollResult(Random.Range(testMinNum, testMaxNum + 1), null);
+    }
+
+    public void ApplyPenaltyKnockback()
+    {
+        if (!isMoving || remainingMoves > 0)
+        {
+            return;
+        }
+
+        isKnockedBack = true;
+    }
+
+    public void AddReroll(int amount)
+    {
+        remainingRerolls += amount;
+        UpdateUI(remainingMoves, remainingRerolls);
+        RefreshRollButtonState();
+        Debug.Log($"리롤 횟수 증가: {amount} -> 남은 리롤: {remainingRerolls}");
+        CaptureFieldCheckpoint();
+    }
+
+    public void QueueForcedMove(int amount)
+    {
+        if (amount == 0)
+        {
+            return;
+        }
+
+        if (isMoving || isAwaitingMoveStart)
+        {
+            ModifyMoves(amount);
+            return;
+        }
+
+        if (amount < 0)
+        {
+            StageManager.Instance?.ModifyDistance(amount);
+            return;
+        }
+
+        remainingMoves += amount;
+        currentDiceValue = Mathf.Max(currentDiceValue, remainingMoves);
+        UpdateUI(remainingMoves, remainingRerolls);
+
+        if (TurnManager.Instance != null && TurnManager.Instance.CurrentPhase == TurnPhase.End)
+        {
+            StageManager.Instance?.ModifyDistance(amount);
+            remainingMoves = 0;
+            UpdateUI(remainingMoves, remainingRerolls);
+            return;
+        }
+
+        if (TurnManager.Instance != null && TurnManager.Instance.CurrentPhase != TurnPhase.Move)
+        {
+            TurnManager.Instance.SetPhase(TurnPhase.Move);
+        }
 
         StartMoveRoutine();
     }
 
-    // PlayerController에서 충돌 시 호출할 넉백 함수
-    public void ApplyPenaltyKnockback()
+    public void RestoreSavedFieldState(FieldSceneState savedState)
     {
-        if (!isMoving || remainingMoves > 0) return;
-        isKnockedBack = true;
+        if (savedState == null)
+        {
+            return;
+        }
+
+        CancelPendingAutoMove();
+        if (activeMoveRoutine != null)
+        {
+            StopCoroutine(activeMoveRoutine);
+            activeMoveRoutine = null;
+        }
+
+        currentDiceValue = savedState.currentDiceValue;
+        remainingMoves = Mathf.Max(0, savedState.remainingMoves);
+        remainingRerolls = Mathf.Max(0, savedState.remainingRerolls);
+        isMoving = false;
+        isMoveRoutineQueued = false;
+        isKnockedBack = false;
+        isRollingDice = false;
+        isAwaitingMoveStart = false;
+
+        UpdateDiceLabel(currentDiceValue > 0
+            ? $"주사위 합: {currentDiceValue}"
+            : "주사위: -");
+        UpdateUI(remainingMoves, remainingRerolls);
+        RefreshRollButtonState();
+        player?.SetAutoMoveAnimation(false);
+        PrepareParkedDiceBoard();
     }
 
-    // 플레이어 이동 코루틴
+    public void ModifyMoves(int amount)
+    {
+        if (!HasPendingMoveBudget)
+        {
+            return;
+        }
+
+        remainingMoves += amount;
+        if (remainingMoves < 0)
+        {
+            remainingMoves = 0;
+        }
+
+        UpdateUI(remainingMoves, remainingRerolls);
+        Debug.Log($"이동 수 변경: {amount} -> 남은 이동 수: {remainingMoves}");
+
+        if (isAwaitingMoveStart)
+        {
+            if (remainingMoves <= 0)
+            {
+                CancelPendingAutoMove();
+                isAwaitingMoveStart = false;
+                RefreshRollButtonState();
+                if (TurnManager.Instance != null && TurnManager.Instance.CurrentPhase == TurnPhase.Move)
+                {
+                    TurnManager.Instance.SetPhase(TurnPhase.End);
+                }
+            }
+            else
+            {
+                UpdateDiceLabel($"주사위 합: {currentDiceValue}\n버튼을 눌러서 이동");
+            }
+        }
+
+        CaptureFieldCheckpoint();
+    }
+
+    private void HandlePrimaryActionButton()
+    {
+        if (isAwaitingMoveStart)
+        {
+            BeginMovementNow();
+            return;
+        }
+
+        RollDice();
+    }
+
+    private IEnumerator RollDiceBoardRoutine()
+    {
+        isRollingDice = true;
+        RefreshRollButtonState();
+
+        List<Dice> ownedDice = GetOwnedDiceDefinitions();
+        yield return diceBoardController.PlayRollSequence(ownedDice);
+
+        isRollingDice = false;
+        ApplyRollResult(diceBoardController.LastRollSum, diceBoardController.LastRollResults);
+    }
+
+    private void ApplyRollResult(int diceValue, IReadOnlyList<int> results)
+    {
+        currentDiceValue = Mathf.Max(0, diceValue);
+        remainingMoves = currentDiceValue;
+
+        if (results != null && results.Count > 0)
+        {
+            string breakdown = string.Join(" + ", results);
+            UpdateDiceLabel($"주사위 합: {currentDiceValue}\n({breakdown})");
+        }
+        else
+        {
+            UpdateDiceLabel($"주사위 합: {currentDiceValue}");
+        }
+
+        UpdateUI(remainingMoves, remainingRerolls);
+        CaptureFieldCheckpoint();
+
+        if (remainingMoves <= 0)
+        {
+            RefreshRollButtonState();
+            TurnManager.Instance?.SetPhase(TurnPhase.End);
+            return;
+        }
+
+        TurnManager.Instance?.SetPhase(TurnPhase.Move);
+        BeginAwaitingMoveStart();
+    }
+
+    private void BeginAwaitingMoveStart()
+    {
+        if (remainingMoves <= 0)
+        {
+            return;
+        }
+
+        CancelPendingAutoMove();
+        isAwaitingMoveStart = true;
+        UpdateDiceLabel($"주사위 합: {currentDiceValue}\n버튼을 누르거나 잠시 후 이동");
+        RefreshRollButtonState();
+
+        if (autoMoveDelay > 0f)
+        {
+            pendingAutoMoveRoutine = StartCoroutine(AutoMoveAfterDelayRoutine());
+        }
+    }
+
+    private IEnumerator AutoMoveAfterDelayRoutine()
+    {
+        yield return new WaitForSeconds(autoMoveDelay);
+        pendingAutoMoveRoutine = null;
+
+        if (isAwaitingMoveStart && !isMoving && remainingMoves > 0)
+        {
+            BeginMovementNow();
+        }
+    }
+
+    private void BeginMovementNow()
+    {
+        if (!isAwaitingMoveStart || remainingMoves <= 0)
+        {
+            return;
+        }
+
+        CancelPendingAutoMove();
+        isAwaitingMoveStart = false;
+        RefreshRollButtonState();
+        StartMoveRoutine();
+    }
+
     private IEnumerator MoveRoutine()
     {
         isMoveRoutineQueued = false;
         isMoving = true;
         player.SetAutoMoveAnimation(true);
+        RefreshRollButtonState();
+
         float moveSpeed = moveDistance / moveDuration;
 
         while (remainingMoves > 0)
@@ -105,24 +348,12 @@ public class DiceManager : MonoBehaviour
 
             remainingMoves--;
             isKnockedBack = false;
-            Vector3 startPos = player.PhysicsPosition;
             float movedDistance = 0f;
 
-            // 칸 판정은 유지하되, 대기 없이 연속적으로 전진
             while (movedDistance < moveDistance)
             {
-                /*if (isKnockedBack && !enableTestMode)     // 넉백 로직 일단 주석 처리
-                {
-                    player.SnapToPosition(startPos);
-                    CheckStopTile();
-                    UpdateUI(remainingMoves, remainingRerolls);
-                    isKnockedBack = false;
-                    remainingMoves = 0;
-                    break;
-                }*/
-
                 float delta = Mathf.Min(moveSpeed * Time.fixedDeltaTime, moveDistance - movedDistance);
-                player.ApplyMove(delta); // PlayerController자동 이동 적용
+                player.ApplyMove(delta);
                 movedDistance += delta;
 
                 yield return fixedUpdateYield;
@@ -145,7 +376,6 @@ public class DiceManager : MonoBehaviour
                 break;
             }
 
-            // 이동이 모두 끝났을 때 정지 발판 체크
             if (remainingMoves <= 0)
             {
                 CheckStopTile();
@@ -160,7 +390,6 @@ public class DiceManager : MonoBehaviour
             }
         }
 
-        // 루프 종료 후 남은 이동 수 UI 동기화 방어코드
         if (remainingMoves <= 0)
         {
             remainingMoves = 0;
@@ -170,90 +399,8 @@ public class DiceManager : MonoBehaviour
         isMoving = false;
         activeMoveRoutine = null;
         player.SetAutoMoveAnimation(false);
-        rollButton.interactable = true;
-
-        // 엔드 턴으로 넘어가기
-        TurnManager.Instance.SetPhase(TurnPhase.End);
-    }
-
-    public void AddReroll(int amount)
-    {
-        remainingRerolls += amount;
-        Debug.Log($"리롤 횟수 증가: {amount} -> 남은 리롤: {remainingRerolls}");
-        CaptureFieldCheckpoint();
-    }
-
-    public void QueueForcedMove(int amount)
-    {
-        if (amount == 0)
-        {
-            return;
-        }
-
-        if (isMoving)
-        {
-            ModifyMoves(amount);
-            return;
-        }
-
-        if (amount < 0)
-        {
-            StageManager.Instance?.ModifyDistance(amount);
-            return;
-        }
-
-        remainingMoves += amount;
-        UpdateUI(remainingMoves, remainingRerolls);
-
-        if (TurnManager.Instance != null && TurnManager.Instance.CurrentPhase == TurnPhase.End)
-        {
-            StageManager.Instance?.ModifyDistance(amount);
-            remainingMoves = 0;
-            UpdateUI(remainingMoves, remainingRerolls);
-            return;
-        }
-
-        if (rollButton != null)
-        {
-            RefreshRollButtonState();
-        }
-
-        if (TurnManager.Instance != null && TurnManager.Instance.CurrentPhase != TurnPhase.Move)
-        {
-            TurnManager.Instance.SetPhase(TurnPhase.Move);
-        }
-
-        StartMoveRoutine();
-    }
-
-    public void RestoreSavedFieldState(FieldSceneState savedState)
-    {
-        if (savedState == null)
-        {
-            return;
-        }
-
-        currentDiceValue = savedState.currentDiceValue;
-        remainingMoves = Mathf.Max(0, savedState.remainingMoves);
-        remainingRerolls = Mathf.Max(0, savedState.remainingRerolls);
-        isMoving = false;
-        isKnockedBack = false;
-
-        if (diceText != null)
-        {
-            diceText.text = currentDiceValue > 0
-                ? $"주사위: {currentDiceValue}"
-                : "주사위: -";
-        }
-
-        UpdateUI(remainingMoves, remainingRerolls);
-
-        if (rollButton != null)
-        {
-            RefreshRollButtonState();
-        }
-
-        player?.SetAutoMoveAnimation(false);
+        RefreshRollButtonState();
+        TurnManager.Instance?.SetPhase(TurnPhase.End);
     }
 
     private void CaptureFieldCheckpoint()
@@ -267,33 +414,6 @@ public class DiceManager : MonoBehaviour
             ? TurnManager.Instance.CurrentPhase
             : TurnPhase.Standby;
         GameManager.Instance.CaptureFieldCheckpoint(player, this, StageManager.Instance, phase);
-    }
-
-    // PlayerController에서 충돌 시 호출할 메서드
-    public void ModifyMoves(int amount)
-    {
-        if (!isMoving) return;
-
-        remainingMoves += amount;
-        if (remainingMoves < 0)
-        {
-            remainingMoves = 0; // 음수 방지
-        }
-
-        UpdateUI(remainingMoves, remainingRerolls);
-        Debug.Log($"이동 수 변경: {amount} -> 남은 이동 수: {remainingMoves}");
-    }
-
-    private void UpdateUI(int currentMoves, int currentRerolls)
-    {
-        if (remainingMoveText != null)
-        {
-            remainingMoveText.text = $"남은 이동: {currentMoves}";
-        }
-        if (remainingRerollText != null)
-        {
-            remainingRerollText.text = $"남은 리롤: {currentRerolls}";
-        }
     }
 
     private void SubscribeTurnManager()
@@ -324,6 +444,18 @@ public class DiceManager : MonoBehaviour
             return;
         }
 
+        if (isRollingDice)
+        {
+            rollButton.interactable = false;
+            return;
+        }
+
+        if (isAwaitingMoveStart)
+        {
+            rollButton.interactable = remainingMoves > 0 && !isMoving;
+            return;
+        }
+
         bool isStandbyPhase = TurnManager.Instance != null && TurnManager.Instance.CurrentPhase == TurnPhase.Standby;
         rollButton.interactable = isStandbyPhase && !isMoving && remainingRerolls > 0 && remainingMoves <= 0;
     }
@@ -331,12 +463,12 @@ public class DiceManager : MonoBehaviour
     private bool HasReachedStageGoal()
     {
         return StageManager.Instance != null
-            && (StageManager.Instance.IsStageResolved || StageManager.Instance.RemainingDistanceToGoal <= 0);
+            && (StageManager.Instance.IsStageResolved || StageManager.Instance.HasReachedGoalTrigger);
     }
 
     private void StartMoveRoutine()
     {
-        if (isMoving || isMoveRoutineQueued || activeMoveRoutine != null)
+        if (isMoving || isMoveRoutineQueued || activeMoveRoutine != null || remainingMoves <= 0)
         {
             return;
         }
@@ -345,19 +477,116 @@ public class DiceManager : MonoBehaviour
         activeMoveRoutine = StartCoroutine(MoveRoutine());
     }
 
+    private void CancelPendingAutoMove()
+    {
+        if (pendingAutoMoveRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(pendingAutoMoveRoutine);
+        pendingAutoMoveRoutine = null;
+    }
+
+    private void UpdateDiceLabel(string message)
+    {
+        if (diceText != null)
+        {
+            diceText.text = message;
+        }
+    }
+
+    private void UpdateUI(int currentMoves, int currentRerolls)
+    {
+        if (remainingMoveText != null)
+        {
+            remainingMoveText.text = $"남은 이동: {currentMoves}";
+        }
+
+        if (remainingRerollText != null)
+        {
+            remainingRerollText.text = $"남은 리롤: {currentRerolls}";
+        }
+    }
+
+    private List<Dice> GetOwnedDiceDefinitions()
+    {
+        List<Dice> ownedDice = new List<Dice>();
+        if (GameManager.Instance == null || GameManager.Instance.HasDice == null)
+        {
+            return ownedDice;
+        }
+
+        for (int i = 0; i < GameManager.Instance.HasDice.Count; i++)
+        {
+            if (GameManager.Instance.HasDice[i] != null)
+            {
+                ownedDice.Add(GameManager.Instance.HasDice[i]);
+            }
+        }
+
+        return ownedDice;
+    }
+
+    private void PrepareParkedDiceBoard()
+    {
+        if (!EnsureDiceBoardController() || diceBoardController == null)
+        {
+            return;
+        }
+
+        diceBoardController.PrepareParkedDice(GetOwnedDiceDefinitions());
+    }
+
+    private bool EnsureDiceBoardController()
+    {
+        if (diceBoardController == null)
+        {
+            Transform boardRoot = diceBoardRoot;
+            if (boardRoot == null)
+            {
+                GameObject boardObject = GameObject.Find("DiceBoard");
+                boardRoot = boardObject != null ? boardObject.transform : null;
+            }
+
+            if (boardRoot == null && createFallbackBoardIfMissing)
+            {
+                diceBoardController = DiceBoardController.CreateRuntimeFallbackBoard();
+                boardRoot = diceBoardController != null ? diceBoardController.transform : null;
+            }
+
+            if (boardRoot != null && diceBoardController == null)
+            {
+                diceBoardController = boardRoot.GetComponent<DiceBoardController>();
+                if (diceBoardController == null)
+                {
+                    diceBoardController = boardRoot.gameObject.AddComponent<DiceBoardController>();
+                }
+            }
+        }
+
+        if (diceBoardController == null)
+        {
+            return false;
+        }
+
+        diceBoardController.Configure(player != null ? player.transform : null);
+        return true;
+    }
+
     private void CheckStopTile()
     {
-        // Raycast를 사용하여 정지 발판 구분
         if (Physics.Raycast(player.PhysicsPosition, Vector3.down, out RaycastHit hit, 2f))
         {
-            if (hit.collider.CompareTag("Tile"))
+            if (!hit.collider.CompareTag("Tile"))
             {
-                Tile tile = hit.collider.GetComponent<Tile>();
+                return;
+            }
 
-                if (tile != null && tile.tileType == TileType.Stop)
-                {
-                    EffectProcessor.ApplyTileEffect(tile, this, player);
-                }
+            Tile tile = hit.collider.GetComponent<Tile>();
+            if (tile != null && tile.tileType == TileType.Stop)
+            {
+                EffectProcessor.ApplyTileEffect(tile, this, player);
             }
         }
     }

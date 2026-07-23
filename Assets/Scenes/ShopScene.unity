@@ -2646,23 +2646,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopManagerf
   cardPool:
-  - {fileID: 11400000, guid: 5e29b0f5c5167894d8924453a3299259, type: 2}
-  - {fileID: 11400000, guid: 69f4b9ab8292aa2459a331fe2fe7be66, type: 2}
-  - {fileID: 11400000, guid: 6243fb0ebc67cff4a823c158fab3dd28, type: 2}
-  - {fileID: 11400000, guid: 977da6eb9b3e44c4983f11c60a4af58e, type: 2}
-  - {fileID: 11400000, guid: ad12ba117b788dc44863e41d5ede0914, type: 2}
-  - {fileID: 11400000, guid: 460891df62ae6c949ab33c36bec36339, type: 2}
-  - {fileID: 11400000, guid: a716a25854b6f3d47992eed79265849b, type: 2}
-  - {fileID: 11400000, guid: 6a36f1067274119468ab1266b4448d02, type: 2}
-  - {fileID: 11400000, guid: f4ff215d5a3575547a1784ee2f258f63, type: 2}
-  - {fileID: 11400000, guid: 974165fd8497c394f9b7d772d5a8bc94, type: 2}
+  - {fileID: 11400000, guid: 2265e2c89102445f0b9e586980907c4f, type: 2}
+  - {fileID: 11400000, guid: 31d0e949679094781aacea2a15a28ccb, type: 2}
+  - {fileID: 11400000, guid: 1cebb789c47a6418fa106e1e0adb6c1e, type: 2}
+  - {fileID: 11400000, guid: c4a43c891dfb64a41898bd337493379a, type: 2}
   dicePool:
-  - {fileID: 11400000, guid: d04ba20991537d0479000fffd720cf02, type: 2}
-  - {fileID: 11400000, guid: c7d5947776eb07946830bd2a338d628f, type: 2}
-  - {fileID: 11400000, guid: 98b15de128c44384aa32a82c25a2e899, type: 2}
-  - {fileID: 11400000, guid: 921887e2b11f1f04899a496f28adad54, type: 2}
-  - {fileID: 11400000, guid: 123ebb30a4f68104a9531001630ed403, type: 2}
-  - {fileID: 11400000, guid: 183927228b905ba429da338aa1564776, type: 2}
+  - {fileID: 11400000, guid: 3902714ba71884217a1850a0865ebf00, type: 2}
+  - {fileID: 11400000, guid: 1ea5cd197bf90454ab9633d788e9d952, type: 2}
+  - {fileID: 11400000, guid: 832dd8c6957ed4b3b83395703f9231e8, type: 2}
+  - {fileID: 11400000, guid: 799a49f4137ef49fe9fcdc4715d3a268, type: 2}
+  - {fileID: 11400000, guid: fed567e69f657418ea5697f500e6e723, type: 2}
+  - {fileID: 11400000, guid: adc491a57d8604f8188194cb5af9c2e9, type: 2}
   shopSlots:
   - {fileID: 1717185509}
   - {fileID: 1322928432}
@@ -3582,13 +3576,10 @@ MonoBehaviour:
   initialPlayerHP: 100
   initialPlayerDamage: 10
   initialStageName: DebugGround
-  initialCards:
-  - {fileID: 11400000, guid: 5e29b0f5c5167894d8924453a3299259, type: 2}
-  - {fileID: 11400000, guid: 69f4b9ab8292aa2459a331fe2fe7be66, type: 2}
-  - {fileID: 11400000, guid: 6243fb0ebc67cff4a823c158fab3dd28, type: 2}
-  initialDice:
-  - {fileID: 11400000, guid: d04ba20991537d0479000fffd720cf02, type: 2}
-  - {fileID: 11400000, guid: c7d5947776eb07946830bd2a338d628f, type: 2}
+  initialCards: []
+  initialDice: []
+  shopFadeDuration: 0.75
+  shopFadeHoldDuration: 0.2
   coin: 0
   pirateCoin: 0
   reroll: 0
@@ -3597,11 +3588,13 @@ MonoBehaviour:
   stageName: 
   hasDice: []
   hasCard: []
+  currentTurnCards: []
   savedFieldState:
     sceneName: 
     stageName: 
     playerPosition: {x: 0, y: 0, z: 0}
     stageDistance: 0
+    reachedGoalTrigger: 0
     remainingMoves: 0
     remainingRerolls: 0
     currentDiceValue: 0
@@ -3628,6 +3621,7 @@ MonoBehaviour:
     stageName: 
     playerPosition: {x: 0, y: 0, z: 0}
     stageDistance: 0
+    reachedGoalTrigger: 0
     remainingMoves: 0
     remainingRerolls: 0
     currentDiceValue: 0
@@ -3654,6 +3648,8 @@ MonoBehaviour:
   instanceIdDebug: 0
   owningSceneDebug: 
   isPrimaryInstanceDebug: 0
+  savedFieldStateSummaryDebug: 
+  latestFieldCheckpointSummaryDebug: 
 --- !u!4 &1455260650
 Transform:
   m_ObjectHideFlags: 0
@@ -5085,6 +5081,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28b0d6b0f8654514382428f04d4be411, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopSlot
+--- !u!1 &1991789281
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1991789283}
+  - component: {fileID: 1991789282}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1991789282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1991789281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dc16fdeb211a4b788547da97ffa8a5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  bgmClip: {fileID: 0}
+  Bvolume: 0
+  sfxClips: []
+  Svolume: 1
+  Schannels: 8
+  defaultCooldown: 0.05
+  cloudCooldown: 0.25
+  blackholeCooldown: 0.25
+--- !u!4 &1991789283
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1991789281}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2018278096
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5503,3 +5551,4 @@ SceneRoots:
   - {fileID: 382165505}
   - {fileID: 1455260650}
   - {fileID: 857437934}
+  - {fileID: 1991789283}

@@ -51,7 +51,7 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             return;
         }
         if (currentCard != null)
-            GameManager.Instance.AddCard(currentCard);
+            GameManager.Instance.AddOwnedCard(currentCard);
         else
             GameManager.Instance.AddDice(currentDice);
         Debug.Log($"{itemName}을 구매했습니다.");

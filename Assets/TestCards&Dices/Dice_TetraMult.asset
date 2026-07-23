@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b481630aad676be4490de1cb1786f609, type: 3}
+  m_Name: Dice_TetraMult
+  m_EditorClassIdentifier: Assembly-CSharp::Dice
+  diceName: Tetra Mult
+  icon: {fileID: 0}
+  price: 0
+  minValue: 0
+  maxValue: 0
+  description: 
+  runtimePrefab: {fileID: 8629187991832175849, guid: 0e2bd91c3a676417a9b205713acfa487, type: 3}
+  preferredBoardSlot: -1
+  boardSpawnOffset: {x: 0, y: 0, z: 0}
+  spawnEulerAngles: {x: 0, y: 0, z: 0}
+  modelScale: 1
+  rigidbodyMass: 1
+  rollForceMultiplier: 1
+  torqueMultiplier: 1
+  faceDefinitions: []
