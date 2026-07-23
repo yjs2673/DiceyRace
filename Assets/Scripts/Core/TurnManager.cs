@@ -97,8 +97,8 @@ public class TurnManager : MonoBehaviour
         // 하단 덱 UI 싹 지우기
         if (CardManager.Instance != null) CardManager.Instance.ClearDeckUI();
 
-        // GameManager에 남은 카드들 지우기
-        if (GameManager.Instance != null) GameManager.Instance.ClearCards();
+        // GameManager에 남은 이번 턴 카드만 지우기
+        if (GameManager.Instance != null) GameManager.Instance.ClearTurnCards();
 
         if (StageManager.Instance != null)
         {
