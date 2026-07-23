@@ -14683,8 +14683,8 @@ MonoBehaviour:
   initialStageName: DebugGround
   initialCards: []
   initialDice:
-  - {fileID: 11400000, guid: adc491a57d8604f8188194cb5af9c2e9, type: 2}
-  - {fileID: 11400000, guid: 3902714ba71884217a1850a0865ebf00, type: 2}
+  - {fileID: 11400000, guid: fed567e69f657418ea5697f500e6e723, type: 2}
+  - {fileID: 11400000, guid: 832dd8c6957ed4b3b83395703f9231e8, type: 2}
   shopFadeDuration: 0.75
   shopFadeHoldDuration: 0.2
   coin: 0
