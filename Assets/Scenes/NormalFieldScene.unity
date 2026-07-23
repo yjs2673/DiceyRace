@@ -3569,10 +3569,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cave
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      propertyPath: m_TagString
+      value: Cave
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 796398125}
   m_SourcePrefab: {fileID: 100100000, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
 --- !u!1001 &608379868
 PrefabInstance:
@@ -3811,7 +3818,7 @@ Transform:
   m_GameObject: {fileID: 654260062}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.5, y: 1, z: -1.5}
+  m_LocalPosition: {x: 1, y: 1, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4451,10 +4458,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6844ac1071aed466991c0aaaac053b95, type: 2}
   - {fileID: 11400000, guid: 177e2b78a839c4c51a8159e4e61af83a, type: 2}
   - {fileID: 11400000, guid: b086c145e282e4223afd93233fd88438, type: 2}
-  - {fileID: 11400000, guid: c4a43c891dfb64a41898bd337493379a, type: 2}
-  - {fileID: 11400000, guid: 1cebb789c47a6418fa106e1e0adb6c1e, type: 2}
-  - {fileID: 11400000, guid: 31d0e949679094781aacea2a15a28ccb, type: 2}
-  - {fileID: 11400000, guid: 2265e2c89102445f0b9e586980907c4f, type: 2}
+  runtimeAvailableCards: []
   mulliganPanel: {fileID: 691629390}
   cardSlots:
   - {fileID: 947719811}
@@ -5066,6 +5070,32 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5418649004961295049, guid: ca1020aae4cd641449cb69b499ea3800, type: 3}
   m_PrefabInstance: {fileID: 785846868}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &796398121 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d633482b2dba54ea69b50b17f66c7c33, type: 3}
+  m_PrefabInstance: {fileID: 604179180}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &796398125
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 796398121}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.13, y: 0.17254892, z: 0.23678872}
+  m_Center: {x: -0.012402691, y: 0.08627446, z: -0.0070868917}
 --- !u!1001 &803993951
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7674,7 +7704,7 @@ Transform:
   m_GameObject: {fileID: 1050101287}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.5, y: 1, z: 1.5}
+  m_LocalPosition: {x: -1, y: 1, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11291,7 +11321,7 @@ MonoBehaviour:
   - {fileID: 654260063}
   - {fileID: 1050101288}
   - {fileID: 1618348779}
-  cameraOffset: {x: 0, y: 3.5, z: 0}
+  cameraOffset: {x: -0.4, y: 4, z: -0.4}
   cameraRotation: {x: 90, y: 45, z: 0}
   preRollDelay: 0.15
   postRollDelay: 0.5
@@ -11647,7 +11677,7 @@ Transform:
   m_GameObject: {fileID: 1618348778}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.5, y: 1, z: -1.5}
+  m_LocalPosition: {x: -1, y: 1, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14683,8 +14713,7 @@ MonoBehaviour:
   initialStageName: DebugGround
   initialCards: []
   initialDice:
-  - {fileID: 11400000, guid: fed567e69f657418ea5697f500e6e723, type: 2}
-  - {fileID: 11400000, guid: 832dd8c6957ed4b3b83395703f9231e8, type: 2}
+  - {fileID: 11400000, guid: 99fd7d4df164d4ffcafea6da13cd819c, type: 2}
   shopFadeDuration: 0.75
   shopFadeHoldDuration: 0.2
   coin: 0
@@ -14695,11 +14724,13 @@ MonoBehaviour:
   stageName: 
   hasDice: []
   hasCard: []
+  currentTurnCards: []
   savedFieldState:
     sceneName: 
     stageName: 
     playerPosition: {x: 0, y: 0, z: 0}
     stageDistance: 0
+    reachedGoalTrigger: 0
     remainingMoves: 0
     remainingRerolls: 0
     currentDiceValue: 0
@@ -14726,6 +14757,7 @@ MonoBehaviour:
     stageName: 
     playerPosition: {x: 0, y: 0, z: 0}
     stageDistance: 0
+    reachedGoalTrigger: 0
     remainingMoves: 0
     remainingRerolls: 0
     currentDiceValue: 0
@@ -15496,7 +15528,7 @@ Transform:
   m_GameObject: {fileID: 2076376300}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.5, y: 1, z: 1.5}
+  m_LocalPosition: {x: 1, y: 1, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

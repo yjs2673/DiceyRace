@@ -9,6 +9,7 @@ public class CardManager : MonoBehaviour
 
     [Header("Card Database")]
     public List<CardData> allAvailableCards;
+    [SerializeField] private List<CardData> runtimeAvailableCards = new List<CardData>();
 
     [Header("Mulligan UI")]
     public GameObject mulliganPanel; // 멀리건 화면 전체 패널
@@ -38,6 +39,8 @@ public class CardManager : MonoBehaviour
 
     private void Start()
     {
+        RefreshAvailableCards();
+
         if (nextButton != null)
             nextButton.onClick.AddListener(OnNextButtonClicked);
     }
@@ -64,6 +67,7 @@ public class CardManager : MonoBehaviour
         Debug.Log("멀리건 페이즈 시작!");
         mulliganPanel.SetActive(true);
         deckPanel.SetActive(false);
+        RefreshAvailableCards();
 
         // 최초 4장 랜덤 배치 및 초기화
         foreach (var slot in cardSlots)
@@ -107,6 +111,7 @@ public class CardManager : MonoBehaviour
     private void FinishMulligan()
     {
         mulliganPanel.SetActive(false);
+        GameManager.Instance?.ClearTurnCards();
 
         List<CardData> selected = new List<CardData>();
         foreach (var slot in cardSlots)
@@ -130,7 +135,7 @@ public class CardManager : MonoBehaviour
         {
             if (i < selected.Count)
             {
-                GameManager.Instance.AddCard(selected[i]);
+                GameManager.Instance.AddTurnCard(selected[i]);
                 deckSlots[i].gameObject.SetActive(true);
                 deckSlots[i].SetCard(selected[i]);
             }
@@ -157,7 +162,7 @@ public class CardManager : MonoBehaviour
                     Debug.Log($"패시브 자동 발동: {slot.currentCard.cardName}");
                     EffectProcessor.ApplyCardEffect(slot.currentCard, diceManager, playerController);
                     
-                    GameManager.Instance.RemoveCard(slot.currentCard);
+                    GameManager.Instance.RemoveTurnCard(slot.currentCard);
                     slot.gameObject.SetActive(false);
                     slot.currentCard = null;
                 }
@@ -183,7 +188,7 @@ public class CardManager : MonoBehaviour
         EffectProcessor.ApplyCardEffect(slot.currentCard, diceManager, playerController);
         
         // 사용한 카드 버리기
-        GameManager.Instance.RemoveCard(slot.currentCard);
+        GameManager.Instance.RemoveTurnCard(slot.currentCard);
         slot.gameObject.SetActive(false);
         slot.currentCard = null;
     }
@@ -202,13 +207,42 @@ public class CardManager : MonoBehaviour
     // 풀에서 랜덤한 카드 한 장 가져오기 (중복 처리 로직은 필요에 따라 추가 가능)
     private CardData GetRandomCard()
     {
-        if (allAvailableCards == null || allAvailableCards.Count == 0)
+        if (runtimeAvailableCards == null || runtimeAvailableCards.Count == 0)
         {
             Debug.LogError("CardManager에 등록된 카드가 없습니다!");
             return null;
         }
 
-        int randomIndex = Random.Range(0, allAvailableCards.Count);
-        return allAvailableCards[randomIndex];
+        int randomIndex = Random.Range(0, runtimeAvailableCards.Count);
+        return runtimeAvailableCards[randomIndex];
+    }
+
+    private void RefreshAvailableCards()
+    {
+        runtimeAvailableCards.Clear();
+
+        if (allAvailableCards != null)
+        {
+            for (int i = 0; i < allAvailableCards.Count; i++)
+            {
+                if (allAvailableCards[i] != null)
+                {
+                    runtimeAvailableCards.Add(allAvailableCards[i]);
+                }
+            }
+        }
+
+        if (GameManager.Instance == null || GameManager.Instance.HasCard == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < GameManager.Instance.HasCard.Count; i++)
+        {
+            if (GameManager.Instance.HasCard[i] != null)
+            {
+                runtimeAvailableCards.Add(GameManager.Instance.HasCard[i]);
+            }
+        }
     }
 }

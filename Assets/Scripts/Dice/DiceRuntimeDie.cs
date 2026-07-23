@@ -62,10 +62,14 @@ public class DiceRuntimeDie : MonoBehaviour
             rb = GetComponent<Rigidbody>();
         }
 
+        if (!rb.isKinematic)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
+
         transform.SetPositionAndRotation(worldPosition, worldRotation);
-        rb.isKinematic = true;
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
 
         stableTimer = 0f;
         rollTimer = 0f;
@@ -85,9 +89,14 @@ public class DiceRuntimeDie : MonoBehaviour
         transform.SetParent(parent, false);
         transform.localPosition = localPosition;
         transform.localRotation = localRotation;
-        rb.isKinematic = true;
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
+
+        if (!rb.isKinematic)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
+
         IsRolling = false;
     }
 

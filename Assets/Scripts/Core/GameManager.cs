@@ -28,6 +28,7 @@ public class FieldSceneState
     public string stageName;
     public Vector3 playerPosition;
     public int stageDistance;
+    public bool reachedGoalTrigger;
     public int remainingMoves;
     public int remainingRerolls;
     public int currentDiceValue;
@@ -51,7 +52,8 @@ public class GameManager : MonoBehaviour
         public static int PlayerDamage;
         public static string StageName;
         public static List<Dice> HasDice = new List<Dice>();
-        public static List<CardData> HasCard = new List<CardData>();
+        public static List<CardData> OwnedCards = new List<CardData>();
+        public static List<CardData> TurnCards = new List<CardData>();
         public static FieldSceneState SavedFieldState;
         public static FieldSceneState LatestFieldCheckpoint;
     }
@@ -83,6 +85,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string stageName;
     [SerializeField] private List<Dice> hasDice = new List<Dice>();
     [SerializeField] private List<CardData> hasCard = new List<CardData>();
+    [SerializeField] private List<CardData> currentTurnCards = new List<CardData>();
     [SerializeField] private FieldSceneState savedFieldState;
     [SerializeField] private FieldSceneState latestFieldCheckpoint;
     [SerializeField] private bool hasSavedFieldStateDebug;
@@ -102,6 +105,7 @@ public class GameManager : MonoBehaviour
 
     public IReadOnlyList<Dice> HasDice => hasDice;
     public IReadOnlyList<CardData> HasCard => hasCard;
+    public IReadOnlyList<CardData> CurrentTurnCards => currentTurnCards;
     public bool HasSavedFieldState => savedFieldState != null;
 
     private void Awake()
@@ -150,6 +154,7 @@ public class GameManager : MonoBehaviour
         playerDamage = initialPlayerDamage;
         stageName = initialStageName;
         hasCard.Clear();
+        currentTurnCards.Clear();
         hasDice.Clear();
         savedFieldState = null;
         latestFieldCheckpoint = null;
@@ -206,7 +211,7 @@ public class GameManager : MonoBehaviour
         RefreshRuntimeDebugInfo();
     }
     // card
-    public void AddCard(CardData card)
+    public void AddOwnedCard(CardData card)
     {
         if (card == null)
             return;
@@ -215,11 +220,27 @@ public class GameManager : MonoBehaviour
         RefreshRuntimeDebugInfo();
     }
 
-    public void RemoveCard(CardData card)
+    public void RemoveOwnedCard(CardData card)
     {
         hasCard.Remove(card);
         RefreshRuntimeDebugInfo();
     }
+
+    public void AddTurnCard(CardData card)
+    {
+        if (card == null)
+            return;
+
+        currentTurnCards.Add(card);
+        RefreshRuntimeDebugInfo();
+    }
+
+    public void RemoveTurnCard(CardData card)
+    {
+        currentTurnCards.Remove(card);
+        RefreshRuntimeDebugInfo();
+    }
+    
     // reroll
     public bool UseReroll()
     {
@@ -266,9 +287,9 @@ public class GameManager : MonoBehaviour
     }
 
     // 턴 종료 시 소지한 카드 모두 제거
-    public void ClearCards()
+    public void ClearTurnCards()
     {
-        hasCard.Clear();
+        currentTurnCards.Clear();
         RefreshRuntimeDebugInfo();
     }
 
@@ -343,6 +364,7 @@ public class GameManager : MonoBehaviour
             stageName = activeSceneName,
             playerPosition = player.GetRestorePosition(),
             stageDistance = stageManager.CurrentDistance,
+            reachedGoalTrigger = stageManager.HasReachedGoalTrigger,
             remainingMoves = diceManager.RemainingMoves,
             remainingRerolls = diceManager.RemainingRerolls,
             currentDiceValue = diceManager.CurrentDiceValue,
@@ -506,7 +528,8 @@ public class GameManager : MonoBehaviour
         RuntimeCache.PlayerDamage = playerDamage;
         RuntimeCache.StageName = stageName;
         RuntimeCache.HasDice = new List<Dice>(hasDice);
-        RuntimeCache.HasCard = new List<CardData>(hasCard);
+        RuntimeCache.OwnedCards = new List<CardData>(hasCard);
+        RuntimeCache.TurnCards = new List<CardData>(currentTurnCards);
         RuntimeCache.SavedFieldState = CloneFieldSceneState(savedFieldState);
         RuntimeCache.LatestFieldCheckpoint = CloneFieldSceneState(latestFieldCheckpoint);
     }
@@ -520,7 +543,8 @@ public class GameManager : MonoBehaviour
         playerDamage = RuntimeCache.PlayerDamage;
         stageName = RuntimeCache.StageName;
         hasDice = new List<Dice>(RuntimeCache.HasDice);
-        hasCard = new List<CardData>(RuntimeCache.HasCard);
+        hasCard = new List<CardData>(RuntimeCache.OwnedCards);
+        currentTurnCards = new List<CardData>(RuntimeCache.TurnCards);
         savedFieldState = CloneFieldSceneState(RuntimeCache.SavedFieldState);
         latestFieldCheckpoint = CloneFieldSceneState(RuntimeCache.LatestFieldCheckpoint);
     }
@@ -568,6 +592,7 @@ public class GameManager : MonoBehaviour
             stageName = source.stageName,
             playerPosition = source.playerPosition,
             stageDistance = source.stageDistance,
+            reachedGoalTrigger = source.reachedGoalTrigger,
             remainingMoves = source.remainingMoves,
             remainingRerolls = source.remainingRerolls,
             currentDiceValue = source.currentDiceValue,
@@ -611,6 +636,6 @@ public class GameManager : MonoBehaviour
             return "None";
         }
 
-        return $"{state.sceneName} | pos:{state.playerPosition} | dist:{state.stageDistance} | moves:{state.remainingMoves} | rerolls:{state.remainingRerolls} | dice:{state.currentDiceValue} | phase:{state.returnPhase}";
+        return $"{state.sceneName} | pos:{state.playerPosition} | dist:{state.stageDistance} | goal:{state.reachedGoalTrigger} | moves:{state.remainingMoves} | rerolls:{state.remainingRerolls} | dice:{state.currentDiceValue} | phase:{state.returnPhase}";
     }
 }

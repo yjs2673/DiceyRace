@@ -463,7 +463,7 @@ public class DiceManager : MonoBehaviour
     private bool HasReachedStageGoal()
     {
         return StageManager.Instance != null
-            && (StageManager.Instance.IsStageResolved || StageManager.Instance.RemainingDistanceToGoal <= 0);
+            && (StageManager.Instance.IsStageResolved || StageManager.Instance.HasReachedGoalTrigger);
     }
 
     private void StartMoveRoutine()
