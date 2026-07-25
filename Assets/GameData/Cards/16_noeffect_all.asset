@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b45fe885722b0046a1fb81189e5770f, type: 3}
+  m_Name: 16_noeffect_all
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  cardID: 16
+  cardName: noeffect all
+  icon: {fileID: 21300000, guid: 29f058a3e815542e49f7d87e09a21aa8, type: 3}
+  price: 0
+  description: "\uC18C\uC9C0\uC2DC \uC774\uB3D9 \uBC1C\uD310\uC758 \uD6A8\uACFC\uB97C
+    \uBC1C\uB3D9\uC2DC\uD0A4\uC9C0 \uC54A\uB294\uB2E4."
+  cardType: 0
+  cardEffect: 2
+  effectValue: 3
