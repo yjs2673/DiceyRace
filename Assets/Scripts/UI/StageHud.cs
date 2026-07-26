@@ -22,7 +22,7 @@ public class StageHud : MonoBehaviour
 
     private void Awake()
     {
-        defaultFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        defaultFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         BuildHud();
     }
 
