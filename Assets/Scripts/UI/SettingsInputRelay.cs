@@ -4,24 +4,46 @@ using UnityEngine.InputSystem;
 public sealed class SettingsInputRelay : MonoBehaviour
 {
     [SerializeField] private SettingsUiManager settingsUiManager;
+    private int lastToggleFrame = -1;
 
-    public void OnMenu(InputValue value)
+    private void Update()
     {
-        if (value == null || !value.isPressed || settingsUiManager == null)
+        if (Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             return;
         }
 
-        settingsUiManager.ToggleSettings();
+        ToggleSettings();
     }
 
-    public void OnEsc(InputValue value)
+    // public void OnMenu(InputValue value)
+    // {
+    //     if (value == null || !value.isPressed)
+    //     {
+    //         return;
+    //     }
+
+    //     ToggleSettings();
+    // }
+
+    // public void OnEsc(InputValue value)
+    // {
+    //     if (value == null || !value.isPressed)
+    //     {
+    //         return;
+    //     }
+
+    //     ToggleSettings();
+    // }
+
+    private void ToggleSettings()
     {
-        if (value == null || !value.isPressed || settingsUiManager == null)
+        if (settingsUiManager == null || lastToggleFrame == Time.frameCount)
         {
             return;
         }
 
+        lastToggleFrame = Time.frameCount;
         settingsUiManager.ToggleSettings();
     }
 }

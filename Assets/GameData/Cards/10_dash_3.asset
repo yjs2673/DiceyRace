@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: 10_dash_3
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardID: 10
-  cardName: dash 3
+  cardName: "\uB3CC\uC9C4 3"
   icon: {fileID: 21300000, guid: 8b3e4abd026d84079a889ba9cc274796, type: 3}
   price: 15
-  description: "3\uAC70\uB9AC\uB9CC\uD07C \uBB34\uC801 \uB3CC\uC9C4"
+  description: "\uBB34\uC801 \uC0C1\uD0DC\uC5D0\uC11C 3\uAC70\uB9AC\uB9CC\uD07C \uB3CC\uC9C4\uD55C\uB2E4."
   cardType: 1
   cardEffect: 9
   effectValue: 3

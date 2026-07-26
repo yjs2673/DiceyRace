@@ -13,11 +13,10 @@ MonoBehaviour:
   m_Name: 29_attackcounter
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardID: 29
-  cardName: attack counter
+  cardName: "\uBC18\uACA9 \uD328\uB9AC"
   icon: {fileID: 21300000, guid: 5463bf731c38e4316a1ab8f995df245e, type: 3}
   price: 15
-  description: "\uD328\uB9C1 \uC2DC \uC801\uC758 \uACF5\uACA9\uC744 \uBC18\uC0AC
-    \uAC00\uB2A5"
+  description: "\uD328\uB9C1 \uC2DC \uC801\uC758 \uACF5\uACA9\uC744 \uBC18\uC0AC\uD55C\uB2E4."
   cardType: 0
   cardEffect: 7
   effectValue: 1

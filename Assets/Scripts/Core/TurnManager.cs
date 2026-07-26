@@ -110,6 +110,13 @@ public class TurnManager : MonoBehaviour
             : FindObjectOfType<PlayerController>();
         player?.ResetTurnCardEffects();
 
+        if (ShouldTriggerRerollGameOver())
+        {
+            StageManager.Instance?.TriggerGameOver("[TurnManager] 남은 주사위 굴리기 횟수가 없어 게임 오버.");
+            isResolvingEndPhase = false;
+            yield break;
+        }
+
         isResolvingEndPhase = false;
 
         if (StageManager.Instance != null && StageManager.Instance.IsStageResolved)
@@ -125,5 +132,18 @@ public class TurnManager : MonoBehaviour
     {
         isResolvingEndPhase = false;
         SetPhase(savedPhase);
+    }
+
+    private bool ShouldTriggerRerollGameOver()
+    {
+        if (StageManager.Instance == null
+            || StageManager.Instance.IsStageResolved
+            || StageManager.Instance.HasReachedGoalTrigger)
+        {
+            return false;
+        }
+
+        DiceManager diceManager = FindFirstObjectByType<DiceManager>();
+        return diceManager != null && diceManager.RemainingRerolls <= 0;
     }
 }
