@@ -14813,7 +14813,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 30992b2436c694db2847ed49ff8ff235, type: 3}
   - {fileID: 8300000, guid: 0b15063cda64b4faf9f88664c75862ad, type: 3}
   Svolume: 1
-  Schannels: 10
+  Schannels: 50
   defaultCooldown: 0.05
 --- !u!1 &1290753426
 GameObject:
