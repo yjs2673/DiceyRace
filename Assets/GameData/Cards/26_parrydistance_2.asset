@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: 26
   cardName: parry distance 2
   icon: {fileID: 21300000, guid: 6444ebff198714020888e3cf066cd273, type: 3}
-  price: 0
+  price: 15
   description: "\uB9C9\uAE30 \uD310\uC815 \uC0AD\uC81C, \uD328\uB9C1 \uC2DC \uAC70\uB9AC
     2 \uCD94\uAC00"
   cardType: 0

@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: 16
   cardName: noeffect all
   icon: {fileID: 21300000, guid: 29f058a3e815542e49f7d87e09a21aa8, type: 3}
-  price: 0
+  price: 25
   description: "\uC18C\uC9C0\uC2DC \uC774\uB3D9 \uBC1C\uD310\uC758 \uD6A8\uACFC\uB97C
     \uBC1C\uB3D9\uC2DC\uD0A4\uC9C0 \uC54A\uB294\uB2E4."
   cardType: 0

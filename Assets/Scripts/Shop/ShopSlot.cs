@@ -62,11 +62,24 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             price = currentDice.price;
             itemName = currentDice.diceName;
         }
-        if (!GameManager.Instance.SpendCoin(price))
+
+        if (currentCard != null)
         {
-            Debug.Log("골드가 부족합니다.");
-            return;
+            if (!GameManager.Instance.SpendCoin(price))
+            {
+                Debug.Log("골드가 부족합니다.");
+                return;
+            }
         }
+        else
+        {
+            if (!GameManager.Instance.SpendPirateCoin(price))
+            {
+                Debug.Log("해적주화가 부족합니다.");
+                return;
+            }
+        }
+
         if (currentCard != null)
             GameManager.Instance.AddOwnedCard(currentCard);
         else

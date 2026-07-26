@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: 9
   cardName: dash 2
   icon: {fileID: 21300000, guid: 79545f7d60e76425e954ed8c48adce15, type: 3}
-  price: 0
+  price: 10
   description: "2\uAC70\uB9AC\uB9CC\uD07C \uBB34\uC801 \uB3CC\uC9C4"
   cardType: 1
   cardEffect: 9

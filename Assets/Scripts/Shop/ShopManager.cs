@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class ShopManager : MonoBehaviour
 {
-    [Header("ìƒì ì— ë“±ì¥ ê°€ëŠ¥í•œ ì¹´ë“œ")]
+    [Header("»óÁ¡¿¡ µîÀå °¡´ÉÇÑ Ä«µå")]
     [SerializeField] private List<CardData> cardPool;
-    [Header("ìƒì ì— ë“±ì¥ ê°€ëŠ¥í•œ ì£¼ì‚¬ìœ„")]
+    [Header("»óÁ¡¿¡ µîÀå °¡´ÉÇÑ ÁÖ»çÀ§")]
     [SerializeField] private List<Dice> dicePool;
 
-    [Header("Shopslot ë¦¬ìŠ¤íŠ¸")]
+    [Header("Shopslot ¸®½ºÆ®")]
     [SerializeField] private List<ShopSlot> shopSlots;
 
     private void Start()
@@ -20,7 +20,7 @@ public class ShopManager : MonoBehaviour
     {
         if (shopSlots == null || shopSlots.Count == 0)
         {
-            Debug.LogError("Shop Slotì„ ë¶ˆëŸ¬ì˜¬ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+            Debug.LogError("Shop SlotÀ» ºÒ·¯¿Ã ¼ö ¾ø½À´Ï´Ù.");
             return;
         }
         foreach (ShopSlot slot in shopSlots)
@@ -28,7 +28,7 @@ public class ShopManager : MonoBehaviour
             if (slot != null)
                 slot.SetEmpty();
         }
-        // ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+
         List<ScriptableObject> remainingItems = new List<ScriptableObject>();
 
         if (cardPool != null)
@@ -51,7 +51,7 @@ public class ShopManager : MonoBehaviour
 
         if (remainingItems.Count == 0)
         {
-            Debug.LogError("ìƒì ì— í‘œì‹œí•  ì¹´ë“œì™€ ì£¼ì‚¬ìœ„ê°€ ì—†ìŠµë‹ˆë‹¤.");
+            Debug.LogError("»óÁ¡¿¡ Ç¥½ÃÇÒ Ä«µå¿Í ÁÖ»çÀ§°¡ ¾ø½À´Ï´Ù.");
             return;
         }
 
@@ -76,7 +76,7 @@ public class ShopManager : MonoBehaviour
     {
         if (GameManager.Instance == null)
         {
-            Debug.LogError("GameManagerê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
+            Debug.LogError("GameManager°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.");
             return;
         }
 
