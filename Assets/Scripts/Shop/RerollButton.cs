@@ -35,6 +35,7 @@ public class RerollButton : MonoBehaviour
     }
     private void RerollShop()
     {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
         if(shopManager == null)
         {
             Debug.LogError("ShopManager가 존재하지 않습니다.");

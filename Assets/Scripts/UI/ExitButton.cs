@@ -23,6 +23,7 @@ public sealed class ExitButton : MonoBehaviour
 
     public void QuitGame()
     {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
