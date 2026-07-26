@@ -29,16 +29,19 @@ public class CardSlot : MonoBehaviour
     // 초기화 (리롤될 때 선택 상태 해제)
     public void ResetSlot()
     {
-        isSelected = false;
-        if (highlightObj != null) highlightObj.SetActive(false);
+        SetSelected(false);
     }
 
     // UI 버튼의 OnClick 이벤트에 연결할 함수
     public void ToggleSelect()
     {
-        isSelected = !isSelected;
+        SetSelected(!isSelected);
+        CardManager.Instance?.HandleMulliganSelectionChanged();
+    }
+
+    public void SetSelected(bool selected)
+    {
+        isSelected = selected;
         if (highlightObj != null) highlightObj.SetActive(isSelected);
-        
-        // Debug.Log($"{currentCard.cardName} 선택 상태: {isSelected}");
     }
 }

@@ -14,10 +14,13 @@ public class RerollButton : MonoBehaviour
 
    private Button button;
    private int currentRerollPrice;
+   private Color availablePriceColor = Color.white;
+   private ColorBlock defaultButtonColors;
 
     private void Awake()
     {
         button = GetComponent<Button>();
+        defaultButtonColors = button.colors;
         currentRerollPrice = initialRerollPrice;
 
         if (rerollPriceText == null)
@@ -27,8 +30,24 @@ public class RerollButton : MonoBehaviour
                 rerollPriceText = rerollPriceTransform.GetComponent<TMP_Text>();
         }
 
+        if (rerollPriceText != null)
+            availablePriceColor = rerollPriceText.color;
+
         button.onClick.AddListener(RerollShop);
     }
+
+    private void OnEnable()
+    {
+        if (shopManager != null)
+            shopManager.AvailabilityChanged += RefreshButton;
+    }
+
+    private void OnDisable()
+    {
+        if (shopManager != null)
+            shopManager.AvailabilityChanged -= RefreshButton;
+    }
+
     private void Start()
     {
         RefreshButton();
@@ -83,9 +102,25 @@ public class RerollButton : MonoBehaviour
         if (rerollPriceText != null)
             rerollPriceText.text = $"{currentRerollPrice}";
 
-        button.interactable =
+        bool hasShopManager = shopManager != null;
+        bool allSlotsSoldOut =
+            hasShopManager &&
+            shopManager.AreAllSlotsSoldOut;
+        bool canReroll =
+            hasShopManager &&
+            !allSlotsSoldOut &&
             GameManager.Instance.Reroll > 0 &&
             GameManager.Instance.Coin >= currentRerollPrice;
+
+        if (rerollPriceText != null)
+            rerollPriceText.color = canReroll ? availablePriceColor : Color.red;
+
+        ColorBlock buttonColors = defaultButtonColors;
+        if (allSlotsSoldOut)
+            buttonColors.disabledColor = Color.gray;
+
+        button.colors = buttonColors;
+        button.interactable = canReroll;
     }
     private void OnDestroy()
     {

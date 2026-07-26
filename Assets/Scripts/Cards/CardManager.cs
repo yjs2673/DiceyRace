@@ -15,6 +15,7 @@ public class CardManager : MonoBehaviour
     public GameObject mulliganPanel; // 멀리건 화면 전체 패널
     public CardSlot[] cardSlots;     // 화면에 배치된 4개의 카드 슬롯
     public Button nextButton;        // 다음/완료 버튼
+    public Button rerollButton;      // 리롤 버튼
 
     [Header("Deck UI")]
     public GameObject deckPanel;     // 화면 하단에 띄울 내 카드 목록 패널
@@ -23,6 +24,8 @@ public class CardManager : MonoBehaviour
     [Header("Managers")]
     public DiceManager diceManager;
     public PlayerController playerController;
+
+    private bool mulliganRerollUsed;
 
     private void Awake()
     {
@@ -43,6 +46,11 @@ public class CardManager : MonoBehaviour
 
         if (nextButton != null)
             nextButton.onClick.AddListener(OnNextButtonClicked);
+
+        if (rerollButton != null)
+            rerollButton.onClick.AddListener(OnRerollButtonClicked);
+
+        RefreshMulliganButtons();
     }
 
     private void Update()
@@ -68,6 +76,7 @@ public class CardManager : MonoBehaviour
         mulliganPanel.SetActive(true);
         deckPanel.SetActive(false);
         RefreshAvailableCards();
+        mulliganRerollUsed = false;
 
         // 최초 4장 랜덤 배치 및 초기화
         foreach (var slot in cardSlots)
@@ -75,37 +84,45 @@ public class CardManager : MonoBehaviour
             slot.ResetSlot();
             slot.SetCard(GetRandomCard());
         }
+
+        RefreshMulliganButtons();
     }
 
     private void OnNextButtonClicked()
     {
+        if (!CanProceedFromMulligan())
+        {
+            return;
+        }
+
+        FinishMulligan();
+    }
+
+    private void OnRerollButtonClicked()
+    {
+        if (mulliganRerollUsed || GetSelectedSlotCount() >= cardSlots.Length)
+        {
+            return;
+        }
+
         AudioManager.instance.PlaySfx(AudioManager.Sfx.CardReroll); //***
-        int selectedCount = 0;
 
-        // 몇 장이 선택되었는지 체크
-        foreach (var slot in cardSlots)
+        for (int i = 0; i < cardSlots.Length; i++)
         {
-            if (slot.isSelected) selectedCount++;
-        }
-
-        // 4장 모두 선택되었다면 멀리건 완료 (게임 진행)
-        if (selectedCount == 4)
-        {
-            FinishMulligan();
-        }
-        else
-        {
-            // 4장이 아니라면 선택되지 않은 카드만 리롤
-            Debug.Log($"현재 {selectedCount}장 선택됨. 나머지를 리롤합니다.");
-            foreach (var slot in cardSlots)
+            CardSlot slot = cardSlots[i];
+            if (slot == null || slot.isSelected)
             {
-                if (!slot.isSelected)
-                {
-                    slot.ResetSlot(); // 하이라이트 끄기 방어코드
-                    slot.SetCard(GetRandomCard());
-                }
+                continue;
             }
+
+            CardData previousCard = slot.currentCard;
+            slot.ResetSlot();
+            slot.SetCard(GetRandomCardExcluding(previousCard));
+            slot.SetSelected(true);
         }
+
+        mulliganRerollUsed = true;
+        RefreshMulliganButtons();
     }
 
     // 멀리건 종료 및 다음 페이즈 이동
@@ -117,7 +134,7 @@ public class CardManager : MonoBehaviour
         List<CardData> selected = new List<CardData>();
         foreach (var slot in cardSlots)
         {
-            if (slot.isSelected) selected.Add(slot.currentCard);
+            if (slot != null && slot.currentCard != null) selected.Add(slot.currentCard);
         }
 
         // 액티브 카드가 무조건 먼저 오고, 그 다음 ID 오름차순 정렬 -> 나중에 그냥 id순으로 정렬하면 될듯
@@ -147,6 +164,16 @@ public class CardManager : MonoBehaviour
         }
 
         TurnManager.Instance.SetPhase(TurnPhase.Standby);
+    }
+
+    public void HandleMulliganSelectionChanged()
+    {
+        if (mulliganPanel == null || !mulliganPanel.activeSelf)
+        {
+            return;
+        }
+
+        RefreshMulliganButtons();
     }
 
     // 패시브 발동: Standby 진입 시 TurnManager가 호출
@@ -218,6 +245,76 @@ public class CardManager : MonoBehaviour
         return runtimeAvailableCards[randomIndex];
     }
 
+    private CardData GetRandomCardExcluding(CardData excludedCard)
+    {
+        if (runtimeAvailableCards == null || runtimeAvailableCards.Count == 0)
+        {
+            Debug.LogError("CardManager에 등록된 카드가 없습니다!");
+            return null;
+        }
+
+        if (runtimeAvailableCards.Count == 1)
+        {
+            return runtimeAvailableCards[0];
+        }
+
+        List<CardData> candidates = new List<CardData>();
+        for (int i = 0; i < runtimeAvailableCards.Count; i++)
+        {
+            CardData candidate = runtimeAvailableCards[i];
+            if (candidate != null && candidate != excludedCard)
+            {
+                candidates.Add(candidate);
+            }
+        }
+
+        if (candidates.Count == 0)
+        {
+            return excludedCard;
+        }
+
+        int randomIndex = Random.Range(0, candidates.Count);
+        return candidates[randomIndex];
+    }
+
+    private int GetSelectedSlotCount()
+    {
+        int selectedCount = 0;
+
+        for (int i = 0; i < cardSlots.Length; i++)
+        {
+            if (cardSlots[i] != null && cardSlots[i].isSelected)
+            {
+                selectedCount++;
+            }
+        }
+
+        return selectedCount;
+    }
+
+    private bool CanProceedFromMulligan()
+    {
+        return mulliganRerollUsed || GetSelectedSlotCount() >= cardSlots.Length;
+    }
+
+    private void RefreshMulliganButtons()
+    {
+        bool canProceed = CanProceedFromMulligan();
+        bool canReroll = !mulliganRerollUsed && !canProceed;
+
+        if (nextButton != null)
+        {
+            nextButton.gameObject.SetActive(canProceed);
+            nextButton.interactable = canProceed;
+        }
+
+        if (rerollButton != null)
+        {
+            rerollButton.gameObject.SetActive(canReroll);
+            rerollButton.interactable = canReroll;
+        }
+    }
+
     private void RefreshAvailableCards()
     {
         runtimeAvailableCards.Clear();
@@ -245,5 +342,14 @@ public class CardManager : MonoBehaviour
                 runtimeAvailableCards.Add(GameManager.Instance.HasCard[i]);
             }
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (nextButton != null)
+            nextButton.onClick.RemoveListener(OnNextButtonClicked);
+
+        if (rerollButton != null)
+            rerollButton.onClick.RemoveListener(OnRerollButtonClicked);
     }
 }
