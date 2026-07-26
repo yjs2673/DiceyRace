@@ -21,6 +21,10 @@ public class CardManager : MonoBehaviour
     public GameObject deckPanel;     // 화면 하단에 띄울 내 카드 목록 패널
     public CardSlot[] deckSlots;     // 하단에 배치된 4개의 카드 슬롯 (프리팹 재사용)
 
+    [Header("Card Type Icons")]
+    [SerializeField] private Sprite passiveTypeSprite;
+    [SerializeField] private Sprite activeTypeSprite;
+
     [Header("Managers")]
     public DiceManager diceManager;
     public PlayerController playerController;
@@ -38,6 +42,7 @@ public class CardManager : MonoBehaviour
 
         if (mulliganPanel != null) mulliganPanel.SetActive(false);
         if (deckPanel != null) deckPanel.SetActive(false);
+        ApplyTypeSpritesToSlots();
     }
 
     private void Start()
@@ -50,6 +55,7 @@ public class CardManager : MonoBehaviour
         if (rerollButton != null)
             rerollButton.onClick.AddListener(OnRerollButtonClicked);
 
+        ApplyTypeSpritesToSlots();
         RefreshMulliganButtons();
     }
 
@@ -174,6 +180,28 @@ public class CardManager : MonoBehaviour
         }
 
         RefreshMulliganButtons();
+    }
+
+    private void ApplyTypeSpritesToSlots()
+    {
+        ApplyTypeSprites(cardSlots);
+        ApplyTypeSprites(deckSlots);
+    }
+
+    private void ApplyTypeSprites(CardSlot[] slots)
+    {
+        if (slots == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i] != null)
+            {
+                slots[i].SetTypeSprites(passiveTypeSprite, activeTypeSprite);
+            }
+        }
     }
 
     // 패시브 발동: Standby 진입 시 TurnManager가 호출
