@@ -17,8 +17,15 @@ public class PlayerCardRuntimeState
     public int jumpCrazyBonusDistance;
     public bool parryReflectActive;
     public int parryReflectDamage;
-    public bool nextAttackHasParry;
-    public bool nextBlockIsParry;
+    public int remainingAttackParryCount;
+    public bool attackParryForTurn;
+    public int remainingAttackDestroyCount;
+    public bool attackDestroyForTurn;
+    public int remainingBlockParryCount;
+    public bool blockParryForTurn;
+    public int remainingIgnoredMoveTileCount;
+    public bool ignoreMoveTileEffectsForTurn;
+    public float turnMoveSpeedMultiplier;
 }
 
 [System.Serializable]
@@ -624,8 +631,15 @@ public class GameManager : MonoBehaviour
             jumpCrazyBonusDistance = source.jumpCrazyBonusDistance,
             parryReflectActive = source.parryReflectActive,
             parryReflectDamage = source.parryReflectDamage,
-            nextAttackHasParry = source.nextAttackHasParry,
-            nextBlockIsParry = source.nextBlockIsParry
+            remainingAttackParryCount = source.remainingAttackParryCount,
+            attackParryForTurn = source.attackParryForTurn,
+            remainingAttackDestroyCount = source.remainingAttackDestroyCount,
+            attackDestroyForTurn = source.attackDestroyForTurn,
+            remainingBlockParryCount = source.remainingBlockParryCount,
+            blockParryForTurn = source.blockParryForTurn,
+            remainingIgnoredMoveTileCount = source.remainingIgnoredMoveTileCount,
+            ignoreMoveTileEffectsForTurn = source.ignoreMoveTileEffectsForTurn,
+            turnMoveSpeedMultiplier = source.turnMoveSpeedMultiplier
         };
     }
 

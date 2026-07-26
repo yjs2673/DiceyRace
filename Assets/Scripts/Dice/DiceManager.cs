@@ -16,6 +16,7 @@ public class DiceManager : MonoBehaviour
     public float moveDuration = 0.3f;
     public float moveDistance = 1f;
     public int remainingRerolls = 0;
+    [SerializeField] private float turnMoveSpeedMultiplier = 1f;
 
     [Header("Dice Board")]
     [SerializeField] private Transform diceBoardRoot;
@@ -47,6 +48,7 @@ public class DiceManager : MonoBehaviour
     public int RemainingMoves => remainingMoves;
     public int RemainingRerolls => remainingRerolls;
     public int CurrentDiceValue => currentDiceValue;
+    public float TurnMoveSpeedMultiplier => turnMoveSpeedMultiplier;
 
     private void Start()
     {
@@ -163,6 +165,44 @@ public class DiceManager : MonoBehaviour
         }
 
         StartMoveRoutine();
+    }
+
+    public void SetTurnMoveSpeedMultiplier(float multiplier, bool captureCheckpoint = true)
+    {
+        float normalizedMultiplier = Mathf.Max(0.1f, multiplier);
+        if (Mathf.Approximately(turnMoveSpeedMultiplier, normalizedMultiplier))
+        {
+            return;
+        }
+
+        turnMoveSpeedMultiplier = normalizedMultiplier;
+        Debug.Log($"이동 속도 배율 변경 -> {turnMoveSpeedMultiplier:0.##}배");
+
+        if (captureCheckpoint)
+        {
+            CaptureFieldCheckpoint();
+        }
+    }
+
+    public void StopRemainingMoves()
+    {
+        if (remainingMoves <= 0 && !isAwaitingMoveStart && !isMoving)
+        {
+            return;
+        }
+
+        CancelPendingAutoMove();
+        isAwaitingMoveStart = false;
+        remainingMoves = 0;
+        UpdateUI(remainingMoves, remainingRerolls);
+        RefreshRollButtonState();
+        CaptureFieldCheckpoint();
+        Debug.Log("남은 이동을 즉시 종료합니다.");
+
+        if (!isMoving && TurnManager.Instance != null && TurnManager.Instance.CurrentPhase == TurnPhase.Move)
+        {
+            TurnManager.Instance.SetPhase(TurnPhase.End);
+        }
     }
 
     public void RestoreSavedFieldState(FieldSceneState savedState)
@@ -335,8 +375,6 @@ public class DiceManager : MonoBehaviour
         player.SetAutoMoveAnimation(true);
         RefreshRollButtonState();
 
-        float moveSpeed = moveDistance / moveDuration;
-
         while (remainingMoves > 0)
         {
             if (HasReachedStageGoal())
@@ -352,6 +390,7 @@ public class DiceManager : MonoBehaviour
 
             while (movedDistance < moveDistance)
             {
+                float moveSpeed = (moveDistance / Mathf.Max(0.01f, moveDuration)) * Mathf.Max(0.1f, turnMoveSpeedMultiplier);
                 float delta = Mathf.Min(moveSpeed * Time.fixedDeltaTime, moveDistance - movedDistance);
                 player.ApplyMove(delta);
                 movedDistance += delta;

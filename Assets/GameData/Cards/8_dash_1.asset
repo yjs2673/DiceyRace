@@ -18,5 +18,5 @@ MonoBehaviour:
   price: 0
   description: "1\uAC70\uB9AC\uB9CC\uD07C \uBB34\uC801 \uB3CC\uC9C4"
   cardType: 1
-  cardEffect: 2
+  cardEffect: 9
   effectValue: 1

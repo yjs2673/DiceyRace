@@ -19,5 +19,5 @@ MonoBehaviour:
   description: "\uB2E4\uC74C 2\uD68C\uC758 \uC774\uB3D9 \uBC1C\uD310\uC758 \uD6A8\uACFC\uB97C
     \uBC1C\uB3D9\uC2DC\uD0A4\uC9C0 \uC54A\uB294\uB2E4."
   cardType: 1
-  cardEffect: 2
-  effectValue: 3
+  cardEffect: 13
+  effectValue: 2

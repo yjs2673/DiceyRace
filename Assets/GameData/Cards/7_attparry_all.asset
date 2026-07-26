@@ -19,4 +19,4 @@ MonoBehaviour:
   description: "\uC18C\uC9C0\uC2DC \uACF5\uACA9\uC5D0 \uD328\uB9C1 \uD310\uC815 \uCD94\uAC00"
   cardType: 0
   cardEffect: 8
-  effectValue: 2
+  effectValue: 100
