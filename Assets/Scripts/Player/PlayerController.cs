@@ -767,7 +767,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        ApplyCollisionPenalty("장애물 충돌 - 넉백 및 이동 수 1 감소", obstacle);
+        ApplyCollisionPenalty("장애물 충돌 - 피해 적용", obstacle);
         DestroyCardTarget(obstacle, "장애물 충돌");
     }
 
@@ -778,7 +778,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        ApplyCollisionPenalty("적 충돌 (피격) - 넉백 및 이동 수 1 감소", enemy);
+        ApplyCollisionPenalty("적 충돌 (피격) - 피해 적용", enemy);
     }
 
     private void ApplyCollisionPenalty(string logMessage, GameObject source)
