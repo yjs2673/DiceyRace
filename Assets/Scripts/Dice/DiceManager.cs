@@ -63,7 +63,7 @@ public class DiceManager : MonoBehaviour
 
         EnsureDiceBoardController();
         PrepareParkedDiceBoard();
-        UpdateDiceLabel("주사위: -");
+        UpdateDiceLabel("주사위 합");
         UpdateUI(remainingMoves, remainingRerolls);
         SubscribeTurnManager();
         RefreshRollButtonState();
@@ -236,8 +236,8 @@ public class DiceManager : MonoBehaviour
         isPrimaryActionLocked = false;
 
         UpdateDiceLabel(currentDiceValue > 0
-            ? $"주사위 합: {currentDiceValue}"
-            : "주사위: -");
+            ? $"{currentDiceValue}"
+            : "주사위 합");
         UpdateUI(remainingMoves, remainingRerolls);
         RefreshRollButtonState();
         player?.SetAutoMoveAnimation(false);
@@ -274,7 +274,7 @@ public class DiceManager : MonoBehaviour
             }
             else
             {
-                UpdateDiceLabel($"주사위 합: {currentDiceValue}\n버튼을 눌러서 이동");
+                UpdateDiceLabel($"{currentDiceValue}");
             }
         }
 
@@ -317,11 +317,11 @@ public class DiceManager : MonoBehaviour
         if (results != null && results.Count > 0)
         {
             string breakdown = string.Join(" + ", results);
-            UpdateDiceLabel($"주사위 합: {currentDiceValue}\n({breakdown})");
+            UpdateDiceLabel($"{currentDiceValue}\n({breakdown})");
         }
         else
         {
-            UpdateDiceLabel($"주사위 합: {currentDiceValue}");
+            UpdateDiceLabel($"{currentDiceValue}");
         }
 
         UpdateUI(remainingMoves, remainingRerolls);
@@ -348,7 +348,7 @@ public class DiceManager : MonoBehaviour
         CancelPendingAutoMove();
         isAwaitingMoveSuspended = false;
         isAwaitingMoveStart = true;
-        UpdateDiceLabel($"주사위 합: {currentDiceValue}\n버튼을 누르거나 잠시 후 이동");
+        UpdateDiceLabel($"{currentDiceValue}");
         RefreshRollButtonState();
         ScheduleAutoMoveStart();
     }
@@ -591,12 +591,12 @@ public class DiceManager : MonoBehaviour
     {
         if (remainingMoveText != null)
         {
-            remainingMoveText.text = $"남은 이동: {currentMoves}";
+            remainingMoveText.text = $"{currentMoves}";
         }
 
         if (remainingRerollText != null)
         {
-            remainingRerollText.text = $"남은 리롤: {currentRerolls}";
+            remainingRerollText.text = $"{currentRerolls}";
         }
     }
 

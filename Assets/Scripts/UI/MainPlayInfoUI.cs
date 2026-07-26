@@ -24,7 +24,7 @@ public class MainPlayInfoUI : MonoBehaviour
             int remainingDistance = StageManager.Instance != null
                 ? StageManager.Instance.RemainingDistanceToGoal
                 : 0;
-            remainingDistanceText.text = $"남은 거리: {remainingDistance}";
+            remainingDistanceText.text = $"도착지까지\\n{remainingDistance}칸";
         }
 
         if (GameManager.Instance == null)
@@ -34,12 +34,12 @@ public class MainPlayInfoUI : MonoBehaviour
 
         if (goldText != null)
         {
-            goldText.text = $"골드: {GameManager.Instance.Coin}";
+            goldText.text = $"{GameManager.Instance.Coin}";
         }
 
         if (pirateGoldText != null)
         {
-            pirateGoldText.text = $"해적 골드: {GameManager.Instance.PirateCoin}";
+            pirateGoldText.text = $"{GameManager.Instance.PirateCoin}";
         }
     }
 }

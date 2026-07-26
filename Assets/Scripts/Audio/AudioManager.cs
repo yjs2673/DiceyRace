@@ -20,8 +20,11 @@ public class AudioManager : MonoBehaviour
 
     public enum Sfx
     {
-        OnBtn, ClickBtn, Mini0, Mini1, Mini2, MiniClear, Mini0Btn, Mini1Btn,
-        Warning, Planet, Cloud, Blackhole, Over, Clear
+        Jump, Slide, Attack, Parry, Hit, Damaged, Fall, // Player
+        MonsterAttack, MonsterFall,                     // Monster
+        TileStep, TileEffect,                           // Tile
+        CardMulligan, CardUse, CardDiscard,             // Card
+        ButtonClick, ShopUse,                           // General
         /*
         플레이어: 점프, 슬라이딩, 공격, 패링, 명중, 피격, 쓰러짐
         몬스터: 원거리 공격, 쓰러짐
@@ -33,8 +36,8 @@ public class AudioManager : MonoBehaviour
 
     [Header("SFX Spam Protection")]
     public float defaultCooldown = 0.05f;
-    public float cloudCooldown = 0.25f;
-    public float blackholeCooldown = 0.25f;
+    // public float cloudCooldown = 0.25f;
+    // public float blackholeCooldown = 0.25f;
 
     // Time.timeScale 무관하게 동작하도록 unscaledTime 기준
     Dictionary<Sfx, float> lastPlayTime = new Dictionary<Sfx, float>();
@@ -79,8 +82,8 @@ public class AudioManager : MonoBehaviour
     {
         switch (sfx)
         {
-            case Sfx.Cloud: return cloudCooldown;
-            case Sfx.Blackhole: return blackholeCooldown;
+            // case Sfx.Cloud: return cloudCooldown;
+            // case Sfx.Blackhole: return blackholeCooldown;
             default: return defaultCooldown;
         }
     }
@@ -120,7 +123,7 @@ public class AudioManager : MonoBehaviour
         }
 
         // 전부 재생 중이면: 중요한 소리는 하나 가져오기
-        if (sfx == Sfx.Cloud || sfx == Sfx.Blackhole) return;
+        // if (sfx == Sfx.Cloud || sfx == Sfx.Blackhole) return;
 
         int stealIdx = channelIdx;
         channelIdx = (channelIdx + 1) % Schannels;

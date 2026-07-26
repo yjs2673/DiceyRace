@@ -305,7 +305,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\uC774\uB3D9 \uAC70\uB9AC"
+  m_Text: "\uB0A8\uC740 \uAC70\uB9AC"
 --- !u!1 &591653367369423186
 GameObject:
   m_ObjectHideFlags: 0
@@ -418,7 +418,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -25}
-  m_SizeDelta: {x: 200, y: 0}
+  m_SizeDelta: {x: 175, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7751873010462329645
 CanvasRenderer:
@@ -448,7 +448,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: "\uB0A8\uC740 \uAC70\uB9AC"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8b1acecaa2ce64c23b51a19bee9cdd9a, type: 2}
   m_sharedMaterial: {fileID: -4945742952136699352, guid: 8b1acecaa2ce64c23b51a19bee9cdd9a, type: 2}
@@ -735,7 +735,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Distance
+  m_Text: "\uB0A8\uC740 \uD69F\uC218"
 --- !u!1 &1483402386053118919
 GameObject:
   m_ObjectHideFlags: 0
@@ -2137,7 +2137,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 50
+    m_FontSize: 30
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 0
@@ -2148,7 +2148,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Dice
+  m_Text: "\uAD74\uB9AC\uAE30\nor\n\uC774\uB3D9"
 --- !u!1 &7548615333358181917
 GameObject:
   m_ObjectHideFlags: 0
@@ -2291,7 +2291,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC774\uB3D9 \uAC70\uB9AC"
+  m_text: "\uB0A8\uC740 \uAC70\uB9AC"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8b1acecaa2ce64c23b51a19bee9cdd9a, type: 2}
   m_sharedMaterial: {fileID: -4945742952136699352, guid: 8b1acecaa2ce64c23b51a19bee9cdd9a, type: 2}
@@ -2517,7 +2517,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\uACB0\uACFC: "
+  m_Text: "\uC8FC\uC0AC\uC704 \uD569"
 --- !u!1 &8761487251440235037
 GameObject:
   m_ObjectHideFlags: 0

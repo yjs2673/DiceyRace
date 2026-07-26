@@ -14547,8 +14547,6 @@ MonoBehaviour:
   Svolume: 1
   Schannels: 8
   defaultCooldown: 0.05
-  cloudCooldown: 0.25
-  blackholeCooldown: 0.25
 --- !u!1 &1944287476
 GameObject:
   m_ObjectHideFlags: 0
@@ -14948,7 +14946,7 @@ MonoBehaviour:
   initialStageName: DebugGround
   initialCards: []
   initialDice:
-  - {fileID: 11400000, guid: 99fd7d4df164d4ffcafea6da13cd819c, type: 2}
+  - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
   shopFadeDuration: 0.75
   shopFadeHoldDuration: 0.2
   coin: 0
