@@ -469,6 +469,7 @@ public class GameManager : MonoBehaviour
         player.RestoreSavedFieldState(stateToRestore);
         diceManager.RestoreSavedFieldState(stateToRestore);
         turnManager.RestoreSavedPhase(stateToRestore.returnPhase);
+        diceManager.AlignBoardToPlayerPosition(stateToRestore.playerPosition);
 
         Debug.Log($"필드 상태 복원 완료 -> {stateToRestore.sceneName}");
         RefreshRuntimeDebugInfo();

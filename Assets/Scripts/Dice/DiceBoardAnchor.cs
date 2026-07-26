@@ -35,18 +35,24 @@ public class DiceBoardAnchor : MonoBehaviour
         }
 
         CacheOffsetIfNeeded();
-        transform.position = GetTargetPosition();
+        transform.position = GetTargetPosition(followTarget.position);
     }
 
-    private Vector3 GetTargetPosition()
+    public void SnapToPosition(Vector3 targetPosition)
+    {
+        CacheOffsetIfNeeded(targetPosition);
+        transform.position = GetTargetPosition(targetPosition);
+    }
+
+    private Vector3 GetTargetPosition(Vector3 targetPosition)
     {
         if (!followXOnly)
         {
-            return followTarget.position + boardOffset;
+            return targetPosition + boardOffset;
         }
 
         return new Vector3(
-            followTarget.position.x + boardOffset.x,
+            targetPosition.x + boardOffset.x,
             boardOffset.y,
             boardOffset.z);
     }
@@ -58,10 +64,20 @@ public class DiceBoardAnchor : MonoBehaviour
             return;
         }
 
+        CacheOffsetIfNeeded(followTarget.position);
+    }
+
+    private void CacheOffsetIfNeeded(Vector3 targetPosition)
+    {
+        if (hasCachedOffset)
+        {
+            return;
+        }
+
         Vector3 currentPosition = transform.position;
         boardOffset = followXOnly
-            ? new Vector3(currentPosition.x - followTarget.position.x, currentPosition.y, currentPosition.z)
-            : currentPosition - followTarget.position;
+            ? new Vector3(currentPosition.x - targetPosition.x, currentPosition.y, currentPosition.z)
+            : currentPosition - targetPosition;
         hasCachedOffset = true;
     }
 

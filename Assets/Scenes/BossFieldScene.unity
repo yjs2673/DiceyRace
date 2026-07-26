@@ -26690,6 +26690,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainPlayInfoPanel
       objectReference: {fileID: 0}
+    - target: {fileID: 6801344146797533967, guid: 323c52f65b2bd435a99affcf3e648a6e, type: 3}
+      propertyPath: m_text
+      value: Boss Stage
+      objectReference: {fileID: 0}
     - target: {fileID: 7072442923729374753, guid: 323c52f65b2bd435a99affcf3e648a6e, type: 3}
       propertyPath: m_Pivot.x
       value: 0

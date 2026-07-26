@@ -235,6 +235,16 @@ public class DiceManager : MonoBehaviour
         PrepareParkedDiceBoard();
     }
 
+    public void AlignBoardToPlayerPosition(Vector3 playerPosition)
+    {
+        if (!EnsureDiceBoardController(configureWithPlayer: false) || diceBoardController == null)
+        {
+            return;
+        }
+
+        diceBoardController.SnapToFollowPosition(playerPosition);
+    }
+
     public void ModifyMoves(int amount)
     {
         if (!HasPendingMoveBudget)
@@ -622,7 +632,7 @@ public class DiceManager : MonoBehaviour
         diceBoardController.PrepareParkedDice(GetOwnedDiceDefinitions());
     }
 
-    private bool EnsureDiceBoardController()
+    private bool EnsureDiceBoardController(bool configureWithPlayer = true)
     {
         if (diceBoardController == null)
         {
@@ -654,7 +664,11 @@ public class DiceManager : MonoBehaviour
             return false;
         }
 
-        diceBoardController.Configure(player != null ? player.transform : null);
+        if (configureWithPlayer)
+        {
+            diceBoardController.Configure(player != null ? player.transform : null);
+        }
+
         return true;
     }
 

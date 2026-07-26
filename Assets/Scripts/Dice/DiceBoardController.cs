@@ -104,6 +104,11 @@ public class DiceBoardController : MonoBehaviour
         ParkDiceAtSpawnPoints(diceCount);
     }
 
+    public void SnapToFollowPosition(Vector3 followPosition)
+    {
+        boardAnchor?.SnapToPosition(followPosition);
+    }
+
     private void LateUpdate()
     {
         if (IsRolling)
