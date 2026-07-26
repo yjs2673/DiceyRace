@@ -21,6 +21,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private string nextSceneName = "BossFieldScene";
     [SerializeField] private float clearFadeDuration = 1.0f;
     [SerializeField] private float clearFadeHoldDuration = 0.5f;
+    [SerializeField] private int normalStageClearGoldReward = 100;
     [Header("Normal To Boss Sequence")]
     [SerializeField] private List<Sprite> transitionImages = new List<Sprite>();
     [SerializeField] private float transitionImageDisplayDuration = 2.5f;
@@ -220,7 +221,10 @@ public class StageManager : MonoBehaviour
 
         if (!IsBossField)
         {
-            TransitionToNextStage();
+            if (!HandleNormalStageClear())
+            {
+                TransitionToNextStage();
+            }
         }
     }
 
@@ -259,6 +263,59 @@ public class StageManager : MonoBehaviour
     private static bool IsShopScene(string sceneName)
     {
         return sceneName.IndexOf("Shop", StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    private bool HandleNormalStageClear()
+    {
+        if (GameManager.Instance == null)
+        {
+            Debug.LogWarning("GameManager가 없어 일반 스테이지 클리어 후 상점 이동을 건너뜁니다.");
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(nextSceneName))
+        {
+            Debug.LogWarning("다음 보스 씬 이름이 비어 있어 상점 연출을 시작할 수 없습니다.");
+            return false;
+        }
+
+        EnsureRuntimeReferences();
+        DiceManager diceManager = FindFirstObjectByType<DiceManager>();
+        if (player == null || diceManager == null)
+        {
+            Debug.LogWarning("상점 이동에 필요한 플레이어 또는 주사위 매니저를 찾지 못해 다음 스테이지로 바로 이동합니다.");
+            return false;
+        }
+
+        int rewardGold = Mathf.Max(0, normalStageClearGoldReward);
+        if (rewardGold > 0)
+        {
+            GameManager.Instance.AddCoin(rewardGold);
+            Debug.Log($"[StageManager] 일반 스테이지 클리어 보상 지급: {rewardGold}G");
+        }
+
+        GameManager.Instance.EnterShopFromField(
+            player,
+            diceManager,
+            this,
+            TurnPhase.End,
+            shopExitTransition: CreatePendingBossSceneTransition());
+        stageTransitionRequested = true;
+        return true;
+    }
+
+    private PendingSceneTransition CreatePendingBossSceneTransition()
+    {
+        return new PendingSceneTransition
+        {
+            targetSceneName = nextSceneName,
+            transitionImages = transitionImages != null ? new List<Sprite>(transitionImages) : new List<Sprite>(),
+            fadeDuration = clearFadeDuration,
+            fadeHoldDuration = clearFadeHoldDuration,
+            imageDisplayDuration = transitionImageDisplayDuration,
+            imageFadeDuration = transitionImageFadeDuration,
+            imageGapDuration = transitionImageGapDuration
+        };
     }
 
     private void TransitionToNextStage()

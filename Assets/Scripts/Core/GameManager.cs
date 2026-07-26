@@ -46,6 +46,18 @@ public class FieldSceneState
     public PlayerCardRuntimeState playerCardRuntimeState;
 }
 
+[System.Serializable]
+public class PendingSceneTransition
+{
+    public string targetSceneName;
+    public List<Sprite> transitionImages = new List<Sprite>();
+    public float fadeDuration = 1f;
+    public float fadeHoldDuration = 0.5f;
+    public float imageDisplayDuration = 2.5f;
+    public float imageFadeDuration = 0.35f;
+    public float imageGapDuration = 0.15f;
+}
+
 [DefaultExecutionOrder(-1000)]
 public class GameManager : MonoBehaviour
 {
@@ -63,6 +75,7 @@ public class GameManager : MonoBehaviour
         public static List<CardData> TurnCards = new List<CardData>();
         public static FieldSceneState SavedFieldState;
         public static FieldSceneState LatestFieldCheckpoint;
+        public static PendingSceneTransition PendingShopExitTransition;
     }
 
     public static GameManager Instance { get; private set; }
@@ -95,6 +108,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<CardData> currentTurnCards = new List<CardData>();
     [SerializeField] private FieldSceneState savedFieldState;
     [SerializeField] private FieldSceneState latestFieldCheckpoint;
+    [SerializeField] private PendingSceneTransition pendingShopExitTransition;
     [SerializeField] private bool hasSavedFieldStateDebug;
     [SerializeField] private string activeSceneNameDebug;
     [SerializeField] private int instanceIdDebug;
@@ -165,6 +179,7 @@ public class GameManager : MonoBehaviour
         hasDice.Clear();
         savedFieldState = null;
         latestFieldCheckpoint = null;
+        pendingShopExitTransition = null;
 
         if (initialCards != null)
             hasCard.AddRange(initialCards);
@@ -317,7 +332,13 @@ public class GameManager : MonoBehaviour
             && SceneManager.GetActiveScene().name == savedFieldState.sceneName;
     }
 
-    public void EnterShopFromField(PlayerController player, DiceManager diceManager, StageManager stageManager, TurnPhase returnPhase = TurnPhase.End, string shopSceneName = DefaultShopSceneName)
+    public void EnterShopFromField(
+        PlayerController player,
+        DiceManager diceManager,
+        StageManager stageManager,
+        TurnPhase returnPhase = TurnPhase.End,
+        string shopSceneName = DefaultShopSceneName,
+        PendingSceneTransition shopExitTransition = null)
     {
         if (player == null || diceManager == null || stageManager == null)
         {
@@ -325,6 +346,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        pendingShopExitTransition = ClonePendingSceneTransition(shopExitTransition);
         SaveFieldSceneState(player, diceManager, stageManager, returnPhase);
         FadeToScene(shopSceneName);
     }
@@ -342,6 +364,11 @@ public class GameManager : MonoBehaviour
 
     public void ReturnToSavedFieldScene()
     {
+        if (TryReturnViaPendingSceneTransition())
+        {
+            return;
+        }
+
         if (!EnsureSavedFieldStateForReturn())
         {
             Debug.LogWarning("복귀할 필드 저장 상태가 없습니다.");
@@ -458,6 +485,41 @@ public class GameManager : MonoBehaviour
         return sceneName.IndexOf("Shop", System.StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
+    private bool TryReturnViaPendingSceneTransition()
+    {
+        if (pendingShopExitTransition == null || string.IsNullOrWhiteSpace(pendingShopExitTransition.targetSceneName))
+        {
+            return false;
+        }
+
+        PendingSceneTransition transition = ClonePendingSceneTransition(pendingShopExitTransition);
+        pendingShopExitTransition = null;
+        savedFieldState = null;
+        latestFieldCheckpoint = null;
+        RefreshRuntimeDebugInfo();
+
+        if (transition.transitionImages != null && transition.transitionImages.Count > 0)
+        {
+            SceneTransitionFader.Instance.FadeThroughImagesToScene(
+                transition.targetSceneName,
+                transition.transitionImages,
+                transition.fadeDuration,
+                transition.fadeHoldDuration,
+                transition.imageDisplayDuration,
+                transition.imageFadeDuration,
+                transition.imageGapDuration);
+        }
+        else
+        {
+            SceneTransitionFader.Instance.FadeToScene(
+                transition.targetSceneName,
+                transition.fadeDuration,
+                transition.fadeHoldDuration);
+        }
+
+        return true;
+    }
+
     private void FadeToScene(string sceneName)
     {
         SceneTransitionFader.Instance.FadeToScene(sceneName, shopFadeDuration, shopFadeHoldDuration);
@@ -539,6 +601,7 @@ public class GameManager : MonoBehaviour
         RuntimeCache.TurnCards = new List<CardData>(currentTurnCards);
         RuntimeCache.SavedFieldState = CloneFieldSceneState(savedFieldState);
         RuntimeCache.LatestFieldCheckpoint = CloneFieldSceneState(latestFieldCheckpoint);
+        RuntimeCache.PendingShopExitTransition = ClonePendingSceneTransition(pendingShopExitTransition);
     }
 
     private void RestoreFromRuntimeCache()
@@ -554,6 +617,7 @@ public class GameManager : MonoBehaviour
         currentTurnCards = new List<CardData>(RuntimeCache.TurnCards);
         savedFieldState = CloneFieldSceneState(RuntimeCache.SavedFieldState);
         latestFieldCheckpoint = CloneFieldSceneState(RuntimeCache.LatestFieldCheckpoint);
+        pendingShopExitTransition = ClonePendingSceneTransition(RuntimeCache.PendingShopExitTransition);
     }
 
     private void UpdateCoin(int value)
@@ -608,6 +672,27 @@ public class GameManager : MonoBehaviour
             bossCurrentHp = source.bossCurrentHp,
             returnPhase = source.returnPhase,
             playerCardRuntimeState = ClonePlayerCardRuntimeState(source.playerCardRuntimeState)
+        };
+    }
+
+    private static PendingSceneTransition ClonePendingSceneTransition(PendingSceneTransition source)
+    {
+        if (source == null)
+        {
+            return null;
+        }
+
+        return new PendingSceneTransition
+        {
+            targetSceneName = source.targetSceneName,
+            transitionImages = source.transitionImages != null
+                ? new List<Sprite>(source.transitionImages)
+                : new List<Sprite>(),
+            fadeDuration = source.fadeDuration,
+            fadeHoldDuration = source.fadeHoldDuration,
+            imageDisplayDuration = source.imageDisplayDuration,
+            imageFadeDuration = source.imageFadeDuration,
+            imageGapDuration = source.imageGapDuration
         };
     }
 
