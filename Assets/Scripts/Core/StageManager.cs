@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public enum FieldMode
 {
@@ -198,25 +199,25 @@ public class StageManager : MonoBehaviour
             return;
         }
 
-        if (!IsBossField)
-        {
+        // if (!IsBossField)
+        // {
             if (HasReachedGoalTrigger)
             {
                 ClearStage();
             }
 
             return;
-        }
+        // }
 
-        bool bossDefeated = boss != null && boss.IsDead;
-        bool cleared = bossMustBeDefeatedToClear
-            ? HasReachedGoalTrigger && bossDefeated
-            : HasReachedGoalTrigger || bossDefeated;
+        // bool bossDefeated = boss != null && boss.IsDead;
+        // bool cleared = bossMustBeDefeatedToClear
+        //     ? HasReachedGoalTrigger || bossDefeated
+        //     : HasReachedGoalTrigger || bossDefeated;
 
-        if (cleared)
-        {
-            ClearStage();
-        }
+        // if (cleared)
+        // {
+        //     ClearStage();
+        // }
     }
 
     private void ClearStage()
@@ -224,6 +225,7 @@ public class StageManager : MonoBehaviour
         IsStageResolved = true;
         IsGameOver = false;
         Debug.Log("[StageManager] 스테이지 클리어!");
+        HideSceneUiForStageClear();
 
         if (!IsBossField)
         {
@@ -231,6 +233,26 @@ public class StageManager : MonoBehaviour
             {
                 TransitionToNextStage();
             }
+
+            return;
+        }
+
+        TransitionToNextStage();
+    }
+
+    private void HideSceneUiForStageClear()
+    {
+        Scene activeScene = SceneManager.GetActiveScene();
+        Canvas[] canvases = FindObjectsByType<Canvas>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            Canvas canvas = canvases[i];
+            if (canvas == null || canvas.gameObject.scene != activeScene)
+            {
+                continue;
+            }
+
+            canvas.gameObject.SetActive(false);
         }
     }
 

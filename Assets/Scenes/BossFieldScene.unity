@@ -18573,8 +18573,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageManager
   fieldMode: 2
   targetDistance: 60
-  bossMustBeDefeatedToClear: 1
-  nextSceneName: BossFieldScene
+  bossMustBeDefeatedToClear: 0
+  nextSceneName: TitleScene
   clearFadeDuration: 1
   clearFadeHoldDuration: 0.5
   normalStageClearGoldReward: 100
@@ -18583,6 +18583,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: c0b4dd3d6edc64cd4b10143cd4fe7f11, type: 3}
   - {fileID: 21300000, guid: 70002ce69f3804519b3a749101b562d9, type: 3}
   - {fileID: 21300000, guid: 77d98eabf66744b37bf22838c1f92529, type: 3}
+  - {fileID: 21300000, guid: be133be41825a4077b490592308746ea, type: 3}
   transitionImageDisplayDuration: 2.5
   transitionImageFadeDuration: 0.35
   transitionImageGapDuration: 0.15
