@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -9,7 +10,7 @@ public sealed class SettingsUiManager : MonoBehaviour
     [Header("Panel References")]
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject titleConfirmPanel;
-    [SerializeField] private GameObject titleButtonGroup;
+    [SerializeField] private GameObject titleButton;
     [SerializeField] private bool hidePanelsOnStart = true;
 
     [Header("Slider References")]
@@ -19,7 +20,7 @@ public sealed class SettingsUiManager : MonoBehaviour
 
     [Header("Brightness Overlay")]
     [SerializeField] private Image brightnessOverlay;
-    [SerializeField, Range(0f, 1f)] private float maxOverlayAlpha = 0.7f;
+    [SerializeField, Range(0f, 1f)] private float maxOverlayAlpha = 1f;
 
     private GameSettingsManager settingsManager;
 
@@ -82,6 +83,26 @@ public sealed class SettingsUiManager : MonoBehaviour
         }
 
         CloseSettings();
+    }
+
+    public void OnMenu(InputValue value)
+    {
+        if (value == null || !value.isPressed)
+        {
+            return;
+        }
+
+        ToggleSettings();
+    }
+
+    public void OnEsc(InputValue value)
+    {
+        if (value == null || !value.isPressed)
+        {
+            return;
+        }
+
+        ToggleSettings();
     }
 
     public void OpenTitleConfirm()
@@ -168,12 +189,12 @@ public sealed class SettingsUiManager : MonoBehaviour
 
     private void RefreshTitleButtonState()
     {
-        if (titleButtonGroup == null)
+        if (titleButton == null)
         {
             return;
         }
 
-        titleButtonGroup.SetActive(SceneManager.GetActiveScene().name != TitleSceneName);
+        titleButton.SetActive(SceneManager.GetActiveScene().name != TitleSceneName);
     }
 
     private void SetSettingsPanelVisible(bool visible)
