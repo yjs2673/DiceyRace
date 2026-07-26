@@ -677,6 +677,7 @@ GameObject:
   - component: {fileID: 944302543}
   - component: {fileID: 944302545}
   - component: {fileID: 944302544}
+  - component: {fileID: 944302546}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -741,6 +742,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 944302542}
   m_CullTransparentMesh: 1
+--- !u!114 &944302546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944302542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ef2ec04d1cc745b78fced04b915b4d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TitleMove
+  speed: 0
+  isSky: 0
+  amplitude: 15
+  frequency: 2
 --- !u!1 &1033937498
 GameObject:
   m_ObjectHideFlags: 0
