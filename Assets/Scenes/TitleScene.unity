@@ -1780,7 +1780,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dc16fdeb211a4b788547da97ffa8a5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  bgmClip: {fileID: 8300000, guid: 197e8fc1a61f64dbe8e4745e76923563, type: 3}
+  bgmClip: {fileID: 8300000, guid: d2554b6e4f6ac4152b50467877d1e87f, type: 3}
   Bvolume: 1
   sfxClips:
   - {fileID: 8300000, guid: 12c0abe41184a4dc190aced6edad6326, type: 3}
@@ -1856,7 +1856,15 @@ PrefabInstance:
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 1880344012138453005, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1880344012138453005, guid: 7753ec150811e472eb419015441841e3, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1880344012138453005, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2295521005840000266, guid: 7753ec150811e472eb419015441841e3, type: 3}
@@ -2089,6 +2097,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7399787726296774421, guid: 7753ec150811e472eb419015441841e3, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7430182041119010223, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7430182041119010223, guid: 7753ec150811e472eb419015441841e3, type: 3}
