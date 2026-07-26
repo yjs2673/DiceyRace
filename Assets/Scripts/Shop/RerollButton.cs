@@ -35,6 +35,7 @@ public class RerollButton : MonoBehaviour
     }
     private void RerollShop()
     {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
         if(shopManager == null)
         {
             Debug.LogError("ShopManager가 존재하지 않습니다.");
@@ -80,7 +81,7 @@ public class RerollButton : MonoBehaviour
         }
 
         if (rerollPriceText != null)
-            rerollPriceText.text = $"{currentRerollPrice}G";
+            rerollPriceText.text = $"{currentRerollPrice}";
 
         button.interactable =
             GameManager.Instance.Reroll > 0 &&

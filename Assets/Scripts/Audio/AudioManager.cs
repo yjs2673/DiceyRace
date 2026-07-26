@@ -7,95 +7,221 @@ public class AudioManager : MonoBehaviour
 
     [Header("BGM")]
     public AudioClip bgmClip;
-    public float Bvolume;
-    AudioSource bgmPlayer;
+    [Range(0f, 1f)] public float Bvolume = 1f;
+    private AudioSource bgmPlayer;
 
     [Header("SFX")]
     public AudioClip[] sfxClips;
-    public float Svolume = 1f;
+    [Range(0f, 1f)] public float Svolume = 1f;
     public int Schannels = 8;
-    AudioSource[] sfxPlayers;
+    private AudioSource[] sfxPlayers;
 
-    int channelIdx;
+    private readonly Dictionary<Sfx, float> lastPlayTime = new Dictionary<Sfx, float>();
+    private int channelIdx;
+    private bool initialized;
 
     public enum Sfx
     {
-        Jump, Slide, Attack, Parry, Hit, Damaged, Fall, // Player
-        MonsterAttack, MonsterFall,                     // Monster
+        Jump, Slide, Attack, Parry, ParrySuccess, Hit,  // Player
+        SharkAttack, SharkHit, SharkDie,                // Monster
+        MimicDie, PigeonDie, OctopusDie, OctopusAttack,
         TileStep, TileEffect,                           // Tile
-        CardMulligan, CardUse, CardDiscard,             // Card
-        ButtonClick, ShopUse,                           // General
-        /*
-        플레이어: 점프, 슬라이딩, 공격, 패링, 명중, 피격, 쓰러짐
-        몬스터: 원거리 공격, 쓰러짐
-        타일: 밟고 지나가기, 효과 발동
-        카드: 멀리건 클릭, 사용 효과 발동, 버리기
-        일반: 버튼 클릭, 상점에서 쓸것들 등등
-        */
+        CardReroll, CardEffect,                         // Card
+        ObstacleBreak,                                  // Obstacle
+        ButtonClick, ShopBuy, DiceRoll                  // General
     }
 
     [Header("SFX Spam Protection")]
     public float defaultCooldown = 0.05f;
-    // public float cloudCooldown = 0.25f;
-    // public float blackholeCooldown = 0.25f;
 
-    // Time.timeScale 무관하게 동작하도록 unscaledTime 기준
-    Dictionary<Sfx, float> lastPlayTime = new Dictionary<Sfx, float>();
-
-    void Awake()
+    private void Awake()
     {
+        if (instance != null && instance != this)
+        {
+            instance.AbsorbSceneAudio(this);
+            Destroy(gameObject);
+            return;
+        }
+
         instance = this;
+
+        if (transform.parent != null)
+        {
+            transform.SetParent(null);
+        }
+
+        gameObject.name = "AudioManager [Persistent]";
+        DontDestroyOnLoad(gameObject);
+
         Init();
+        AbsorbSceneAudio(this);
+        SubscribeToSettings();
     }
 
-    void Init()
+    private void Start()
     {
-        // init bgm player
+        PlayBgm();
+    }
+
+    private void OnDestroy()
+    {
+        if (instance == this && GameSettingsManager.Instance != null)
+        {
+            GameSettingsManager.Instance.BgmVolumeChanged -= HandleBgmVolumeChanged;
+            GameSettingsManager.Instance.SfxVolumeChanged -= HandleSfxVolumeChanged;
+        }
+    }
+
+    private void Init()
+    {
+        if (initialized)
+        {
+            return;
+        }
+
+        initialized = true;
+
         GameObject bgmObject = new GameObject("BgmPlayer");
-        bgmObject.transform.parent = transform;
+        bgmObject.transform.SetParent(transform, false);
         bgmPlayer = bgmObject.AddComponent<AudioSource>();
         bgmPlayer.playOnAwake = false;
         bgmPlayer.loop = true;
-        bgmPlayer.volume = Bvolume;
+
+        int channelCount = Mathf.Max(1, Schannels);
+        GameObject sfxObject = new GameObject("SfxPlayer");
+        sfxObject.transform.SetParent(transform, false);
+
+        sfxPlayers = new AudioSource[channelCount];
+        for (int i = 0; i < channelCount; i++)
+        {
+            AudioSource source = sfxObject.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.bypassListenerEffects = true;
+            sfxPlayers[i] = source;
+        }
+    }
+
+    private void SubscribeToSettings()
+    {
+        GameSettingsManager settingsManager = GameSettingsManager.EnsureInstance();
+
+        settingsManager.BgmVolumeChanged -= HandleBgmVolumeChanged;
+        settingsManager.SfxVolumeChanged -= HandleSfxVolumeChanged;
+        settingsManager.BgmVolumeChanged += HandleBgmVolumeChanged;
+        settingsManager.SfxVolumeChanged += HandleSfxVolumeChanged;
+
+        ApplyVolumes(settingsManager.BgmVolume, settingsManager.SfxVolume);
+    }
+
+    private void HandleBgmVolumeChanged(float volume)
+    {
+        Bvolume = Mathf.Clamp01(volume);
+        if (bgmPlayer != null)
+        {
+            bgmPlayer.volume = Bvolume;
+        }
+    }
+
+    private void HandleSfxVolumeChanged(float volume)
+    {
+        Svolume = Mathf.Clamp01(volume);
+
+        if (sfxPlayers == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < sfxPlayers.Length; i++)
+        {
+            if (sfxPlayers[i] != null)
+            {
+                sfxPlayers[i].volume = Svolume;
+            }
+        }
+    }
+
+    private void ApplyVolumes(float bgmVolume, float sfxVolume)
+    {
+        HandleBgmVolumeChanged(bgmVolume);
+        HandleSfxVolumeChanged(sfxVolume);
+    }
+
+    private void AbsorbSceneAudio(AudioManager source)
+    {
+        if (source == null)
+        {
+            return;
+        }
+
+        if (source.sfxClips != null && source.sfxClips.Length > 0)
+        {
+            sfxClips = source.sfxClips;
+        }
+
+        defaultCooldown = source.defaultCooldown;
+
+        if (source.bgmClip == null)
+        {
+            return;
+        }
+
+        bool clipChanged = bgmPlayer == null || bgmPlayer.clip != source.bgmClip;
+        bgmClip = source.bgmClip;
+
+        if (bgmPlayer == null)
+        {
+            return;
+        }
+
         bgmPlayer.clip = bgmClip;
 
-        // init sfx player
-        GameObject sfxObject = new GameObject("SfxPlayer");
-        sfxObject.transform.parent = transform;
-
-        sfxPlayers = new AudioSource[Schannels];
-        for (int i = 0; i < Schannels; i++)
+        if (clipChanged)
         {
-            sfxPlayers[i] = sfxObject.AddComponent<AudioSource>();
-            sfxPlayers[i].playOnAwake = false;
-            sfxPlayers[i].bypassListenerEffects = true;
-            sfxPlayers[i].volume = Svolume;
+            bgmPlayer.Stop();
         }
+
+        PlayBgm();
     }
 
     public void PlayBgm()
     {
-        if (!bgmPlayer.isPlaying) bgmPlayer.Play();
-    }
-
-    float GetCooldown(Sfx sfx)
-    {
-        switch (sfx)
+        if (bgmPlayer == null || bgmClip == null)
         {
-            // case Sfx.Cloud: return cloudCooldown;
-            // case Sfx.Blackhole: return blackholeCooldown;
-            default: return defaultCooldown;
+            return;
+        }
+
+        bgmPlayer.clip = bgmClip;
+        if (!bgmPlayer.isPlaying)
+        {
+            bgmPlayer.Play();
         }
     }
 
-    bool CanPlayNow(Sfx sfx)
+    public void StopBgm()
+    {
+        if (bgmPlayer != null && bgmPlayer.isPlaying)
+        {
+            bgmPlayer.Stop();
+        }
+    }
+
+    private float GetCooldown(Sfx sfx)
+    {
+        switch (sfx)
+        {
+            default:
+                return defaultCooldown;
+        }
+    }
+
+    private bool CanPlayNow(Sfx sfx)
     {
         float now = Time.unscaledTime;
-        float cd = GetCooldown(sfx);
+        float cooldown = GetCooldown(sfx);
 
-        if (lastPlayTime.TryGetValue(sfx, out float last))
+        if (lastPlayTime.TryGetValue(sfx, out float last) && now - last < cooldown)
         {
-            if (now - last < cd) return false;
+            return false;
         }
 
         lastPlayTime[sfx] = now;
@@ -104,35 +230,36 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySfx(Sfx sfx)
     {
-        if (!CanPlayNow(sfx)) return;
-
-        // 빈 채널 찾기
-        for (int i = 0; i < Schannels; i++)
+        if (!CanPlayNow(sfx) || sfxPlayers == null || sfxPlayers.Length == 0)
         {
-            int loopIdx = (i + channelIdx) % Schannels;
-            if (sfxPlayers[loopIdx].isPlaying) continue;
+            return;
+        }
+
+        int clipIdx = (int)sfx;
+        if (sfxClips == null || clipIdx < 0 || clipIdx >= sfxClips.Length || sfxClips[clipIdx] == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < sfxPlayers.Length; i++)
+        {
+            int loopIdx = (i + channelIdx) % sfxPlayers.Length;
+            if (sfxPlayers[loopIdx].isPlaying)
+            {
+                continue;
+            }
 
             channelIdx = loopIdx;
-
-            int clipIdx = (int)sfx;
-            if (clipIdx < 0 || clipIdx >= sfxClips.Length) return;
-
             sfxPlayers[loopIdx].clip = sfxClips[clipIdx];
             sfxPlayers[loopIdx].Play();
             return;
         }
 
-        // 전부 재생 중이면: 중요한 소리는 하나 가져오기
-        // if (sfx == Sfx.Cloud || sfx == Sfx.Blackhole) return;
-
         int stealIdx = channelIdx;
-        channelIdx = (channelIdx + 1) % Schannels;
-
-        int stealClipIdx = (int)sfx;
-        if (stealClipIdx < 0 || stealClipIdx >= sfxClips.Length) return;
+        channelIdx = (channelIdx + 1) % sfxPlayers.Length;
 
         sfxPlayers[stealIdx].Stop();
-        sfxPlayers[stealIdx].clip = sfxClips[stealClipIdx];
+        sfxPlayers[stealIdx].clip = sfxClips[clipIdx];
         sfxPlayers[stealIdx].Play();
     }
 }

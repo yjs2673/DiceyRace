@@ -24,10 +24,10 @@ public class InventoryUIController : MonoBehaviour
             return;
         }
 
-        inventoryButton.onClick.AddListener(ShowInventory);
-        returnButton.onClick.AddListener(ShowShop);
-        cardButton.onClick.AddListener(ShowCards);
-        diceButton.onClick.AddListener(ShowDice);
+        inventoryButton.onClick.AddListener(HandleInventoryButtonClick);
+        returnButton.onClick.AddListener(HandleReturnButtonClick);
+        cardButton.onClick.AddListener(HandleCardButtonClick);
+        diceButton.onClick.AddListener(HandleDiceButtonClick);
     }
 
     private void Start()
@@ -146,15 +146,39 @@ public class InventoryUIController : MonoBehaviour
     private void OnDestroy()
     {
         if (inventoryButton != null)
-            inventoryButton.onClick.RemoveListener(ShowInventory);
+            inventoryButton.onClick.RemoveListener(HandleInventoryButtonClick);
 
         if (returnButton != null)
-            returnButton.onClick.RemoveListener(ShowShop);
+            returnButton.onClick.RemoveListener(HandleReturnButtonClick);
 
         if (cardButton != null)
-            cardButton.onClick.RemoveListener(ShowCards);
+            cardButton.onClick.RemoveListener(HandleCardButtonClick);
 
         if (diceButton != null)
-            diceButton.onClick.RemoveListener(ShowDice);
+            diceButton.onClick.RemoveListener(HandleDiceButtonClick);
+    }
+
+    private void HandleInventoryButtonClick()
+    {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
+        ShowInventory();
+    }
+
+    private void HandleReturnButtonClick()
+    {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
+        ShowShop();
+    }
+
+    private void HandleCardButtonClick()
+    {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
+        ShowCards();
+    }
+
+    private void HandleDiceButtonClick()
+    {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
+        ShowDice();
     }
 }

@@ -9,6 +9,7 @@ public static class EffectProcessor
     {
         if (tile == null || tile.tileEffect == TileEffect.None) return;
 
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.TileEffect); //***
         int value = tile.effectValue;
 
         switch (tile.tileEffect)
@@ -76,6 +77,7 @@ public static class EffectProcessor
             return;
         }
 
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.CardEffect); //***
         int value = card.effectValue;
         int normalizedValue = value > 0 ? value : 1;
 

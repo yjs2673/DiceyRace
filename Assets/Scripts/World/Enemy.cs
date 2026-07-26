@@ -47,6 +47,7 @@ public class Enemy : MonoBehaviour
             {
                 // if (TurnManager.Instance.CurrentPhase == TurnPhase.Move)
                 Instantiate(rangeObject, spawnPoint.position, spawnPoint.rotation);
+                AudioManager.instance.PlaySfx(AudioManager.Sfx.OctopusAttack); //***
                 Debug.Log("원거리 공격!");
             }
 
