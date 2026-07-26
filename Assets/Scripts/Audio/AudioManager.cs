@@ -28,7 +28,7 @@ public class AudioManager : MonoBehaviour
         TileStep, TileEffect,                           // Tile
         CardReroll, CardEffect,                         // Card
         ObstacleBreak,                                  // Obstacle
-        ButtonClick, ShopBuy,                           // General
+        ButtonClick, ShopBuy, DiceRoll                  // General
     }
 
     [Header("SFX Spam Protection")]

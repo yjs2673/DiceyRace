@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public enum FieldMode
 {
+    Title,
     Normal,
     Boss
 }
@@ -318,7 +319,7 @@ public class StageManager : MonoBehaviour
         };
     }
 
-    private void TransitionToNextStage()
+    public void TransitionToNextStage()
     {
         if (stageTransitionRequested)
         {

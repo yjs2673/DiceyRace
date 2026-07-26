@@ -4542,7 +4542,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f3ea9087deaf4e4d9d7535b51976f5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageManager
-  fieldMode: 0
+  fieldMode: 1
   targetDistance: 40
   bossMustBeDefeatedToClear: 0
   nextSceneName: BossFieldScene
@@ -15299,7 +15299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   bgmClip: {fileID: 8300000, guid: 197e8fc1a61f64dbe8e4745e76923563, type: 3}
-  Bvolume: 3
+  Bvolume: 1
   sfxClips:
   - {fileID: 8300000, guid: 12c0abe41184a4dc190aced6edad6326, type: 3}
   - {fileID: 8300000, guid: fe93470748d3d4633a14864cb49e465e, type: 3}
@@ -15321,8 +15321,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 1a201a6cddb954754bd8ff8de58cb250, type: 3}
   - {fileID: 8300000, guid: 379b9c0d433bf498083bd67627cb9aa1, type: 3}
   - {fileID: 8300000, guid: 30992b2436c694db2847ed49ff8ff235, type: 3}
+  - {fileID: 8300000, guid: 0b15063cda64b4faf9f88664c75862ad, type: 3}
   Svolume: 1
-  Schannels: 8
+  Schannels: 10
   defaultCooldown: 0.05
 --- !u!1 &1944287476
 GameObject:
@@ -15723,6 +15724,7 @@ MonoBehaviour:
   initialStageName: DebugGround
   initialCards: []
   initialDice:
+  - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
   - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
   shopFadeDuration: 0.75
   shopFadeHoldDuration: 0.2

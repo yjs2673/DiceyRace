@@ -129,6 +129,67 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5448562506350764698, guid: 1dfa1f0f3846c4e68a3f183a8a10ff61, type: 3}
   m_PrefabInstance: {fileID: 3975139424849578058}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &163599442
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 163599444}
+  - component: {fileID: 163599443}
+  m_Layer: 0
+  m_Name: StageManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &163599443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 163599442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f3ea9087deaf4e4d9d7535b51976f5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageManager
+  fieldMode: 0
+  targetDistance: 40
+  bossMustBeDefeatedToClear: 0
+  nextSceneName: NormalFieldScene
+  clearFadeDuration: 1
+  clearFadeHoldDuration: 0.5
+  normalStageClearGoldReward: 100
+  transitionImages:
+  - {fileID: 21300000, guid: d09d1ed31e9e14a7682c9c77dd532b65, type: 3}
+  - {fileID: 21300000, guid: 67f17722830614d8481d2af0d716ac4e, type: 3}
+  - {fileID: 21300000, guid: 793555a0c61b542c290d0398505c7f27, type: 3}
+  - {fileID: 21300000, guid: 3613f7b7f11394712afa115eaca083a9, type: 3}
+  transitionImageDisplayDuration: 2.5
+  transitionImageFadeDuration: 0.35
+  transitionImageGapDuration: 0.15
+  player: {fileID: 0}
+  boss: {fileID: 0}
+--- !u!4 &163599444
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 163599442}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &215055046
 GameObject:
   m_ObjectHideFlags: 0
@@ -346,7 +407,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 348362513}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 163599443}
+        m_TargetAssemblyTypeName: StageManager, Assembly-CSharp
+        m_MethodName: TransitionToNextStage
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &348362513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1465,7 +1538,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   bgmClip: {fileID: 8300000, guid: 197e8fc1a61f64dbe8e4745e76923563, type: 3}
-  Bvolume: 3
+  Bvolume: 1
   sfxClips:
   - {fileID: 8300000, guid: 12c0abe41184a4dc190aced6edad6326, type: 3}
   - {fileID: 8300000, guid: fe93470748d3d4633a14864cb49e465e, type: 3}
@@ -1487,8 +1560,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 1a201a6cddb954754bd8ff8de58cb250, type: 3}
   - {fileID: 8300000, guid: 379b9c0d433bf498083bd67627cb9aa1, type: 3}
   - {fileID: 8300000, guid: 30992b2436c694db2847ed49ff8ff235, type: 3}
+  - {fileID: 8300000, guid: 0b15063cda64b4faf9f88664c75862ad, type: 3}
   Svolume: 1
-  Schannels: 8
+  Schannels: 10
   defaultCooldown: 0.05
 --- !u!1001 &2041297882113900182
 PrefabInstance:
@@ -1840,5 +1914,6 @@ SceneRoots:
   - {fileID: 1481353639}
   - {fileID: 1732278331}
   - {fileID: 215055049}
+  - {fileID: 163599444}
   - {fileID: 2059115671}
   - {fileID: 622024338}

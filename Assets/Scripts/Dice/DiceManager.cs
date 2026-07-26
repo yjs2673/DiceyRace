@@ -100,6 +100,7 @@ public class DiceManager : MonoBehaviour
             return;
         }
 
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.DiceRoll); //***
         remainingRerolls--;
         UpdateUI(remainingMoves, remainingRerolls);
         RefreshRollButtonState();
