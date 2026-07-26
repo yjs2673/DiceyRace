@@ -4878,6 +4878,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1567272775}
   - component: {fileID: 1567272776}
+  - component: {fileID: 1567272777}
   m_Layer: 5
   m_Name: SettingUIManager
   m_TagString: Untagged
@@ -4925,6 +4926,19 @@ MonoBehaviour:
   brightnessSlider: {fileID: 1743474371}
   brightnessOverlay: {fileID: 295626764}
   maxOverlayAlpha: 0.8
+--- !u!114 &1567272777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1567272774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48b0b99b4e4548b1b72983373bf9ef0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SettingsInputRelay
+  settingsUiManager: {fileID: 1567272776}
 --- !u!1 &1583159662
 GameObject:
   m_ObjectHideFlags: 0

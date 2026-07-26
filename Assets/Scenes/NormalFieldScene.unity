@@ -3216,6 +3216,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
+--- !u!114 &443017771 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6423484253053343949, guid: 7753ec150811e472eb419015441841e3, type: 3}
+  m_PrefabInstance: {fileID: 443017766}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
+--- !u!114 &443017772 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8109285250711142222, guid: 7753ec150811e472eb419015441841e3, type: 3}
+  m_PrefabInstance: {fileID: 443017766}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1 &453037698
 GameObject:
   m_ObjectHideFlags: 0
@@ -9281,6 +9303,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1095145490}
   - component: {fileID: 1095145491}
+  - component: {fileID: 1095145492}
   m_Layer: 5
   m_Name: SettingUIManager
   m_TagString: Untagged
@@ -9324,10 +9347,23 @@ MonoBehaviour:
   titleButton: {fileID: 443017769}
   hidePanelsOnStart: 1
   bgmSlider: {fileID: 443017770}
-  sfxSlider: {fileID: 0}
-  brightnessSlider: {fileID: 0}
+  sfxSlider: {fileID: 443017772}
+  brightnessSlider: {fileID: 443017771}
   brightnessOverlay: {fileID: 755124785}
   maxOverlayAlpha: 0.8
+--- !u!114 &1095145492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1095145489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48b0b99b4e4548b1b72983373bf9ef0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SettingsInputRelay
+  settingsUiManager: {fileID: 1095145491}
 --- !u!1 &1097854333
 GameObject:
   m_ObjectHideFlags: 0

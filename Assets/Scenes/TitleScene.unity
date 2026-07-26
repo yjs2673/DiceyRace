@@ -279,6 +279,7 @@ GameObject:
   m_Component:
   - component: {fileID: 337683694}
   - component: {fileID: 337683695}
+  - component: {fileID: 337683696}
   m_Layer: 5
   m_Name: SettingUIManager
   m_TagString: Untagged
@@ -322,10 +323,23 @@ MonoBehaviour:
   titleButton: {fileID: 577966632}
   hidePanelsOnStart: 1
   bgmSlider: {fileID: 1351917816}
-  sfxSlider: {fileID: 0}
-  brightnessSlider: {fileID: 0}
+  sfxSlider: {fileID: 2041297882113900184}
+  brightnessSlider: {fileID: 2041297882113900183}
   brightnessOverlay: {fileID: 1629486692}
   maxOverlayAlpha: 0.8
+--- !u!114 &337683696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337683693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48b0b99b4e4548b1b72983373bf9ef0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SettingsInputRelay
+  settingsUiManager: {fileID: 337683695}
 --- !u!1 &348362510
 GameObject:
   m_ObjectHideFlags: 0
@@ -2008,6 +2022,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7753ec150811e472eb419015441841e3, type: 3}
+--- !u!114 &2041297882113900183 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6423484253053343949, guid: 7753ec150811e472eb419015441841e3, type: 3}
+  m_PrefabInstance: {fileID: 2041297882113900182}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
+--- !u!114 &2041297882113900184 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8109285250711142222, guid: 7753ec150811e472eb419015441841e3, type: 3}
+  m_PrefabInstance: {fileID: 2041297882113900182}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1001 &3975139424849578058
 PrefabInstance:
   m_ObjectHideFlags: 0
