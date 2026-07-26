@@ -17914,13 +17914,6 @@ MonoBehaviour:
   initialDice:
   - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
   - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
-  - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
-  - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
-  - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
-  - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
-  - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
-  - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
-  - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
   shopFadeDuration: 0.75
   shopFadeHoldDuration: 0.2
   coin: 0
