@@ -61,9 +61,8 @@ public class CardManager : MonoBehaviour
 
     private void Update()
     {
-        // Standby 또는 Move 페이즈일 때만 숫자 1~4번 키로 액티브 카드 사용 가능
-        TurnPhase phase = TurnManager.Instance.CurrentPhase;
-        if (phase == TurnPhase.Standby || phase == TurnPhase.Move)
+        // 플레이어가 실제로 이동을 시작한 뒤에만 숫자 1~4번 키로 액티브 카드 사용 가능
+        if (CanUseActiveCards())
         {
             if (Keyboard.current != null)
             {
@@ -73,6 +72,16 @@ public class CardManager : MonoBehaviour
                 if (Keyboard.current.digit4Key.wasPressedThisFrame) UseActiveCard(3);
             }
         }
+    }
+
+    private bool CanUseActiveCards()
+    {
+        if (TurnManager.Instance == null || TurnManager.Instance.CurrentPhase != TurnPhase.Move)
+        {
+            return false;
+        }
+
+        return diceManager != null && diceManager.IsMoving;
     }
 
     // TurnManager에서 TurnPhase.Mulligan이 될 때 호출할 함수

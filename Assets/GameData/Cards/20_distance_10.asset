@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: 20_distance_10
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardID: 20
-  cardName: distance 10
+  cardName: "\uAC70\uB9AC \uC99D\uAC00 10"
   icon: {fileID: 21300000, guid: bcac272130b7e40ab93371da0895fa1a, type: 3}
   price: 15
-  description: "\uC0AC\uC6A9\uC2DC \uAC70\uB9AC 10\uC99D\uAC00"
+  description: "\uC774\uB3D9 \uAC70\uB9AC\uAC00 10\uCE78 \uC99D\uAC00\uD55C\uB2E4."
   cardType: 1
   cardEffect: 14
   effectValue: 10
