@@ -1042,18 +1042,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2007189149
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2007189144}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 733c1408cebd49f19c483dc47ef3570a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ExitButton
 --- !u!114 &2007189147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1092,6 +1080,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2007189144}
   m_CullTransparentMesh: 1
+--- !u!114 &2007189149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2007189144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 733c1408cebd49f19c483dc47ef3570a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExitButton
 --- !u!1 &2008698817
 GameObject:
   m_ObjectHideFlags: 0
@@ -1167,6 +1167,76 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2008698817}
   m_CullTransparentMesh: 1
+--- !u!1 &2059115670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2059115671}
+  - component: {fileID: 2059115672}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2059115671
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2059115670}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2059115672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2059115670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dc16fdeb211a4b788547da97ffa8a5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  bgmClip: {fileID: 8300000, guid: 197e8fc1a61f64dbe8e4745e76923563, type: 3}
+  Bvolume: 3
+  sfxClips:
+  - {fileID: 8300000, guid: 12c0abe41184a4dc190aced6edad6326, type: 3}
+  - {fileID: 8300000, guid: fe93470748d3d4633a14864cb49e465e, type: 3}
+  - {fileID: 8300000, guid: f11660a49238041e4a7ad23fdab7342c, type: 3}
+  - {fileID: 8300000, guid: c21ef2613dcd3449d8898efa100166a0, type: 3}
+  - {fileID: 8300000, guid: 0cb6b3e923b5e458fa82bce3d030ebb3, type: 3}
+  - {fileID: 8300000, guid: 685c9707eed77418bacbc26b8f506107, type: 3}
+  - {fileID: 8300000, guid: 66e6f277c14e245a19241ebcdc379c3d, type: 3}
+  - {fileID: 8300000, guid: b1e6c2faee8704982872bc4370ad692f, type: 3}
+  - {fileID: 8300000, guid: 124f2e19e994843139c1aaab6e0c24f4, type: 3}
+  - {fileID: 8300000, guid: b0bfded9d8555423ea212a9fa8f2e974, type: 3}
+  - {fileID: 8300000, guid: d23f93b28b97a4004b06efb22638b2bb, type: 3}
+  - {fileID: 8300000, guid: 4c702a9b26a0040aeac29d1ae355c4a6, type: 3}
+  - {fileID: 8300000, guid: d8c8fbfd527ca40e09df9fb286b417ec, type: 3}
+  - {fileID: 8300000, guid: 40d89725d49a24463a7da3ce08987628, type: 3}
+  - {fileID: 8300000, guid: acb1bb02996244b6bbe1895ce9aed2cc, type: 3}
+  - {fileID: 8300000, guid: 4086fa332d5414dc9b1690d7a224cb79, type: 3}
+  - {fileID: 8300000, guid: 4923a3fc1246145a18cc49b80e15d857, type: 3}
+  - {fileID: 8300000, guid: 1a201a6cddb954754bd8ff8de58cb250, type: 3}
+  - {fileID: 8300000, guid: 379b9c0d433bf498083bd67627cb9aa1, type: 3}
+  - {fileID: 8300000, guid: 30992b2436c694db2847ed49ff8ff235, type: 3}
+  Svolume: 1
+  Schannels: 8
+  defaultCooldown: 0.05
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1175,3 +1245,4 @@ SceneRoots:
   - {fileID: 1481353639}
   - {fileID: 1732278331}
   - {fileID: 215055049}
+  - {fileID: 2059115671}
