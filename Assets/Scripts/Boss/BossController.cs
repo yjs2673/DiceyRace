@@ -67,6 +67,12 @@ public class BossController : MonoBehaviour
 
         CurrentHP = Mathf.Max(0, CurrentHP - amount);
         Debug.Log($"[Boss] 피격 {amount} -> 현재 HP: {CurrentHP}/{maxHP}");
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.SharkHit); //***
+
+        if (CurrentHP <= 0)
+        {
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.SharkDie); //***
+        }
     }
 
     public void RestoreHP(int amount)
@@ -83,6 +89,7 @@ public class BossController : MonoBehaviour
 
         SyncToFollowTarget();
         bossAnimator?.SetTrigger(DoAttackHash);
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.SharkAttack); //***
         yield return new WaitForSeconds(attackDelay);
         player.ReceiveDirectDamage(attackDamage, gameObject, true);
     }

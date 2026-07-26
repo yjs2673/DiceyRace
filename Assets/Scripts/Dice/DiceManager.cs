@@ -288,6 +288,8 @@ public class DiceManager : MonoBehaviour
             return;
         }
 
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
+
         if (isAwaitingMoveStart)
         {
             BeginMovementNow();

@@ -44,6 +44,8 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (currentCard == null && currentDice == null)
             return;
 
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
+
         if (GameManager.Instance == null)
         {
             Debug.LogError("GameManager가 존재하지 않습니다.");
@@ -85,6 +87,7 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         else
             GameManager.Instance.AddDice(currentDice);
         Debug.Log($"{itemName}을 구매했습니다.");
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ShopBuy); //***
 
         currentCard = null;
         currentDice = null;

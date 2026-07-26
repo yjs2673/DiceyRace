@@ -79,6 +79,7 @@ public class CardManager : MonoBehaviour
 
     private void OnNextButtonClicked()
     {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.CardReroll); //***
         int selectedCount = 0;
 
         // 몇 장이 선택되었는지 체크

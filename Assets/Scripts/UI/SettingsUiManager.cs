@@ -61,6 +61,7 @@ public sealed class SettingsUiManager : MonoBehaviour
 
     public void OpenSettings()
     {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
         SetSettingsPanelVisible(true);
         SetTitleConfirmVisible(false);
         RefreshFromSettings();
@@ -68,6 +69,7 @@ public sealed class SettingsUiManager : MonoBehaviour
 
     public void CloseSettings()
     {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
         SetSettingsPanelVisible(false);
         SetTitleConfirmVisible(false);
     }
@@ -112,11 +114,13 @@ public sealed class SettingsUiManager : MonoBehaviour
             return;
         }
 
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
         SetTitleConfirmVisible(true);
     }
 
     public void CloseTitleConfirm()
     {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
         SetTitleConfirmVisible(false);
     }
 

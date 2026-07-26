@@ -79,6 +79,7 @@ public class PlayerController : MonoBehaviour
             animator?.SetTrigger(DoJumpHash);
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isJumping = true;
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.Jump); //***
             if (jumpCrazyBonusDistance != 0)
             {
                 AdjustCardDistance(jumpCrazyBonusDistance, "JumpCrazy");
@@ -93,6 +94,7 @@ public class PlayerController : MonoBehaviour
         if (value.isPressed && !isSliding)
         {
             animator?.SetTrigger(DoSlideHash);
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.Slide); //***
             StartCoroutine(SlideRoutine());
             Debug.Log("슬라이딩 (W)");
         }
@@ -104,6 +106,7 @@ public class PlayerController : MonoBehaviour
         if (value.isPressed && !isAttacking)
         {
             animator?.SetTrigger(DoAttackHash);
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.Attack); //***
             StartCoroutine(AttackRoutine());
             Debug.Log("공격 (E)");
         }
@@ -115,6 +118,7 @@ public class PlayerController : MonoBehaviour
         if (value.isPressed && !isParrying)
         {
             animator?.SetTrigger(DoShieldHash);
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.Parry); //***
             StartCoroutine(ParryRoutine());
             Debug.Log("패링 (R)");
         }
@@ -189,6 +193,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Tile"))
         {
             isJumping = false;
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.TileStep); //***
         }
     }
 
@@ -426,6 +431,7 @@ public class PlayerController : MonoBehaviour
             return false;
         }
 
+        PlayDestroySfx(target, reason);
         Destroy(target);
         Debug.Log($"{reason}: {target.name} 제거");
         OnTargetDestroyed(reason);
@@ -601,6 +607,7 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("패링 성공! - 남은 이동 수 1 증가");
         ModifyRemainingMoves(1);
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ParrySuccess); //***
 
         if (parryGodBonusDistance != 0)
         {
@@ -762,6 +769,7 @@ public class PlayerController : MonoBehaviour
     private void ApplyCollisionPenalty(string logMessage, GameObject source)
     {
         animator?.SetTrigger(DoHitHash);
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.Hit); //***
         ModifyRemainingMoves(-1);
         Debug.Log(logMessage);
         OnDamaged(1, source);
@@ -840,6 +848,44 @@ public class PlayerController : MonoBehaviour
         Debug.Log("장애물 공격 파괴 성공!");
         DestroyCardTarget(obstacle, "공격 파괴");
     }
+
+    private void PlayDestroySfx(GameObject target, string reason)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        if (target.CompareTag("Obstacle"))
+        {
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.ObstacleBreak); //***
+            return;
+        }
+
+        if (!target.CompareTag("Enemy") || reason != "공격 성공")
+        {
+            return;
+        }
+
+        Enemy enemy = target.GetComponent<Enemy>();
+        if (enemy == null)
+        {
+            return;
+        }
+
+        switch (enemy.enemyType)
+        {
+            case EnemyType.Normal:
+                AudioManager.instance.PlaySfx(AudioManager.Sfx.MimicDie); //***
+                break;
+            case EnemyType.Flying:
+                AudioManager.instance.PlaySfx(AudioManager.Sfx.PigeonDie); //***
+                break;
+            case EnemyType.Range:
+                AudioManager.instance.PlaySfx(AudioManager.Sfx.OctopusDie); //***
+                break;
+        }
+    }
     #endregion
 
     #region 외부 이동 처리
@@ -883,6 +929,7 @@ public class PlayerController : MonoBehaviour
         }
 
         animator?.SetTrigger(DoHitHash);
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.Hit); //***
         GameManager.Instance?.TakeDamage(damage);
         OnDamaged(damage, source);
         Debug.Log($"직접 피해 {damage} -> 현재 체력: {GameManager.Instance?.PlayerHP ?? 0}");
