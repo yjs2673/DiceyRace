@@ -14,17 +14,17 @@ public class TutorialInfoUI : MonoBehaviour
     {
         if (returnButton != null)
         {
-            returnButton.onClick.AddListener(Hide);
+            returnButton.onClick.AddListener(HandleReturnButtonClick);
         }
 
         if (prevPageButton != null)
         {
-            prevPageButton.onClick.AddListener(ShowPreviousPage);
+            prevPageButton.onClick.AddListener(HandlePreviousPageButtonClick);
         }
 
         if (nextPageButton != null)
         {
-            nextPageButton.onClick.AddListener(ShowNextPage);
+            nextPageButton.onClick.AddListener(HandleNextPageButtonClick);
         }
 
         currentPageIndex = 0;
@@ -35,17 +35,17 @@ public class TutorialInfoUI : MonoBehaviour
     {
         if (returnButton != null)
         {
-            returnButton.onClick.RemoveListener(Hide);
+            returnButton.onClick.RemoveListener(HandleReturnButtonClick);
         }
 
         if (prevPageButton != null)
         {
-            prevPageButton.onClick.RemoveListener(ShowPreviousPage);
+            prevPageButton.onClick.RemoveListener(HandlePreviousPageButtonClick);
         }
 
         if (nextPageButton != null)
         {
-            nextPageButton.onClick.RemoveListener(ShowNextPage);
+            nextPageButton.onClick.RemoveListener(HandleNextPageButtonClick);
         }
     }
 
@@ -68,6 +68,32 @@ public class TutorialInfoUI : MonoBehaviour
     public void ShowNextPage()
     {
         SetPage(currentPageIndex + 1);
+    }
+
+    private void HandleReturnButtonClick()
+    {
+        PlayButtonClickSfx();
+        Hide();
+    }
+
+    private void HandlePreviousPageButtonClick()
+    {
+        PlayButtonClickSfx();
+        ShowPreviousPage();
+    }
+
+    private void HandleNextPageButtonClick()
+    {
+        PlayButtonClickSfx();
+        ShowNextPage();
+    }
+
+    private void PlayButtonClickSfx()
+    {
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick);
+        }
     }
 
     private void SetPage(int pageIndex)
