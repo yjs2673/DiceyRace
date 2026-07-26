@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: 19
   cardName: distance 3
   icon: {fileID: 21300000, guid: de93aedc5e88a44ecb185a05de706d24, type: 3}
-  price: 0
+  price: 10
   description: "\uC0AC\uC6A9\uC2DC \uAC70\uB9AC 3\uC99D\uAC00"
   cardType: 1
   cardEffect: 14

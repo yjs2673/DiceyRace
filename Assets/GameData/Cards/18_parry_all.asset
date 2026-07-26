@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: 18
   cardName: parry all
   icon: {fileID: 21300000, guid: f7dac3a117aff4728b77493bfb5072ce, type: 3}
-  price: 0
+  price: 25
   description: "\uC18C\uC9C0\uC2DC \uBAA8\uB4E0 \uBC29\uC5B4\uAC00 \uD328\uB9C1\uC73C\uB85C
     \uD310\uC815"
   cardType: 0

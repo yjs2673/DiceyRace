@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: 22
   cardName: invindash 1
   icon: {fileID: 21300000, guid: 98636aba8a43a461da5c0b0e7aba9f68, type: 3}
-  price: 0
+  price: 20
   description: "\uD68C\uD53C \uC131\uACF5\uC2DC 1\uCE78 \uBB34\uC801 \uB3CC\uC9C4"
   cardType: 0
   cardEffect: 2

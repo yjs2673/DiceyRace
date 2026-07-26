@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b481630aad676be4490de1cb1786f609, type: 3}
   m_Name: TetraMult
   m_EditorClassIdentifier: Assembly-CSharp::Dice
-  diceName: Tetra Mult
+  diceName: "\uACF1\uC148 \uC8FC\uC0AC\uC704"
   icon: {fileID: 21300000, guid: c320e96ce1256407883f3c93a192e8c0, type: 3}
-  price: 0
-  minValue: 0
-  maxValue: 0
-  description: 
+  price: 4
+  description: "\uB354\uD55C \uCD1D \uC22B\uC790\uC5D0 \uD574\uB2F9 \uC8FC\uC0AC\uC704\uC758
+    \uB208\uAE08\uC744 \uACF1\uD55C\uB2E4."
   runtimePrefab: {fileID: 8629187991832175849, guid: 0e2bd91c3a676417a9b205713acfa487, type: 3}
   preferredBoardSlot: -1
   boardSpawnOffset: {x: 0, y: 0, z: 0}
