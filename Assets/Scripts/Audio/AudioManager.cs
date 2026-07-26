@@ -7,7 +7,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("BGM")]
     public AudioClip bgmClip;
-    public float Bvolume;
+    public float Bvolume = 5f;
     AudioSource bgmPlayer;
 
     [Header("SFX")]
@@ -46,6 +46,11 @@ public class AudioManager : MonoBehaviour
     {
         instance = this;
         Init();
+    }
+
+    void Start()
+    {
+        PlayBgm();
     }
 
     void Init()

@@ -13166,8 +13166,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dc16fdeb211a4b788547da97ffa8a5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  bgmClip: {fileID: 0}
-  Bvolume: 0
+  bgmClip: {fileID: 8300000, guid: 197e8fc1a61f64dbe8e4745e76923563, type: 3}
+  Bvolume: 3
   sfxClips: []
   Svolume: 1
   Schannels: 8
