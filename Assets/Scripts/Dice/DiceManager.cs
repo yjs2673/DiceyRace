@@ -114,16 +114,6 @@ public class DiceManager : MonoBehaviour
         ApplyRollResult(Random.Range(testMinNum, testMaxNum + 1), null);
     }
 
-    public void ApplyPenaltyKnockback()
-    {
-        if (!isMoving || remainingMoves > 0)
-        {
-            return;
-        }
-
-        isKnockedBack = true;
-    }
-
     public void AddReroll(int amount)
     {
         remainingRerolls += amount;

@@ -779,11 +779,6 @@ public class PlayerController : MonoBehaviour
         }
 
         ApplyCollisionPenalty("적 충돌 (피격) - 넉백 및 이동 수 1 감소", enemy);
-
-        if (diceManager != null)
-        {
-            diceManager.ApplyPenaltyKnockback();
-        }
     }
 
     private void ApplyCollisionPenalty(string logMessage, GameObject source)
