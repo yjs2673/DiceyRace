@@ -8,6 +8,8 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [Header("Shopslot Text UI")]
     [SerializeField] private TMP_Text soldoutText;
     [SerializeField] private TMP_Text priceText;
+    [SerializeField] private Image coinImage;
+    [SerializeField] private Image pirateCoinImage;
     [SerializeField] private Image itemImage;
 
     private Button buyButton;
@@ -90,6 +92,8 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         currentDice = null;
 
         priceText.gameObject.SetActive(false);
+        coinImage.gameObject.SetActive(false);
+        pirateCoinImage.gameObject.SetActive(false);
         soldoutText.gameObject.SetActive(true);
         buyButton.interactable = false;
 
@@ -116,8 +120,9 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             itemImage.preserveAspect = true;
         }
 
-        priceText.text = $"{card.price}G";
+        priceText.text = $"{card.price}";
         priceText.gameObject.SetActive(true);
+        coinImage.gameObject.SetActive(true);
         soldoutText.gameObject.SetActive(false);
         buyButton.interactable = true;
     }
@@ -135,8 +140,9 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             itemImage.preserveAspect = true;
         }
 
-        priceText.text = $"{dice.price}G";
+        priceText.text = $"{dice.price}";
         priceText.gameObject.SetActive(true);
+        pirateCoinImage.gameObject.SetActive(true);
         soldoutText.gameObject.SetActive(false);
         buyButton.interactable = true;
     }
@@ -148,6 +154,8 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (itemImage != null)
             itemImage.sprite = null;
         priceText.gameObject.SetActive(false);
+        coinImage.gameObject.SetActive(false);
+        pirateCoinImage.gameObject.SetActive(false);
         soldoutText.gameObject.SetActive(false);
         buyButton.interactable = false;
     }

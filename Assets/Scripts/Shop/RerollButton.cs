@@ -80,7 +80,7 @@ public class RerollButton : MonoBehaviour
         }
 
         if (rerollPriceText != null)
-            rerollPriceText.text = $"{currentRerollPrice}G";
+            rerollPriceText.text = $"{currentRerollPrice}";
 
         button.interactable =
             GameManager.Instance.Reroll > 0 &&
