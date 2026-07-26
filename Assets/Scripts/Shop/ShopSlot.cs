@@ -8,8 +8,8 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [Header("Shopslot Text UI")]
     [SerializeField] private TMP_Text soldoutText;
     [SerializeField] private TMP_Text priceText;
+    [SerializeField] private Image itemImage;
 
-    private Image cardImage;
     private Button buyButton;
 
     private CardData currentCard;
@@ -17,9 +17,26 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private void Awake()
     {
-        cardImage = GetComponent<Image>();
+        ResolveItemImage();
+
         buyButton = GetComponent<Button>();
+        if (itemImage != null)
+            buyButton.targetGraphic = itemImage;
+
         buyButton.onClick.AddListener(BuyItem);
+    }
+
+    private void ResolveItemImage()
+    {
+        if (itemImage != null)
+            return;
+
+        Transform itemImageTransform = transform.Find("ItemImage");
+        if (itemImageTransform != null)
+            itemImage = itemImageTransform.GetComponent<Image>();
+
+        if (itemImage == null)
+            Debug.LogError($"{name}의 ItemImage 참조를 찾을 수 없습니다.", this);
     }
 
     private void BuyItem()
@@ -51,7 +68,7 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             return;
         }
         if (currentCard != null)
-            GameManager.Instance.AddCard(currentCard);
+            GameManager.Instance.AddOwnedCard(currentCard);
         else
             GameManager.Instance.AddDice(currentDice);
         Debug.Log($"{itemName}을 구매했습니다.");
@@ -80,8 +97,11 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         currentCard = card;
         currentDice = null;
 
-        cardImage.sprite = card.icon;
-        cardImage.preserveAspect = true;
+        if (itemImage != null)
+        {
+            itemImage.sprite = card.icon;
+            itemImage.preserveAspect = true;
+        }
 
         priceText.text = $"{card.price}G";
         priceText.gameObject.SetActive(true);
@@ -96,8 +116,11 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         currentDice = dice;
         currentCard = null;
-        cardImage.sprite = dice.icon;
-        cardImage.preserveAspect = true;
+        if (itemImage != null)
+        {
+            itemImage.sprite = dice.icon;
+            itemImage.preserveAspect = true;
+        }
 
         priceText.text = $"{dice.price}G";
         priceText.gameObject.SetActive(true);
@@ -109,7 +132,8 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         currentCard = null;
         currentDice = null;
-        cardImage.sprite = null;
+        if (itemImage != null)
+            itemImage.sprite = null;
         priceText.gameObject.SetActive(false);
         soldoutText.gameObject.SetActive(false);
         buyButton.interactable = false;

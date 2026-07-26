@@ -110,19 +110,39 @@ public static class EffectProcessor
                 break;
 
             case CardEffect.AddParryToAttack:
-                player?.EnableNextAttackParry();
+                player?.EnableAttackParry(normalizedValue, card.cardType == CardType.Passive);
                 break;
 
             case CardEffect.InvincibleDash:
                 player?.TriggerInvincibleDash(value > 0 ? value : 2);
                 break;
 
-            case CardEffect.DestroyEnemy3:
+            case CardEffect.DestroyEnemy:
                 DestroyTargetsAhead(player, diceManager, value > 0 ? value : 3);
                 break;
 
             case CardEffect.NextBlockIsParry:
-                player?.EnableNextBlockParry();
+                player?.EnableBlockParry(normalizedValue, card.cardType == CardType.Passive);
+                break;
+
+            case CardEffect.AddDestroyToAttack:
+                player?.EnableObstacleDestroyOnAttack(normalizedValue, card.cardType == CardType.Passive);
+                break;
+
+            case CardEffect.IgnoreMoveTileEffects:
+                player?.EnableIgnoreMoveTileEffects(normalizedValue, card.cardType == CardType.Passive);
+                break;
+
+            case CardEffect.AddDistance:
+                player?.AddCardDistanceBoost(value);
+                break;
+
+            case CardEffect.LongFast:
+                player?.ActivateLongFast(normalizedValue, 2f);
+                break;
+
+            case CardEffect.StopMovement:
+                player?.StopRemainingMovement();
                 break;
         }
     }
@@ -174,6 +194,6 @@ public static class EffectProcessor
             }
         }
 
-        Debug.Log($"카드 효과 적용: DestroyEnemy3 -> {destroyedCount}개 제거");
+        Debug.Log($"카드 효과 적용: 전방 {distance}칸 파괴 -> {destroyedCount}개 제거");
     }
 }

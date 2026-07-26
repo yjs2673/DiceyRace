@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b45fe885722b0046a1fb81189e5770f, type: 3}
+  m_Name: 9_dash_2
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  cardID: 9
+  cardName: dash 2
+  icon: {fileID: 21300000, guid: 79545f7d60e76425e954ed8c48adce15, type: 3}
+  price: 0
+  description: "2\uAC70\uB9AC\uB9CC\uD07C \uBB34\uC801 \uB3CC\uC9C4"
+  cardType: 1
+  cardEffect: 9
+  effectValue: 2

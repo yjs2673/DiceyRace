@@ -33,6 +33,7 @@ public class StageManager : MonoBehaviour
 
     public int CurrentDistance { get; private set; }
     public int RemainingDistanceToGoal => Mathf.Max(0, targetDistance - CurrentDistance);
+    public bool HasReachedGoalTrigger { get; private set; }
     public bool IsBossField => fieldMode == FieldMode.Boss;
     public bool IsStageResolved { get; private set; }
 
@@ -130,6 +131,18 @@ public class StageManager : MonoBehaviour
         EvaluateStageResolution();
     }
 
+    public void ReachGoalTrigger()
+    {
+        if (IsStageResolved || HasReachedGoalTrigger)
+        {
+            return;
+        }
+
+        HasReachedGoalTrigger = true;
+        Debug.Log("[StageManager] Cave 도착 감지");
+        EvaluateStageResolution();
+    }
+
     public IEnumerator ResolveEndTurn()
     {
         EnsureRuntimeReferences();
@@ -164,6 +177,7 @@ public class StageManager : MonoBehaviour
         EnsureRuntimeReferences();
         IsStageResolved = false;
         CurrentDistance = Mathf.Clamp(savedState.stageDistance, 0, targetDistance);
+        HasReachedGoalTrigger = savedState.reachedGoalTrigger;
 
         if (IsBossField && boss != null)
         {
@@ -178,11 +192,9 @@ public class StageManager : MonoBehaviour
             return;
         }
 
-        bool reachedTarget = CurrentDistance >= targetDistance;
-
         if (!IsBossField)
         {
-            if (reachedTarget)
+            if (HasReachedGoalTrigger)
             {
                 ClearStage();
             }
@@ -192,8 +204,8 @@ public class StageManager : MonoBehaviour
 
         bool bossDefeated = boss != null && boss.IsDead;
         bool cleared = bossMustBeDefeatedToClear
-            ? reachedTarget && bossDefeated
-            : reachedTarget || bossDefeated;
+            ? HasReachedGoalTrigger && bossDefeated
+            : HasReachedGoalTrigger || bossDefeated;
 
         if (cleared)
         {

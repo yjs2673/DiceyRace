@@ -11,6 +11,14 @@ public class CameraFollow : MonoBehaviour
     private float fixedY;
     private float fixedZ;
     private float offsetX;
+    private Quaternion followRotation;
+    private bool hasFocusTarget;
+    private Transform focusTarget;
+    private Vector3 focusOffset;
+    private Quaternion focusRotation;
+    private bool hasPoseOverride;
+    private Vector3 overridePosition;
+    private Quaternion overrideRotation;
 
     private void Start()
     {
@@ -23,10 +31,27 @@ public class CameraFollow : MonoBehaviour
             // 플레이어와 카메라 사이의 X축 간격(오프셋) 계산
             offsetX = transform.position.x - player.position.x;
         }
+
+        followRotation = transform.rotation;
     }
 
     private void LateUpdate()
     {
+        if (hasPoseOverride)
+        {
+            transform.position = Vector3.Lerp(transform.position, overridePosition, smoothSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, overrideRotation, smoothSpeed * Time.deltaTime);
+            return;
+        }
+
+        if (hasFocusTarget && focusTarget != null)
+        {
+            Vector3 focusPosition = focusTarget.position + focusOffset;
+            transform.position = Vector3.Lerp(transform.position, focusPosition, smoothSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, focusRotation, smoothSpeed * Time.deltaTime);
+            return;
+        }
+
         if (player == null) return;
 
         // 목표 위치: 플레이어의 X 위치에 오프셋을 더하고, Y와 Z는 고정값 사용
@@ -34,5 +59,60 @@ public class CameraFollow : MonoBehaviour
         
         // Lerp를 이용해 부드럽게 목표 위치로 이동
         transform.position = Vector3.Lerp(transform.position, targetPosition, smoothSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, followRotation, smoothSpeed * Time.deltaTime);
+    }
+
+    public void SetTemporaryFocus(Transform target, Vector3 offset, Vector3 eulerAngles)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        focusTarget = target;
+        focusOffset = offset;
+        focusRotation = Quaternion.Euler(eulerAngles);
+        hasFocusTarget = true;
+    }
+
+    public void ClearTemporaryFocus()
+    {
+        hasFocusTarget = false;
+        focusTarget = null;
+    }
+
+    public void SetTemporaryPose(Vector3 worldPosition, Vector3 eulerAngles)
+    {
+        overridePosition = worldPosition;
+        overrideRotation = Quaternion.Euler(eulerAngles);
+        hasPoseOverride = true;
+    }
+
+    public void ClearTemporaryPose()
+    {
+        hasPoseOverride = false;
+    }
+
+    public bool IsNearFollowPose(float positionThreshold = 0.15f, float rotationThreshold = 2f)
+    {
+        if (player == null)
+        {
+            return true;
+        }
+
+        Vector3 targetPosition = new Vector3(player.position.x + offsetX, fixedY, fixedZ);
+        return Vector3.Distance(transform.position, targetPosition) <= positionThreshold
+            && Quaternion.Angle(transform.rotation, followRotation) <= rotationThreshold;
+    }
+
+    public void SnapToFollowTarget()
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        transform.position = new Vector3(player.position.x + offsetX, fixedY, fixedZ);
+        transform.rotation = followRotation;
     }
 }

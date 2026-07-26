@@ -43,8 +43,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int jumpCrazyBonusDistance;
     [SerializeField] private bool parryReflectActive;
     [SerializeField] private int parryReflectDamage = 1;
-    [SerializeField] private bool nextAttackHasParry;
-    [SerializeField] private bool nextBlockIsParry;
+    [SerializeField] private int remainingAttackParryCount;
+    [SerializeField] private bool attackParryForTurn;
+    [SerializeField] private int remainingAttackDestroyCount;
+    [SerializeField] private bool attackDestroyForTurn;
+    [SerializeField] private int remainingBlockParryCount;
+    [SerializeField] private bool blockParryForTurn;
+    [SerializeField] private int remainingIgnoredMoveTileCount;
+    [SerializeField] private bool ignoreMoveTileEffectsForTurn;
     [SerializeField] private bool isInvincibleDashResolving;
 
     [Header("Managers")]
@@ -114,17 +120,24 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void OnWholeMap(InputValue value)
+    {
+        if (!value.isPressed)
+        {
+            return;
+        }
+
+        WholeMapViewController.Instance?.ToggleWholeMapView();
+    }
+
     private IEnumerator AttackRoutine()
     {
-        bool consumeParryAfterAttack = nextAttackHasParry;
+        bool consumeAttackParry = remainingAttackParryCount > 0 && !attackParryForTurn;
+        bool consumeAttackDestroy = remainingAttackDestroyCount > 0 && !attackDestroyForTurn;
         isAttacking = true;
         yield return new WaitForSeconds(attackDuration); // 공격 지속 시간
         isAttacking = false;
-
-        if (consumeParryAfterAttack)
-        {
-            nextAttackHasParry = false;
-        }
+        ConsumeAttackModifiersAfterUse(consumeAttackParry, consumeAttackDestroy);
     }
 
     private IEnumerator ParryRoutine()
@@ -195,6 +208,10 @@ public class PlayerController : MonoBehaviour
         {
             HandleEnemyTrigger(otherObject);
         }
+        else if (otherObject.CompareTag("Cave"))
+        {
+            StageManager.Instance?.ReachGoalTrigger();
+        }
     }
     #endregion
 
@@ -260,16 +277,83 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"카드 효과 적용: ParryReflect 활성화 ({parryReflectDamage} 반사 피해)");
     }
 
+    public void EnableAttackParry(int attackCount, bool applyForEntireTurn = false)
+    {
+        if (applyForEntireTurn)
+        {
+            attackParryForTurn = true;
+            Debug.Log("카드 효과 적용: 이번 턴 모든 공격에 패링 판정 추가");
+            return;
+        }
+
+        remainingAttackParryCount = Mathf.Max(remainingAttackParryCount, Mathf.Max(1, attackCount));
+        Debug.Log($"카드 효과 적용: 다음 {remainingAttackParryCount}번 공격에 패링 판정 추가");
+    }
+
     public void EnableNextAttackParry()
     {
-        nextAttackHasParry = true;
-        Debug.Log("카드 효과 적용: 다음 공격에 패링 판정 추가");
+        EnableAttackParry(1);
+    }
+
+    public void EnableObstacleDestroyOnAttack(int attackCount, bool applyForEntireTurn = false)
+    {
+        if (applyForEntireTurn)
+        {
+            attackDestroyForTurn = true;
+            Debug.Log("카드 효과 적용: 이번 턴 모든 공격에 장애물 파괴 판정 추가");
+            return;
+        }
+
+        remainingAttackDestroyCount = Mathf.Max(remainingAttackDestroyCount, Mathf.Max(1, attackCount));
+        Debug.Log($"카드 효과 적용: 다음 {remainingAttackDestroyCount}번 공격에 장애물 파괴 판정 추가");
+    }
+
+    public void EnableBlockParry(int blockCount, bool applyForEntireTurn = false)
+    {
+        if (applyForEntireTurn)
+        {
+            blockParryForTurn = true;
+            Debug.Log("카드 효과 적용: 이번 턴 모든 방어가 패링으로 판정됩니다.");
+            return;
+        }
+
+        remainingBlockParryCount = Mathf.Max(remainingBlockParryCount, Mathf.Max(1, blockCount));
+        Debug.Log($"카드 효과 적용: 다음 {remainingBlockParryCount}번 방어가 패링으로 판정됩니다.");
     }
 
     public void EnableNextBlockParry()
     {
-        nextBlockIsParry = true;
-        Debug.Log("카드 효과 적용: 다음 방어가 패링으로 판정됩니다.");
+        EnableBlockParry(1);
+    }
+
+    public void EnableIgnoreMoveTileEffects(int tileCount, bool applyForEntireTurn = false)
+    {
+        if (applyForEntireTurn)
+        {
+            ignoreMoveTileEffectsForTurn = true;
+            Debug.Log("카드 효과 적용: 이번 턴 이동 발판 효과를 모두 무시합니다.");
+            return;
+        }
+
+        remainingIgnoredMoveTileCount = Mathf.Max(remainingIgnoredMoveTileCount, Mathf.Max(1, tileCount));
+        Debug.Log($"카드 효과 적용: 다음 {remainingIgnoredMoveTileCount}칸 동안 이동 발판 효과를 무시합니다.");
+    }
+
+    public void AddCardDistanceBoost(int amount)
+    {
+        AdjustCardDistance(amount, "CardDistance");
+    }
+
+    public void ActivateLongFast(int bonusDistance, float speedMultiplier = 2f)
+    {
+        AddCardDistanceBoost(bonusDistance);
+        diceManager?.SetTurnMoveSpeedMultiplier(speedMultiplier);
+        Debug.Log($"카드 효과 적용: 이번 턴 거리 +{bonusDistance}, 속도 {speedMultiplier:0.##}배");
+    }
+
+    public void StopRemainingMovement()
+    {
+        diceManager?.StopRemainingMoves();
     }
 
     public void TriggerInvincibleDash(int distance)
@@ -386,8 +470,15 @@ public class PlayerController : MonoBehaviour
             jumpCrazyBonusDistance = jumpCrazyBonusDistance,
             parryReflectActive = parryReflectActive,
             parryReflectDamage = parryReflectDamage,
-            nextAttackHasParry = nextAttackHasParry,
-            nextBlockIsParry = nextBlockIsParry
+            remainingAttackParryCount = remainingAttackParryCount,
+            attackParryForTurn = attackParryForTurn,
+            remainingAttackDestroyCount = remainingAttackDestroyCount,
+            attackDestroyForTurn = attackDestroyForTurn,
+            remainingBlockParryCount = remainingBlockParryCount,
+            blockParryForTurn = blockParryForTurn,
+            remainingIgnoredMoveTileCount = remainingIgnoredMoveTileCount,
+            ignoreMoveTileEffectsForTurn = ignoreMoveTileEffectsForTurn,
+            turnMoveSpeedMultiplier = diceManager != null ? diceManager.TurnMoveSpeedMultiplier : 1f
         };
     }
 
@@ -427,8 +518,15 @@ public class PlayerController : MonoBehaviour
         jumpCrazyBonusDistance = 0;
         parryReflectActive = false;
         parryReflectDamage = 1;
-        nextAttackHasParry = false;
-        nextBlockIsParry = false;
+        remainingAttackParryCount = 0;
+        attackParryForTurn = false;
+        remainingAttackDestroyCount = 0;
+        attackDestroyForTurn = false;
+        remainingBlockParryCount = 0;
+        blockParryForTurn = false;
+        remainingIgnoredMoveTileCount = 0;
+        ignoreMoveTileEffectsForTurn = false;
+        diceManager?.SetTurnMoveSpeedMultiplier(1f, false);
     }
 
     // 적이나 장애물에 닿았을 때 무적 상태인지 체크하고 차감하는 헬퍼 함수
@@ -470,21 +568,15 @@ public class PlayerController : MonoBehaviour
         }
 
         bool forcedParry = false;
-        if (canParry && nextBlockIsParry)
+        if (canParry && TryConsumeForcedParryBlock())
         {
-            nextBlockIsParry = false;
             forcedParry = true;
             animator?.SetTrigger(DoShieldHash);
         }
 
-        bool attackParry = canParry && isAttacking && nextAttackHasParry;
+        bool attackParry = canParry && isAttacking && CanCurrentAttackParry();
         if ((canParry && isParrying) || forcedParry || attackParry)
         {
-            if (attackParry)
-            {
-                nextAttackHasParry = false;
-            }
-
             OnSuccessfulParry(source);
             return true;
         }
@@ -590,8 +682,15 @@ public class PlayerController : MonoBehaviour
         jumpCrazyBonusDistance = runtimeState.jumpCrazyBonusDistance;
         parryReflectActive = runtimeState.parryReflectActive;
         parryReflectDamage = runtimeState.parryReflectDamage;
-        nextAttackHasParry = runtimeState.nextAttackHasParry;
-        nextBlockIsParry = runtimeState.nextBlockIsParry;
+        remainingAttackParryCount = runtimeState.remainingAttackParryCount;
+        attackParryForTurn = runtimeState.attackParryForTurn;
+        remainingAttackDestroyCount = runtimeState.remainingAttackDestroyCount;
+        attackDestroyForTurn = runtimeState.attackDestroyForTurn;
+        remainingBlockParryCount = runtimeState.remainingBlockParryCount;
+        blockParryForTurn = runtimeState.blockParryForTurn;
+        remainingIgnoredMoveTileCount = runtimeState.remainingIgnoredMoveTileCount;
+        ignoreMoveTileEffectsForTurn = runtimeState.ignoreMoveTileEffectsForTurn;
+        diceManager?.SetTurnMoveSpeedMultiplier(runtimeState.turnMoveSpeedMultiplier > 0f ? runtimeState.turnMoveSpeedMultiplier : 1f, false);
     }
 
     private void AdjustCardDistance(int amount, string reason)
@@ -601,7 +700,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (diceManager != null && diceManager.IsMoving)
+        if (diceManager != null && diceManager.HasPendingMoveBudget)
         {
             diceManager.ModifyMoves(amount);
         }
@@ -618,12 +717,23 @@ public class PlayerController : MonoBehaviour
         Tile tile = other.GetComponent<Tile>();
         if (tile != null && tile.tileType == TileType.Moving)
         {
+            if (TryIgnoreMoveTileEffect())
+            {
+                return;
+            }
+
             EffectProcessor.ApplyTileEffect(tile, diceManager, this);
         }
     }
 
     private void HandleObstacleTrigger(GameObject obstacle)
     {
+        if (isAttacking && CanCurrentAttackDestroyObstacle())
+        {
+            OnSuccessfulObstacleAttack(obstacle);
+            return;
+        }
+
         if (TryResolveThreat(obstacle, false, true, true))
         {
             DestroyCardTarget(obstacle, "장애물 관통");
@@ -663,6 +773,72 @@ public class PlayerController : MonoBehaviour
         {
             diceManager.ModifyMoves(amount);
         }
+    }
+
+    private void ConsumeAttackModifiersAfterUse(bool consumeAttackParry, bool consumeAttackDestroy)
+    {
+        if (consumeAttackParry && remainingAttackParryCount > 0)
+        {
+            remainingAttackParryCount--;
+            Debug.Log($"공격 패링 횟수 차감 -> 남은 공격 패링: {remainingAttackParryCount}");
+        }
+
+        if (consumeAttackDestroy && remainingAttackDestroyCount > 0)
+        {
+            remainingAttackDestroyCount--;
+            Debug.Log($"공격 파괴 횟수 차감 -> 남은 공격 파괴: {remainingAttackDestroyCount}");
+        }
+    }
+
+    private bool CanCurrentAttackParry()
+    {
+        return attackParryForTurn || remainingAttackParryCount > 0;
+    }
+
+    private bool CanCurrentAttackDestroyObstacle()
+    {
+        return attackDestroyForTurn || remainingAttackDestroyCount > 0;
+    }
+
+    private bool TryConsumeForcedParryBlock()
+    {
+        if (blockParryForTurn)
+        {
+            return true;
+        }
+
+        if (remainingBlockParryCount <= 0)
+        {
+            return false;
+        }
+
+        remainingBlockParryCount--;
+        Debug.Log($"방어 패링 횟수 차감 -> 남은 방어 패링: {remainingBlockParryCount}");
+        return true;
+    }
+
+    private bool TryIgnoreMoveTileEffect()
+    {
+        if (ignoreMoveTileEffectsForTurn)
+        {
+            Debug.Log("이동 발판 효과 무시: 이번 턴 전체 무효");
+            return true;
+        }
+
+        if (remainingIgnoredMoveTileCount <= 0)
+        {
+            return false;
+        }
+
+        remainingIgnoredMoveTileCount--;
+        Debug.Log($"이동 발판 효과 무시 -> 남은 무효 칸 수: {remainingIgnoredMoveTileCount}");
+        return true;
+    }
+
+    private void OnSuccessfulObstacleAttack(GameObject obstacle)
+    {
+        Debug.Log("장애물 공격 파괴 성공!");
+        DestroyCardTarget(obstacle, "공격 파괴");
     }
     #endregion
 

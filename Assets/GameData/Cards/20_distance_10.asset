@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b45fe885722b0046a1fb81189e5770f, type: 3}
+  m_Name: 20_distance_10
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  cardID: 20
+  cardName: distance 10
+  icon: {fileID: 21300000, guid: bcac272130b7e40ab93371da0895fa1a, type: 3}
+  price: 0
+  description: "\uC0AC\uC6A9\uC2DC \uAC70\uB9AC 10\uC99D\uAC00"
+  cardType: 1
+  cardEffect: 14
+  effectValue: 10
