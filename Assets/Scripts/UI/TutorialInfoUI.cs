@@ -53,6 +53,7 @@ public class TutorialInfoUI : MonoBehaviour
     {
         gameObject.SetActive(true);
         transform.SetAsLastSibling();
+        PlayButtonClickSfx();
     }
 
     public void Hide()
