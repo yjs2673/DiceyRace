@@ -2683,8 +2683,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: PHT
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: cb4f0084ec21ce645863d5c2cf3b5d45, type: 2}
-  m_sharedMaterial: {fileID: -8938523376588496302, guid: cb4f0084ec21ce645863d5c2cf3b5d45, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: f2c2888cdc4c6664499a9a8593aa44f5, type: 2}
+  m_sharedMaterial: {fileID: -3181700801976097004, guid: f2c2888cdc4c6664499a9a8593aa44f5, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
