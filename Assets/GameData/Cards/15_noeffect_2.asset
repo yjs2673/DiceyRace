@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 15_noeffect_2
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardID: 15
-  cardName: noeffect 2
+  cardName: "\uBC1C\uD310 \uBB34\uD6A8\uD654 2"
   icon: {fileID: 21300000, guid: 482d819ae56a9495ea9ad6e63d2d1228, type: 3}
   price: 10
   description: "\uB2E4\uC74C 2\uD68C\uC758 \uC774\uB3D9 \uBC1C\uD310\uC758 \uD6A8\uACFC\uB97C

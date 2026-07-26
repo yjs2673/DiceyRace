@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: 28_jumpdistance_1
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardID: 28
-  cardName: jump distance 1
+  cardName: "\uCD94\uC9C4\uB825"
   icon: {fileID: 21300000, guid: ec6b94901a6fd488cbbc7cd41666f08b, type: 3}
   price: 10
-  description: "\uC810\uD504\uB97C \uD560 \uB54C\uB9C8\uB2E4 \uAC70\uB9AC 1 \uC99D\uAC00"
+  description: "\uC810\uD504\uB97C \uD560 \uB54C\uB9C8\uB2E4 \uAC70\uB9AC\uAC00 1\uCE78
+    \uC99D\uAC00\uD55C\uB2E4."
   cardType: 0
   cardEffect: 6
   effectValue: 1

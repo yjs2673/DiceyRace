@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: 1_attparry_1
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardID: 1
-  cardName: attack parry 1
+  cardName: "\uACF5\uACA9 \uD328\uB9C1 1"
   icon: {fileID: 21300000, guid: 6c042aeb954e54409ba43162842f01b9, type: 3}
   price: 5
-  description: "\uB2E4\uC74C 1\uBC88\uC758 \uACF5\uACA9\uC5D0 \uD328\uB9C1 \uD310\uC815
-    \uCD94\uAC00"
+  description: "\uB2E4\uC74C 1\uBC88\uC758 \uACF5\uACA9\uC5D0 \uD328\uB9C1 \uD310\uC815\uC744
+    \uCD94\uAC00\uD55C\uB2E4."
   cardType: 1
   cardEffect: 8
   effectValue: 1
