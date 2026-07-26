@@ -16,6 +16,10 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private CardData currentCard;
     private Dice currentDice;
+    private bool isSoldOut;
+
+    public bool IsSoldOut => isSoldOut;
+    public event System.Action SoldOut;
 
     private void Awake()
     {
@@ -88,12 +92,19 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             GameManager.Instance.AddOwnedCard(currentCard);
         else
             GameManager.Instance.AddDice(currentDice);
+
         Debug.Log($"{itemName}을 구매했습니다.");
         AudioManager.instance.PlaySfx(AudioManager.Sfx.ShopBuy); //***
 
         currentCard = null;
         currentDice = null;
+        isSoldOut = true;
 
+        if (itemImage != null)
+        {
+            itemImage.sprite = null;
+            itemImage.gameObject.SetActive(false);
+        }
         priceText.gameObject.SetActive(false);
         coinImage.gameObject.SetActive(false);
         pirateCoinImage.gameObject.SetActive(false);
@@ -106,7 +117,10 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         if (ShopTooltipUI.Instance != null)
             ShopTooltipUI.Instance.Hide();
+
+        SoldOut?.Invoke();
     }
+
     public void SetCard(CardData card)
     {
         if (card == null)
@@ -116,9 +130,11 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         currentCard = card;
         currentDice = null;
+        isSoldOut = false;
 
         if (itemImage != null)
         {
+            itemImage.gameObject.SetActive(true);
             itemImage.sprite = card.icon;
             itemImage.preserveAspect = true;
         }
@@ -137,8 +153,10 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         currentDice = dice;
         currentCard = null;
+        isSoldOut = false;
         if (itemImage != null)
         {
+            itemImage.gameObject.SetActive(true);
             itemImage.sprite = dice.icon;
             itemImage.preserveAspect = true;
         }
@@ -154,8 +172,12 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         currentCard = null;
         currentDice = null;
+        isSoldOut = false;
         if (itemImage != null)
+        {
+            itemImage.gameObject.SetActive(true);
             itemImage.sprite = null;
+        }
         priceText.gameObject.SetActive(false);
         coinImage.gameObject.SetActive(false);
         pirateCoinImage.gameObject.SetActive(false);
