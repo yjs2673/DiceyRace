@@ -33,4 +33,22 @@ public class Tile : MonoBehaviour
     
     [Tooltip("효과 수치")]
     public int effectValue;
+
+    public bool HasInspectableEffect => tileEffect != TileEffect.None;
+
+    public string GetTooltipTypeText()
+    {
+        return tileType.ToString();
+    }
+
+    public string GetTooltipEffectText()
+    {
+        if (tileEffect == TileEffect.None)
+        {
+            return tileEffect.ToString();
+        }
+
+        string valueText = effectValue > 0 ? $"+{effectValue}" : effectValue.ToString();
+        return $"{tileEffect} {valueText}";
+    }
 }

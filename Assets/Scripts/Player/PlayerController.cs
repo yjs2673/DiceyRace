@@ -120,6 +120,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void OnWholeMap(InputValue value)
+    {
+        if (!value.isPressed)
+        {
+            return;
+        }
+
+        WholeMapViewController.Instance?.ToggleWholeMapView();
+    }
+
     private IEnumerator AttackRoutine()
     {
         bool consumeAttackParry = remainingAttackParryCount > 0 && !attackParryForTurn;

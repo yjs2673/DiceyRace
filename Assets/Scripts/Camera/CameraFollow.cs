@@ -16,6 +16,9 @@ public class CameraFollow : MonoBehaviour
     private Transform focusTarget;
     private Vector3 focusOffset;
     private Quaternion focusRotation;
+    private bool hasPoseOverride;
+    private Vector3 overridePosition;
+    private Quaternion overrideRotation;
 
     private void Start()
     {
@@ -34,6 +37,13 @@ public class CameraFollow : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (hasPoseOverride)
+        {
+            transform.position = Vector3.Lerp(transform.position, overridePosition, smoothSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, overrideRotation, smoothSpeed * Time.deltaTime);
+            return;
+        }
+
         if (hasFocusTarget && focusTarget != null)
         {
             Vector3 focusPosition = focusTarget.position + focusOffset;
@@ -69,6 +79,18 @@ public class CameraFollow : MonoBehaviour
     {
         hasFocusTarget = false;
         focusTarget = null;
+    }
+
+    public void SetTemporaryPose(Vector3 worldPosition, Vector3 eulerAngles)
+    {
+        overridePosition = worldPosition;
+        overrideRotation = Quaternion.Euler(eulerAngles);
+        hasPoseOverride = true;
+    }
+
+    public void ClearTemporaryPose()
+    {
+        hasPoseOverride = false;
     }
 
     public bool IsNearFollowPose(float positionThreshold = 0.15f, float rotationThreshold = 2f)

@@ -26,7 +26,7 @@ public enum CardEffect
     IgnoreMoveTileEffects,  // 이동 타일 효과 무시
     AddDistance,            // 거리 증가
     LongFast,               // 거리, 속도 증가
-    StopMovement            // 즉시 이동 저이
+    StopMovement            // 즉시 이동 정지
 }
 
 [CreateAssetMenu(fileName = "New Card", menuName = "Game/Card")]

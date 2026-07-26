@@ -36,6 +36,8 @@ public class DiceManager : MonoBehaviour
     private bool isKnockedBack;
     private bool isRollingDice;
     private bool isAwaitingMoveStart;
+    private bool isAwaitingMoveSuspended;
+    private bool isPrimaryActionLocked;
     private Coroutine activeMoveRoutine;
     private Coroutine pendingAutoMoveRoutine;
     private DiceBoardController diceBoardController;
@@ -43,7 +45,9 @@ public class DiceManager : MonoBehaviour
 
     public bool IsMoving => isMoving;
     public bool IsRollingDice => isRollingDice;
+    public bool IsAwaitingMoveStart => isAwaitingMoveStart;
     public bool HasPendingMoveBudget => isMoving || isAwaitingMoveStart || remainingMoves > 0;
+    public bool CanToggleWholeMapView => isAwaitingMoveStart && !isMoving && !isRollingDice;
     public float StepDistance => moveDistance;
     public int RemainingMoves => remainingMoves;
     public int RemainingRerolls => remainingRerolls;
@@ -84,7 +88,7 @@ public class DiceManager : MonoBehaviour
             return;
         }
 
-        if (isMoving || isRollingDice || isAwaitingMoveStart || remainingRerolls <= 0 || remainingMoves > 0)
+        if (isMoving || isRollingDice || isAwaitingMoveStart || isPrimaryActionLocked || remainingRerolls <= 0 || remainingMoves > 0)
         {
             return;
         }
@@ -193,6 +197,7 @@ public class DiceManager : MonoBehaviour
 
         CancelPendingAutoMove();
         isAwaitingMoveStart = false;
+        isAwaitingMoveSuspended = false;
         remainingMoves = 0;
         UpdateUI(remainingMoves, remainingRerolls);
         RefreshRollButtonState();
@@ -227,6 +232,8 @@ public class DiceManager : MonoBehaviour
         isKnockedBack = false;
         isRollingDice = false;
         isAwaitingMoveStart = false;
+        isAwaitingMoveSuspended = false;
+        isPrimaryActionLocked = false;
 
         UpdateDiceLabel(currentDiceValue > 0
             ? $"주사위 합: {currentDiceValue}"
@@ -276,6 +283,11 @@ public class DiceManager : MonoBehaviour
 
     private void HandlePrimaryActionButton()
     {
+        if (isPrimaryActionLocked)
+        {
+            return;
+        }
+
         if (isAwaitingMoveStart)
         {
             BeginMovementNow();
@@ -334,14 +346,11 @@ public class DiceManager : MonoBehaviour
         }
 
         CancelPendingAutoMove();
+        isAwaitingMoveSuspended = false;
         isAwaitingMoveStart = true;
         UpdateDiceLabel($"주사위 합: {currentDiceValue}\n버튼을 누르거나 잠시 후 이동");
         RefreshRollButtonState();
-
-        if (autoMoveDelay > 0f)
-        {
-            pendingAutoMoveRoutine = StartCoroutine(AutoMoveAfterDelayRoutine());
-        }
+        ScheduleAutoMoveStart();
     }
 
     private IEnumerator AutoMoveAfterDelayRoutine()
@@ -349,7 +358,7 @@ public class DiceManager : MonoBehaviour
         yield return new WaitForSeconds(autoMoveDelay);
         pendingAutoMoveRoutine = null;
 
-        if (isAwaitingMoveStart && !isMoving && remainingMoves > 0)
+        if (isAwaitingMoveStart && !isAwaitingMoveSuspended && !isMoving && remainingMoves > 0)
         {
             BeginMovementNow();
         }
@@ -357,13 +366,14 @@ public class DiceManager : MonoBehaviour
 
     private void BeginMovementNow()
     {
-        if (!isAwaitingMoveStart || remainingMoves <= 0)
+        if (!isAwaitingMoveStart || isAwaitingMoveSuspended || remainingMoves <= 0)
         {
             return;
         }
 
         CancelPendingAutoMove();
         isAwaitingMoveStart = false;
+        isAwaitingMoveSuspended = false;
         RefreshRollButtonState();
         StartMoveRoutine();
     }
@@ -476,6 +486,37 @@ public class DiceManager : MonoBehaviour
         RefreshRollButtonState();
     }
 
+    public void SetPrimaryActionLocked(bool locked)
+    {
+        if (isPrimaryActionLocked == locked)
+        {
+            return;
+        }
+
+        isPrimaryActionLocked = locked;
+        RefreshRollButtonState();
+    }
+
+    public void SetAwaitingMoveSuspended(bool suspended)
+    {
+        if (!isAwaitingMoveStart || isAwaitingMoveSuspended == suspended)
+        {
+            return;
+        }
+
+        isAwaitingMoveSuspended = suspended;
+        if (suspended)
+        {
+            CancelPendingAutoMove();
+        }
+        else
+        {
+            ScheduleAutoMoveStart();
+        }
+
+        RefreshRollButtonState();
+    }
+
     private void RefreshRollButtonState()
     {
         if (rollButton == null)
@@ -483,7 +524,7 @@ public class DiceManager : MonoBehaviour
             return;
         }
 
-        if (isRollingDice)
+        if (isPrimaryActionLocked || isRollingDice)
         {
             rollButton.interactable = false;
             return;
@@ -525,6 +566,17 @@ public class DiceManager : MonoBehaviour
 
         StopCoroutine(pendingAutoMoveRoutine);
         pendingAutoMoveRoutine = null;
+    }
+
+    private void ScheduleAutoMoveStart()
+    {
+        if (!isAwaitingMoveStart || isAwaitingMoveSuspended || autoMoveDelay <= 0f)
+        {
+            return;
+        }
+
+        CancelPendingAutoMove();
+        pendingAutoMoveRoutine = StartCoroutine(AutoMoveAfterDelayRoutine());
     }
 
     private void UpdateDiceLabel(string message)

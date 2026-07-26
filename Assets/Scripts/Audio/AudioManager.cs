@@ -22,6 +22,13 @@ public class AudioManager : MonoBehaviour
     {
         OnBtn, ClickBtn, Mini0, Mini1, Mini2, MiniClear, Mini0Btn, Mini1Btn,
         Warning, Planet, Cloud, Blackhole, Over, Clear
+        /*
+        플레이어: 점프, 슬라이딩, 공격, 패링, 명중, 피격, 쓰러짐
+        몬스터: 원거리 공격, 쓰러짐
+        타일: 밟고 지나가기, 효과 발동
+        카드: 멀리건 클릭, 사용 효과 발동, 버리기
+        일반: 버튼 클릭, 상점에서 쓸것들 등등
+        */
     }
 
     [Header("SFX Spam Protection")]
