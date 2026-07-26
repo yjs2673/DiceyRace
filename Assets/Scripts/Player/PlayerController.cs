@@ -790,7 +790,7 @@ public class PlayerController : MonoBehaviour
     {
         animator?.SetTrigger(DoHitHash);
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Hit); //***
-        ModifyRemainingMoves(-1);
+
         Debug.Log(logMessage);
         OnDamaged(1, source);
     }
