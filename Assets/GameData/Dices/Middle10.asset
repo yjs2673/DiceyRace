@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Middle10
   m_EditorClassIdentifier: Assembly-CSharp::Dice
   diceName: "\uC911\uAC04 \uC8FC\uC0AC\uC704(10)"
-  icon: {fileID: 21300000, guid: c320e96ce1256407883f3c93a192e8c0, type: 3}
+  icon: {fileID: 21300000, guid: 0eae18490722b45248d50385da746379, type: 3}
   price: 4
   description: "\uC774\uAC70 \uAC19\uC740 \uAC12\uC774\uBA74 \uAD73\uC774 \uC815\uC774\uC2ED\uBA74\uCCB4\uB85C
     \uD574\uC57C \uD558\uB098\uC694?"

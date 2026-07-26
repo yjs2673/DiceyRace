@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour
     // Input System: Jump (Q)
     public void OnJump(InputValue value)
     {
-        if (value.isPressed && !isJumping)
+        if (value.isPressed && CanStartAction())
         {            
             animator?.SetTrigger(DoJumpHash);
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour
     // Input System: Slide (W)
     public void OnSlide(InputValue value)
     {
-        if (value.isPressed && !isSliding)
+        if (value.isPressed && CanStartAction())
         {
             animator?.SetTrigger(DoSlideHash);
             AudioManager.instance.PlaySfx(AudioManager.Sfx.Slide); //***
@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour
     // Input System: Attack (E)
     public void OnAttack(InputValue value)
     {
-        if (value.isPressed && !isAttacking)
+        if (value.isPressed && CanStartAction())
         {
             animator?.SetTrigger(DoAttackHash);
             AudioManager.instance.PlaySfx(AudioManager.Sfx.Attack); //***
@@ -115,7 +115,7 @@ public class PlayerController : MonoBehaviour
     // Input System: Parry (R)
     public void OnParry(InputValue value)
     {
-        if (value.isPressed && !isParrying)
+        if (value.isPressed && CanStartAction())
         {
             animator?.SetTrigger(DoShieldHash);
             AudioManager.instance.PlaySfx(AudioManager.Sfx.Parry); //***
@@ -132,6 +132,26 @@ public class PlayerController : MonoBehaviour
         }
 
         WholeMapViewController.Instance?.ToggleWholeMapView();
+    }
+
+    private bool CanUseMovementInputs()
+    {
+        if (TurnManager.Instance == null || TurnManager.Instance.CurrentPhase != TurnPhase.Move)
+        {
+            return false;
+        }
+
+        return diceManager != null && diceManager.IsMoving;
+    }
+
+    private bool CanStartAction()
+    {
+        return CanUseMovementInputs() && !IsActionInProgress();
+    }
+
+    private bool IsActionInProgress()
+    {
+        return isJumping || isSliding || isAttacking || isParrying;
     }
 
     private IEnumerator AttackRoutine()
