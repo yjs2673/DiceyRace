@@ -63,7 +63,7 @@ public class DiceManager : MonoBehaviour
 
         EnsureDiceBoardController();
         PrepareParkedDiceBoard();
-        UpdateDiceLabel("주사위 합");
+        UpdateDiceLabel("주사위\n합");
         UpdateUI(remainingMoves, remainingRerolls);
         SubscribeTurnManager();
         RefreshRollButtonState();
@@ -238,7 +238,7 @@ public class DiceManager : MonoBehaviour
 
         UpdateDiceLabel(currentDiceValue > 0
             ? $"{currentDiceValue}"
-            : "주사위 합");
+            : "주사위\n합");
         UpdateUI(remainingMoves, remainingRerolls);
         RefreshRollButtonState();
         player?.SetAutoMoveAnimation(false);

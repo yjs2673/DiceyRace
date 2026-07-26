@@ -288,6 +288,21 @@ public class GameManager : MonoBehaviour
         UpdatePlayerHP(hp);
     }
 
+    public void ResetRuntimeDataToDefaults()
+    {
+        InitDefaultData();
+    }
+
+    public void PrepareForFieldSceneRetry()
+    {
+        savedFieldState = null;
+        latestFieldCheckpoint = null;
+        pendingShopExitTransition = null;
+        currentTurnCards.Clear();
+        playerHP = initialPlayerHP;
+        RefreshRuntimeDebugInfo();
+    }
+
     public void TakeDamage(int damage)
     {
         UpdatePlayerHP(Mathf.Max(0, playerHP - damage));

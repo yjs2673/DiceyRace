@@ -2246,6 +2246,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TitleConfirmPanel
       objectReference: {fileID: 0}
+    - target: {fileID: 7029908273542543615, guid: 1dfa1f0f3846c4e68a3f183a8a10ff61, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4920,7 +4924,7 @@ MonoBehaviour:
   sfxSlider: {fileID: 169662689}
   brightnessSlider: {fileID: 1743474371}
   brightnessOverlay: {fileID: 295626764}
-  maxOverlayAlpha: 0.7
+  maxOverlayAlpha: 0.8
 --- !u!1 &1583159662
 GameObject:
   m_ObjectHideFlags: 0
@@ -5685,7 +5689,15 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1457505726896593539, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1457505726896593539, guid: 7753ec150811e472eb419015441841e3, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1457505726896593539, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1704277910108792779, guid: 7753ec150811e472eb419015441841e3, type: 3}
@@ -5717,7 +5729,15 @@ PrefabInstance:
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 1880344012138453005, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1880344012138453005, guid: 7753ec150811e472eb419015441841e3, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1880344012138453005, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2295521005840000266, guid: 7753ec150811e472eb419015441841e3, type: 3}
@@ -5749,7 +5769,15 @@ PrefabInstance:
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 2645702924000670119, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2645702924000670119, guid: 7753ec150811e472eb419015441841e3, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2645702924000670119, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3803234656918161023, guid: 7753ec150811e472eb419015441841e3, type: 3}
@@ -5765,6 +5793,10 @@ PrefabInstance:
       value: SettingPanel
       objectReference: {fileID: 0}
     - target: {fileID: 5648983900454470983, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648983900454470983, guid: 7753ec150811e472eb419015441841e3, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -5777,7 +5809,15 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1567272776}
     - target: {fileID: 5648983900454470983, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1567272776}
+    - target: {fileID: 5648983900454470983, guid: 7753ec150811e472eb419015441841e3, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648983900454470983, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5648983900454470983, guid: 7753ec150811e472eb419015441841e3, type: 3}
@@ -5785,11 +5825,23 @@ PrefabInstance:
       value: SetBgmVolume
       objectReference: {fileID: 0}
     - target: {fileID: 5648983900454470983, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: SetBgmVolume
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648983900454470983, guid: 7753ec150811e472eb419015441841e3, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: SettingsUiManager, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5648983900454470983, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: SettingsUiManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648983900454470983, guid: 7753ec150811e472eb419015441841e3, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5648983900454470983, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6073201594662773363, guid: 7753ec150811e472eb419015441841e3, type: 3}
@@ -5904,8 +5956,48 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6423484253053343949, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6423484253053343949, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6423484253053343949, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6423484253053343949, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1567272776}
+    - target: {fileID: 6423484253053343949, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6423484253053343949, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetBrightness
+      objectReference: {fileID: 0}
+    - target: {fileID: 6423484253053343949, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SettingsUiManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6423484253053343949, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 7399787726296774421, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7399787726296774421, guid: 7753ec150811e472eb419015441841e3, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7430182041119010223, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7430182041119010223, guid: 7753ec150811e472eb419015441841e3, type: 3}
@@ -5921,8 +6013,44 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8019952288626598403, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8019952288626598403, guid: 7753ec150811e472eb419015441841e3, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8109285250711142222, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8109285250711142222, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8109285250711142222, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8109285250711142222, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1567272776}
+    - target: {fileID: 8109285250711142222, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8109285250711142222, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetSfxVolume
+      objectReference: {fileID: 0}
+    - target: {fileID: 8109285250711142222, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SettingsUiManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8109285250711142222, guid: 7753ec150811e472eb419015441841e3, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 8501156880834565500, guid: 7753ec150811e472eb419015441841e3, type: 3}
       propertyPath: m_AnchorMax.y

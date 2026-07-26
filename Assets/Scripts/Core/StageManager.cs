@@ -38,6 +38,7 @@ public class StageManager : MonoBehaviour
     public bool HasReachedGoalTrigger { get; private set; }
     public bool IsBossField => fieldMode == FieldMode.Boss;
     public bool IsStageResolved { get; private set; }
+    public bool IsGameOver { get; private set; }
 
     private bool bossFollowInitialized;
     private bool stageTransitionRequested;
@@ -159,10 +160,12 @@ public class StageManager : MonoBehaviour
             yield return boss.PerformEndTurnAttack(player);
         }
 
-        if (GameManager.Instance != null && GameManager.Instance.PlayerHP <= 0)
+        if (IsBossField
+            && !HasReachedGoalTrigger
+            && GameManager.Instance != null
+            && GameManager.Instance.PlayerHP <= 0)
         {
-            IsStageResolved = true;
-            Debug.Log("[StageManager] 플레이어가 쓰러졌습니다. 게임 오버.");
+            TriggerGameOver("[StageManager] 플레이어가 쓰러졌습니다. 게임 오버.");
             yield break;
         }
 
@@ -178,6 +181,7 @@ public class StageManager : MonoBehaviour
 
         EnsureRuntimeReferences();
         IsStageResolved = false;
+        IsGameOver = false;
         CurrentDistance = Mathf.Clamp(savedState.stageDistance, 0, targetDistance);
         HasReachedGoalTrigger = savedState.reachedGoalTrigger;
 
@@ -218,6 +222,7 @@ public class StageManager : MonoBehaviour
     private void ClearStage()
     {
         IsStageResolved = true;
+        IsGameOver = false;
         Debug.Log("[StageManager] 스테이지 클리어!");
 
         if (!IsBossField)
@@ -246,6 +251,19 @@ public class StageManager : MonoBehaviour
             boss.InitializeFollow(player.transform);
             bossFollowInitialized = true;
         }
+    }
+
+    public void TriggerGameOver(string reason)
+    {
+        if (IsStageResolved)
+        {
+            return;
+        }
+
+        IsStageResolved = true;
+        IsGameOver = true;
+        Debug.Log(reason);
+        GameOverUiController.Instance?.ShowGameOver();
     }
 
     private void ApplySceneDefaults()
