@@ -96,20 +96,7 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         Debug.Log($"{itemName}을 구매했습니다.");
         AudioManager.instance.PlaySfx(AudioManager.Sfx.ShopBuy); //***
 
-        currentCard = null;
-        currentDice = null;
-        isSoldOut = true;
-
-        if (itemImage != null)
-        {
-            itemImage.sprite = null;
-            itemImage.gameObject.SetActive(false);
-        }
-        priceText.gameObject.SetActive(false);
-        coinImage.gameObject.SetActive(false);
-        pirateCoinImage.gameObject.SetActive(false);
-        soldoutText.gameObject.SetActive(true);
-        buyButton.interactable = false;
+        SetSoldOut();
 
         InfoPanelUI infoPanel = FindFirstObjectByType<InfoPanelUI>();
         if (infoPanel != null)
@@ -184,6 +171,26 @@ public class ShopSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         soldoutText.gameObject.SetActive(false);
         buyButton.interactable = false;
     }
+
+    public void SetSoldOut()
+    {
+        currentCard = null;
+        currentDice = null;
+        isSoldOut = true;
+
+        if (itemImage != null)
+        {
+            itemImage.sprite = null;
+            itemImage.gameObject.SetActive(false);
+        }
+
+        priceText.gameObject.SetActive(false);
+        coinImage.gameObject.SetActive(false);
+        pirateCoinImage.gameObject.SetActive(false);
+        soldoutText.gameObject.SetActive(true);
+        buyButton.interactable = false;
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (ShopTooltipUI.Instance == null)

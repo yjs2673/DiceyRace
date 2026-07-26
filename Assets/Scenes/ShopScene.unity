@@ -1840,7 +1840,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -4521,9 +4521,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 879b2bbbc9e348a4e9d2a5bb1966b01d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  initialCoin: 1000
-  initialPirateCoin: 100
-  initialReroll: 999
+  initialCoin: 100
+  initialPirateCoin: 10
+  initialReroll: 8
   initialPlayerHP: 100
   initialPlayerDamage: 10
   initialStageName: DebugGround
@@ -6649,7 +6649,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 30992b2436c694db2847ed49ff8ff235, type: 3}
   - {fileID: 8300000, guid: 0b15063cda64b4faf9f88664c75862ad, type: 3}
   Svolume: 1
-  Schannels: 10
+  Schannels: 50
   defaultCooldown: 0.05
 --- !u!4 &1991789283
 Transform:

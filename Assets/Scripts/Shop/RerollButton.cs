@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class RerollButton : MonoBehaviour
 {
+   private const float UnavailableAlpha = 0.5f;
+
    [SerializeField] private ShopManager shopManager;
    [SerializeField] private InfoPanelUI infoPanelUI;
 
@@ -16,10 +18,15 @@ public class RerollButton : MonoBehaviour
    private int currentRerollPrice;
    private Color availablePriceColor = Color.white;
    private ColorBlock defaultButtonColors;
+   private CanvasGroup buttonCanvasGroup;
 
     private void Awake()
     {
         button = GetComponent<Button>();
+        buttonCanvasGroup = GetComponent<CanvasGroup>();
+        if (buttonCanvasGroup == null)
+            buttonCanvasGroup = gameObject.AddComponent<CanvasGroup>();
+
         defaultButtonColors = button.colors;
         currentRerollPrice = initialRerollPrice;
 
@@ -113,14 +120,14 @@ public class RerollButton : MonoBehaviour
             GameManager.Instance.Coin >= currentRerollPrice;
 
         if (rerollPriceText != null)
-            rerollPriceText.color = canReroll ? availablePriceColor : Color.red;
+            rerollPriceText.color = availablePriceColor;
 
         ColorBlock buttonColors = defaultButtonColors;
-        if (allSlotsSoldOut)
-            buttonColors.disabledColor = Color.gray;
+        buttonColors.disabledColor = defaultButtonColors.normalColor;
 
         button.colors = buttonColors;
         button.interactable = canReroll;
+        buttonCanvasGroup.alpha = canReroll ? 1f : UnavailableAlpha;
     }
     private void OnDestroy()
     {

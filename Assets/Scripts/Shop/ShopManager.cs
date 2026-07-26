@@ -59,6 +59,12 @@ public class ShopManager : MonoBehaviour
             return;
         }
 
+        if (GameManager.Instance == null)
+        {
+            Debug.LogError("GameManager가 존재하지 않습니다.", this);
+            return;
+        }
+
         foreach (ShopSlot slot in shopSlots)
         {
             if (slot == null || slot.IsSoldOut)
@@ -68,13 +74,20 @@ public class ShopManager : MonoBehaviour
         }
 
         List<ScriptableObject> remainingItems = new List<ScriptableObject>();
+        HashSet<ScriptableObject> uniqueItems = new HashSet<ScriptableObject>();
+        HashSet<CardData> ownedCards = new HashSet<CardData>(GameManager.Instance.HasCard);
+        HashSet<Dice> ownedDice = new HashSet<Dice>(GameManager.Instance.HasDice);
 
         if (cardPool != null)
         {
             foreach (CardData card in cardPool)
             {
-                if (card != null)
+                if (card != null &&
+                    !ownedCards.Contains(card) &&
+                    uniqueItems.Add(card))
+                {
                     remainingItems.Add(card);
+                }
             }
         }
 
@@ -82,15 +95,13 @@ public class ShopManager : MonoBehaviour
         {
             foreach (Dice dice in dicePool)
             {
-                if (dice != null)
+                if (dice != null &&
+                    !ownedDice.Contains(dice) &&
+                    uniqueItems.Add(dice))
+                {
                     remainingItems.Add(dice);
+                }
             }
-        }
-
-        if (remainingItems.Count == 0)
-        {
-            Debug.LogError("상점에 표시할 카드와 주사위가 없습니다.");
-            return;
         }
 
         for (int i = 0; i < shopSlots.Count; i++)
@@ -100,7 +111,10 @@ public class ShopManager : MonoBehaviour
                 continue;
 
             if (remainingItems.Count == 0)
-                break;
+            {
+                slot.SetSoldOut();
+                continue;
+            }
 
             int randomIndex = Random.Range(0, remainingItems.Count);
             ScriptableObject selectedItem = remainingItems[randomIndex];
@@ -112,6 +126,8 @@ public class ShopManager : MonoBehaviour
 
             remainingItems.RemoveAt(randomIndex);
         }
+
+        AvailabilityChanged?.Invoke();
     }
 
     private void HandleSlotSoldOut()
