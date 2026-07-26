@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b481630aad676be4490de1cb1786f609, type: 3}
   m_Name: Binary
   m_EditorClassIdentifier: Assembly-CSharp::Dice
-  diceName: Binary
+  diceName: "\uC774\uC0C1\uD55C \uC774\uC9C4\uBC95 \uC8FC\uC0AC\uC704"
   icon: {fileID: 21300000, guid: 75f25bae6a9374ad495491003289a5f1, type: 3}
-  price: 0
-  minValue: 0
-  maxValue: 0
-  description: 
+  price: 8
+  description: "\uC774\uC9C4\uBC95\uC774\uC9C0\uB9CC \uC798\uBABB \uC801\uC6A9\uB418\uC5B4
+    \uB208\uAE08\uC774 \uC2ED\uC9C4\uBC95\uC73C\uB85C \uB098\uC628\uB2E4."
   runtimePrefab: {fileID: 5321447060382311039, guid: 99661a024221349d38bddf67b6bf0ef1, type: 3}
   preferredBoardSlot: -1
   boardSpawnOffset: {x: 0, y: 0, z: 0}

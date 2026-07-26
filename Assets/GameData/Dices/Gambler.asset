@@ -12,12 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b481630aad676be4490de1cb1786f609, type: 3}
   m_Name: Gambler
   m_EditorClassIdentifier: Assembly-CSharp::Dice
-  diceName: Gambler
+  diceName: "\uB3C4\uBC15\uAFBC\uC758 \uC8FC\uC0AC\uC704"
   icon: {fileID: 21300000, guid: a69893349185346c8ac8db505a0c97ae, type: 3}
-  price: 0
-  minValue: 0
-  maxValue: 0
-  description: 
+  price: 6
+  description: "\uC804\uBD80 \uC5BB\uAC70\uB098, \uC804\uBD80 \uC783\uAC70\uB098."
   runtimePrefab: {fileID: 8145070081236639754, guid: 37e3202e8497948b0a8511ca1dbc7f65, type: 3}
   preferredBoardSlot: -1
   boardSpawnOffset: {x: 0, y: 0, z: 0}

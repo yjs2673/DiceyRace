@@ -12,12 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b481630aad676be4490de1cb1786f609, type: 3}
   m_Name: OddDice
   m_EditorClassIdentifier: Assembly-CSharp::Dice
-  diceName: Odd Dice
+  diceName: "\uD640\uC218 \uC8FC\uC0AC\uC704"
   icon: {fileID: 21300000, guid: dea34104546d64340bb7a24e826831a5, type: 3}
-  price: 0
-  minValue: 0
-  maxValue: 0
-  description: 
+  price: 2
+  description: "\uD640\uC218 \uB208\uAE08\uC774 \uB450\uAC1C\uC529 \uC788\uB294 \uC8FC\uC0AC\uC704."
   runtimePrefab: {fileID: 820570565641664209, guid: d178d618fb3214a48ac0ba4e07e695c4, type: 3}
   preferredBoardSlot: -1
   boardSpawnOffset: {x: 0, y: 0, z: 0}
