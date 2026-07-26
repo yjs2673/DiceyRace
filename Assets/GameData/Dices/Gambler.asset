@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Gambler
   m_EditorClassIdentifier: Assembly-CSharp::Dice
   diceName: Gambler
-  icon: {fileID: 21300000, guid: c320e96ce1256407883f3c93a192e8c0, type: 3}
+  icon: {fileID: 21300000, guid: a69893349185346c8ac8db505a0c97ae, type: 3}
   price: 0
   minValue: 0
   maxValue: 0

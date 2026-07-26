@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: 29
   cardName: attack counter
   icon: {fileID: 21300000, guid: 5463bf731c38e4316a1ab8f995df245e, type: 3}
-  price: 0
+  price: 15
   description: "\uD328\uB9C1 \uC2DC \uC801\uC758 \uACF5\uACA9\uC744 \uBC18\uC0AC
     \uAC00\uB2A5"
   cardType: 0

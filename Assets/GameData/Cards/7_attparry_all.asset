@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: 7
   cardName: attparry all
   icon: {fileID: 21300000, guid: fa131aa0398f0421993deee339f9704a, type: 3}
-  price: 0
+  price: 25
   description: "\uC18C\uC9C0\uC2DC \uACF5\uACA9\uC5D0 \uD328\uB9C1 \uD310\uC815 \uCD94\uAC00"
   cardType: 0
   cardEffect: 8

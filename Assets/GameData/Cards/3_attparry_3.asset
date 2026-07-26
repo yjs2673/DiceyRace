@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: 3
   cardName: attack parry 3
   icon: {fileID: 21300000, guid: 5fff4bae5fc6046b7bc4d753e383bb8c, type: 3}
-  price: 0
+  price: 15
   description: "\uB2E4\uC74C 3\uBC88\uC758 \uACF5\uACA9\uC5D0 \uD328\uB9C1 \uD310\uC815
     \uCD94\uAC00"
   cardType: 1

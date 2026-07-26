@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: 25
   cardName: cointoss
   icon: {fileID: 21300000, guid: 5ee7c809da512477cb2edc36c838a0f9, type: 3}
-  price: 0
+  price: 15
   description: "5\uC758 \uBC30\uC218 \uAC70\uB9AC\uB9C8\uB2E4 \uB3C4\uBC15, -5 ~
     +5"
   cardType: 0

@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: 11
   cardName: destroy 1
   icon: {fileID: 21300000, guid: fea9033cd06e5452caff6510456c479f, type: 3}
-  price: 0
+  price: 5
   description: "\uC0AC\uC6A9\uC2DC 1\uAC70\uB9AC \uC801\uACFC \uC7A5\uC560\uBB3C
     \uD30C\uAD34"
   cardType: 1
