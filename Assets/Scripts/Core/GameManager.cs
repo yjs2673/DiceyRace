@@ -64,6 +64,15 @@ public class GameManager : MonoBehaviour
     private static class RuntimeCache
     {
         public static bool HasCache;
+        public static bool HasStartupDefaults;
+        public static int InitialCoin;
+        public static int InitialPirateCoin;
+        public static int InitialReroll;
+        public static int InitialPlayerHP;
+        public static int InitialPlayerDamage;
+        public static string InitialStageName;
+        public static List<Dice> InitialDice = new List<Dice>();
+        public static List<CardData> InitialCards = new List<CardData>();
         public static int Coin;
         public static int PirateCoin;
         public static int Reroll;
@@ -143,6 +152,7 @@ public class GameManager : MonoBehaviour
         Instance = this;
         gameObject.name = "GameManager [Persistent]";
         DontDestroyOnLoad(gameObject);
+        CacheStartupDefaultsIfNeeded();
 
         if (RuntimeCache.HasCache)
         {
@@ -168,12 +178,12 @@ public class GameManager : MonoBehaviour
 
     private void InitDefaultData()
     {
-        coin = initialCoin;
-        pirateCoin = initialPirateCoin;
-        reroll = initialReroll;
-        playerHP = initialPlayerHP;
-        playerDamage = initialPlayerDamage;
-        stageName = initialStageName;
+        coin = RuntimeCache.HasStartupDefaults ? RuntimeCache.InitialCoin : initialCoin;
+        pirateCoin = RuntimeCache.HasStartupDefaults ? RuntimeCache.InitialPirateCoin : initialPirateCoin;
+        reroll = RuntimeCache.HasStartupDefaults ? RuntimeCache.InitialReroll : initialReroll;
+        playerHP = RuntimeCache.HasStartupDefaults ? RuntimeCache.InitialPlayerHP : initialPlayerHP;
+        playerDamage = RuntimeCache.HasStartupDefaults ? RuntimeCache.InitialPlayerDamage : initialPlayerDamage;
+        stageName = RuntimeCache.HasStartupDefaults ? RuntimeCache.InitialStageName : initialStageName;
         hasCard.Clear();
         currentTurnCards.Clear();
         hasDice.Clear();
@@ -181,11 +191,19 @@ public class GameManager : MonoBehaviour
         latestFieldCheckpoint = null;
         pendingShopExitTransition = null;
 
-        if (initialCards != null)
-            hasCard.AddRange(initialCards);
+        if (RuntimeCache.HasStartupDefaults)
+        {
+            hasCard.AddRange(RuntimeCache.InitialCards);
+            hasDice.AddRange(RuntimeCache.InitialDice);
+        }
+        else
+        {
+            if (initialCards != null)
+                hasCard.AddRange(initialCards);
 
-        if (initialDice != null)
-            hasDice.AddRange(initialDice);
+            if (initialDice != null)
+                hasDice.AddRange(initialDice);
+        }
 
         RefreshRuntimeDebugInfo();
     }
@@ -290,7 +308,26 @@ public class GameManager : MonoBehaviour
 
     public void ResetRuntimeDataToDefaults()
     {
+        CacheStartupDefaultsIfNeeded();
         InitDefaultData();
+    }
+
+    private void CacheStartupDefaultsIfNeeded()
+    {
+        if (RuntimeCache.HasStartupDefaults)
+        {
+            return;
+        }
+
+        RuntimeCache.HasStartupDefaults = true;
+        RuntimeCache.InitialCoin = initialCoin;
+        RuntimeCache.InitialPirateCoin = initialPirateCoin;
+        RuntimeCache.InitialReroll = initialReroll;
+        RuntimeCache.InitialPlayerHP = initialPlayerHP;
+        RuntimeCache.InitialPlayerDamage = initialPlayerDamage;
+        RuntimeCache.InitialStageName = initialStageName;
+        RuntimeCache.InitialCards = initialCards != null ? new List<CardData>(initialCards) : new List<CardData>();
+        RuntimeCache.InitialDice = initialDice != null ? new List<Dice>(initialDice) : new List<Dice>();
     }
 
     public void PrepareForFieldSceneRetry()
