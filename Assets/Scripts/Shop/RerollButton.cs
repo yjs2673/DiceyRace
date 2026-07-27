@@ -83,13 +83,6 @@ public class RerollButton : MonoBehaviour
             RefreshButton();
             return;
         }
-        if (!GameManager.Instance.UseReroll())
-        {
-            GameManager.Instance.AddCoin(currentRerollPrice);
-            Debug.Log("남은 리롤 횟수가 없습니다.");
-            RefreshButton();
-            return;
-        }
 
         shopManager.CreateShop();
         currentRerollPrice += rerollPriceIncrease;
@@ -116,7 +109,6 @@ public class RerollButton : MonoBehaviour
         bool canReroll =
             hasShopManager &&
             !allSlotsSoldOut &&
-            GameManager.Instance.Reroll > 0 &&
             GameManager.Instance.Coin >= currentRerollPrice;
 
         if (rerollPriceText != null)

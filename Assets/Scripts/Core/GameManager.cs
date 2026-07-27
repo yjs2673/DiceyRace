@@ -93,7 +93,6 @@ public class GameManager : MonoBehaviour
     // 게임 시작 시 초기값 설정 //
     [SerializeField] private int initialCoin = 1000;
     [SerializeField] private int initialPirateCoin = 100;
-    [SerializeField] private int initialReroll = 999;
     [SerializeField] private int initialPlayerHP = 100;
     [SerializeField] private int initialPlayerDamage = 10;
     [SerializeField] private string initialStageName = "DebugGround";
@@ -178,12 +177,11 @@ public class GameManager : MonoBehaviour
 
     private void InitDefaultData()
     {
-        coin = RuntimeCache.HasStartupDefaults ? RuntimeCache.InitialCoin : initialCoin;
-        pirateCoin = RuntimeCache.HasStartupDefaults ? RuntimeCache.InitialPirateCoin : initialPirateCoin;
-        reroll = RuntimeCache.HasStartupDefaults ? RuntimeCache.InitialReroll : initialReroll;
-        playerHP = RuntimeCache.HasStartupDefaults ? RuntimeCache.InitialPlayerHP : initialPlayerHP;
-        playerDamage = RuntimeCache.HasStartupDefaults ? RuntimeCache.InitialPlayerDamage : initialPlayerDamage;
-        stageName = RuntimeCache.HasStartupDefaults ? RuntimeCache.InitialStageName : initialStageName;
+        coin = initialCoin;
+        pirateCoin = initialPirateCoin;
+        playerHP = initialPlayerHP;
+        playerDamage = initialPlayerDamage;
+        stageName = initialStageName;
         hasCard.Clear();
         currentTurnCards.Clear();
         hasDice.Clear();
@@ -322,7 +320,6 @@ public class GameManager : MonoBehaviour
         RuntimeCache.HasStartupDefaults = true;
         RuntimeCache.InitialCoin = initialCoin;
         RuntimeCache.InitialPirateCoin = initialPirateCoin;
-        RuntimeCache.InitialReroll = initialReroll;
         RuntimeCache.InitialPlayerHP = initialPlayerHP;
         RuntimeCache.InitialPlayerDamage = initialPlayerDamage;
         RuntimeCache.InitialStageName = initialStageName;
