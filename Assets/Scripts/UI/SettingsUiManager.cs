@@ -127,6 +127,7 @@ public sealed class SettingsUiManager : MonoBehaviour
     public void ConfirmMoveToTitle()
     {
         CloseSettings();
+        GameManager.Instance?.ResetRuntimeDataToDefaults();
         SceneTransitionFader.Instance.FadeToScene(TitleSceneName, 0.5f, 0.1f);
     }
 

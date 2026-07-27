@@ -188,7 +188,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 481559787}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &215055046
 GameObject:
@@ -472,6 +472,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 348362510}
   m_CullTransparentMesh: 1
+--- !u!1 &481559786
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 481559787}
+  m_Layer: 0
+  m_Name: Managers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &481559787
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 481559786}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 163599444}
+  - {fileID: 2059115671}
+  - {fileID: 622024338}
+  - {fileID: 1235956335}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &498371103 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5398721498537655493, guid: 7753ec150811e472eb419015441841e3, type: 3}
@@ -512,12 +547,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 622024337}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 481559787}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &622024339
 MonoBehaviour:
@@ -754,8 +789,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef2ec04d1cc745b78fced04b915b4d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TitleMove
-  speed: 0
-  isSky: 0
   amplitude: 15
   frequency: 2
 --- !u!1 &1033937498
@@ -1144,6 +1177,154 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1218952764}
   m_CullTransparentMesh: 1
+--- !u!1 &1235956333
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1235956335}
+  - component: {fileID: 1235956334}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1235956334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1235956333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 879b2bbbc9e348a4e9d2a5bb1966b01d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  initialCoin: 100
+  initialPirateCoin: 10
+  initialReroll: 8
+  initialPlayerHP: 100
+  initialPlayerDamage: 10
+  initialStageName: DebugGround
+  initialCards: []
+  initialDice:
+  - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
+  - {fileID: 11400000, guid: c3448afddad0f4c059eb3b72e6f05755, type: 2}
+  shopFadeDuration: 0.75
+  shopFadeHoldDuration: 0.2
+  coin: 0
+  pirateCoin: 0
+  reroll: 0
+  playerHP: 0
+  playerDamage: 0
+  stageName: 
+  hasDice: []
+  hasCard: []
+  currentTurnCards: []
+  savedFieldState:
+    sceneName: 
+    stageName: 
+    playerPosition: {x: 0, y: 0, z: 0}
+    stageDistance: 0
+    reachedGoalTrigger: 0
+    remainingMoves: 0
+    remainingRerolls: 0
+    currentDiceValue: 0
+    playerInvincibleMoveCount: 0
+    playerIgnoreHitCount: 0
+    bossCurrentHp: 0
+    returnPhase: 0
+    playerCardRuntimeState:
+      gamblerActive: 0
+      gamblerSwing: 0
+      nextGamblerThreshold: 0
+      dashAfterEvadeActive: 0
+      dashAfterEvadeDistance: 0
+      hedonismBonusDistance: 0
+      parryGodBonusDistance: 0
+      destroyerBonusDistance: 0
+      jumpCrazyBonusDistance: 0
+      parryReflectActive: 0
+      parryReflectDamage: 0
+      remainingAttackParryCount: 0
+      attackParryForTurn: 0
+      remainingAttackDestroyCount: 0
+      attackDestroyForTurn: 0
+      remainingBlockParryCount: 0
+      blockParryForTurn: 0
+      remainingIgnoredMoveTileCount: 0
+      ignoreMoveTileEffectsForTurn: 0
+      turnMoveSpeedMultiplier: 0
+  latestFieldCheckpoint:
+    sceneName: 
+    stageName: 
+    playerPosition: {x: 0, y: 0, z: 0}
+    stageDistance: 0
+    reachedGoalTrigger: 0
+    remainingMoves: 0
+    remainingRerolls: 0
+    currentDiceValue: 0
+    playerInvincibleMoveCount: 0
+    playerIgnoreHitCount: 0
+    bossCurrentHp: 0
+    returnPhase: 0
+    playerCardRuntimeState:
+      gamblerActive: 0
+      gamblerSwing: 0
+      nextGamblerThreshold: 0
+      dashAfterEvadeActive: 0
+      dashAfterEvadeDistance: 0
+      hedonismBonusDistance: 0
+      parryGodBonusDistance: 0
+      destroyerBonusDistance: 0
+      jumpCrazyBonusDistance: 0
+      parryReflectActive: 0
+      parryReflectDamage: 0
+      remainingAttackParryCount: 0
+      attackParryForTurn: 0
+      remainingAttackDestroyCount: 0
+      attackDestroyForTurn: 0
+      remainingBlockParryCount: 0
+      blockParryForTurn: 0
+      remainingIgnoredMoveTileCount: 0
+      ignoreMoveTileEffectsForTurn: 0
+      turnMoveSpeedMultiplier: 0
+  pendingShopExitTransition:
+    targetSceneName: 
+    transitionImages: []
+    fadeDuration: 1
+    fadeHoldDuration: 0.5
+    imageDisplayDuration: 2.5
+    imageFadeDuration: 0.35
+    imageGapDuration: 0.15
+  hasSavedFieldStateDebug: 0
+  activeSceneNameDebug: 
+  instanceIdDebug: 0
+  owningSceneDebug: 
+  isPrimaryInstanceDebug: 0
+  savedFieldStateSummaryDebug: 
+  latestFieldCheckpointSummaryDebug: 
+--- !u!4 &1235956335
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1235956333}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 481559787}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1351917816 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5648983900454470983, guid: 7753ec150811e472eb419015441841e3, type: 3}
@@ -1778,12 +1959,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2059115670}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 481559787}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2059115672
 MonoBehaviour:
@@ -2318,8 +2499,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 1033937501}
   - {fileID: 1481353639}
+  - {fileID: 481559787}
   - {fileID: 1732278331}
   - {fileID: 215055049}
-  - {fileID: 163599444}
-  - {fileID: 2059115671}
-  - {fileID: 622024338}

@@ -301,6 +301,11 @@ public class StageManager : MonoBehaviour
         return sceneName.IndexOf("Boss", StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
+    private static bool IsTitleScene(string sceneName)
+    {
+        return sceneName.Equals("TitleScene", StringComparison.OrdinalIgnoreCase);
+    }
+
     private static bool IsShopScene(string sceneName)
     {
         return sceneName.IndexOf("Shop", StringComparison.OrdinalIgnoreCase) >= 0;
@@ -370,6 +375,11 @@ public class StageManager : MonoBehaviour
         {
             Debug.LogWarning("다음 스테이지 씬 이름이 비어 있어 전환을 건너뜁니다.");
             return;
+        }
+
+        if (fieldMode == FieldMode.Title || IsTitleScene(SceneManager.GetActiveScene().name))
+        {
+            GameManager.Instance?.ResetRuntimeDataToDefaults();
         }
 
         stageTransitionRequested = true;

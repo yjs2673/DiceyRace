@@ -343,6 +343,11 @@ public class GameManager : MonoBehaviour
 
     public bool ShouldRestoreFieldStateForActiveScene()
     {
+        if (IsTitleScene(SceneManager.GetActiveScene().name))
+        {
+            return false;
+        }
+
         return HasSavedFieldState
             && SceneManager.GetActiveScene().name == savedFieldState.sceneName;
     }
@@ -435,6 +440,11 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        if (IsTitleScene(scene.name))
+        {
+            return;
+        }
+
         if (!HasSavedFieldState || scene.name != savedFieldState.sceneName)
         {
             StartCoroutine(CaptureFieldCheckpointNextFrame(scene.name));
@@ -484,6 +494,11 @@ public class GameManager : MonoBehaviour
             yield break;
         }
 
+        if (IsTitleScene(sceneName))
+        {
+            yield break;
+        }
+
         if (!TryFindFieldRuntime(out StageManager stageManager, out PlayerController player, out DiceManager diceManager, out TurnManager turnManager, false))
         {
             Debug.LogWarning($"필드 체크포인트 자동 저장 실패 -> {sceneName}");
@@ -499,6 +514,11 @@ public class GameManager : MonoBehaviour
     private static bool IsShopScene(string sceneName)
     {
         return sceneName.IndexOf("Shop", System.StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    private static bool IsTitleScene(string sceneName)
+    {
+        return sceneName.Equals("TitleScene", System.StringComparison.OrdinalIgnoreCase);
     }
 
     private bool TryReturnViaPendingSceneTransition()
@@ -566,7 +586,8 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-        return !IsShopScene(SceneManager.GetActiveScene().name);
+        string activeSceneName = SceneManager.GetActiveScene().name;
+        return !IsShopScene(activeSceneName) && !IsTitleScene(activeSceneName);
     }
 
     private static bool TryFindFieldRuntime(
