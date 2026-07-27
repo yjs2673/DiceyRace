@@ -16041,7 +16041,7 @@ GameObject:
   - component: {fileID: 1733708262}
   m_Layer: 0
   m_Name: Start
-  m_TagString: Tile
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17229,7 +17229,7 @@ GameObject:
   - component: {fileID: 1883044169}
   m_Layer: 0
   m_Name: End
-  m_TagString: Tile
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17906,7 +17906,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   initialCoin: 100
   initialPirateCoin: 10
-  initialReroll: 8
   initialPlayerHP: 100
   initialPlayerDamage: 10
   initialStageName: DebugGround

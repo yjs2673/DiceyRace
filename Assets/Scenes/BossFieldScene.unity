@@ -1405,6 +1405,7 @@ GameObject:
   - component: {fileID: 60034986}
   - component: {fileID: 60034989}
   - component: {fileID: 60034990}
+  - component: {fileID: 60034991}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1544,6 +1545,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
   player: {fileID: 1622605424}
   smoothSpeed: 10
+--- !u!114 &60034991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60034985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8d4e8130af843e89c3e4b5e22b7a6c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WholeMapViewController
 --- !u!1 &72537914
 GameObject:
   m_ObjectHideFlags: 0
@@ -3792,7 +3805,7 @@ GameObject:
   - component: {fileID: 273744111}
   m_Layer: 0
   m_Name: Prev1
-  m_TagString: Tile
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -20524,7 +20537,7 @@ GameObject:
   - component: {fileID: 1733708262}
   m_Layer: 0
   m_Name: Start
-  m_TagString: Tile
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -22142,7 +22155,7 @@ GameObject:
   - component: {fileID: 1883044169}
   m_Layer: 0
   m_Name: End
-  m_TagString: Tile
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -22663,7 +22676,7 @@ GameObject:
   - component: {fileID: 1946747985}
   m_Layer: 0
   m_Name: Prev2
-  m_TagString: Tile
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -24370,7 +24383,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   initialCoin: 100
   initialPirateCoin: 10
-  initialReroll: 8
   initialPlayerHP: 100
   initialPlayerDamage: 10
   initialStageName: DebugGround

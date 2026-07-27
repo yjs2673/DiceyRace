@@ -110,6 +110,8 @@ public class CardManager : MonoBehaviour
             return;
         }
 
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.ButtonClick); //***
+
         FinishMulligan();
     }
 
