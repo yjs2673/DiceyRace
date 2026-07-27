@@ -1,15 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShopManager : MonoBehaviour
 {
-    [Header("»óÁ¡¿¡ µîÀå °¡´ÉÇÑ Ä«µå")]
+    [Header("ìƒì ì— ë“±ì¥ ê°€ëŠ¥í•œ ì¹´ë“œ")]
     [SerializeField] private List<CardData> cardPool;
-    [Header("»óÁ¡¿¡ µîÀå °¡´ÉÇÑ ÁÖ»çÀ§")]
+    [Header("ìƒì ì— ë“±ì¥ ê°€ëŠ¥í•œ ì£¼ì‚¬ìœ„")]
     [SerializeField] private List<Dice> dicePool;
 
-    [Header("Shopslot ¸®½ºÆ®")]
+    [Header("Shopslot ë¦¬ìŠ¤íŠ¸")]
     [SerializeField] private List<ShopSlot> shopSlots;
+    [SerializeField] private Button moveButton;
 
     public event System.Action AvailabilityChanged;
 
@@ -36,6 +38,12 @@ public class ShopManager : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        ResolveMoveButton();
+        BindMoveButton();
+    }
+
     private void OnEnable()
     {
         SetSlotEventSubscriptions(true);
@@ -44,6 +52,14 @@ public class ShopManager : MonoBehaviour
     private void OnDisable()
     {
         SetSlotEventSubscriptions(false);
+    }
+
+    private void OnDestroy()
+    {
+        if (moveButton != null)
+        {
+            moveButton.onClick.RemoveListener(ReturnToField);
+        }
     }
 
     private void Start()
@@ -55,13 +71,13 @@ public class ShopManager : MonoBehaviour
     {
         if (shopSlots == null || shopSlots.Count == 0)
         {
-            Debug.LogError("Shop SlotÀ» ºÒ·¯¿Ã ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError("Shop Slotì„ ë¶ˆëŸ¬ì˜¬ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         if (GameManager.Instance == null)
         {
-            Debug.LogError("GameManager°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.", this);
+            Debug.LogError("GameManagerê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.", this);
             return;
         }
 
@@ -151,11 +167,37 @@ public class ShopManager : MonoBehaviour
         }
     }
 
+    private void ResolveMoveButton()
+    {
+        if (moveButton != null)
+        {
+            return;
+        }
+
+        GameObject moveButtonObject = GameObject.Find("MoveButton");
+        if (moveButtonObject != null)
+        {
+            moveButton = moveButtonObject.GetComponent<Button>();
+        }
+    }
+
+    private void BindMoveButton()
+    {
+        if (moveButton == null)
+        {
+            Debug.LogWarning("ìƒì  ë‚˜ê°€ê¸° ë²„íŠ¼ì„ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.", this);
+            return;
+        }
+
+        moveButton.onClick = new Button.ButtonClickedEvent();
+        moveButton.onClick.AddListener(ReturnToField);
+    }
+
     public void ReturnToField()
     {
         if (GameManager.Instance == null)
         {
-            Debug.LogError("GameManager°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.");
+            Debug.LogError("GameManagerê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
             return;
         }
 
