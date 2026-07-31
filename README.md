@@ -1,5 +1,7 @@
 # Dicey Race
-Unity Runner Action Board Game
+Unity 3D Runner Action Board Game
+
+[시연 영상](https://www.youtube.com/watch?v=zx3-_ANwB30&list=PLbuYQ5g5ijqLyRhIt4l2I8GsuL3aI699J)
 
 <br/>
 
