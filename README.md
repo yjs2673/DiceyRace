@@ -5,6 +5,11 @@ Unity 3D Runner Action Board Game
 
 <br/>
 
+<img width="800" height="450" alt="%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202026-07-29%20%E1%84%8B%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB%2012 17 21" src="https://github.com/user-attachments/assets/90b80a93-b7e0-41bd-8b35-7e89b9cebbc3" />
+
+
+<br/>
+
 ## 🛠️ 기술 스택
 
 | **구분** | **기술** | **역할** |
